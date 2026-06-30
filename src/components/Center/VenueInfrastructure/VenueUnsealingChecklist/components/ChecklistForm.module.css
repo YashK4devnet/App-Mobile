@@ -1,0 +1,442 @@
+.formWrapper {
+  width: 100%;
+  max-width: none; /* ✅ CHANGE from 900px to none */
+  background: #252839;
+  border-radius: 16px;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  color: #ffffff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  margin-top: 2rem;
+  margin-bottom: 4rem;
+}
+
+/* ============================================
+   PAGE TITLE
+   ============================================ */
+.pageTitle {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: clamp(2rem, 5vh, 3rem);
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+/* ============================================
+   SECTIONS
+   ============================================ */
+.section {
+  margin-bottom: clamp(2rem, 5vh, 2.5rem);
+}
+
+.subTitle {
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #ffffff;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.subTitle svg {
+  width: 20px;
+  height: 20px;
+  color: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+}
+
+/* ============================================
+   GRID LAYOUTS
+   ============================================ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 1.25rem;
+}
+
+.checklistGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 1rem;
+}
+
+/* ============================================
+   INPUT GROUPS
+   ============================================ */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputGroup label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inputGroup label svg {
+  width: 16px;
+  height: 16px;
+  color: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+}
+
+.inputGroup input,
+.textArea {
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  font-size: 0.95rem;
+  width: 100%;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.inputGroup input:focus,
+.textArea:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.inputGroup input:read-only {
+  background: rgba(255, 255, 255, 0.03);
+  cursor: not-allowed;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.textArea {
+  min-height: 140px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* ============================================
+   CHECKBOXES
+   ============================================ */
+.checkboxItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 0.5rem 0;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.checkboxItem:hover {
+  color: #ffffff;
+}
+
+.checkboxItem input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #ff6b6b;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   OTHER SECTION
+   ============================================ */
+.otherSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.otherSection .checkboxItem {
+  font-size: 1rem;
+  padding: 0.75rem 0;
+}
+
+/* ============================================
+   PHOTO SECTION
+   ============================================ */
+.photoActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.photoButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  flex: 1;
+  min-width: 160px;
+}
+
+.photoButton:hover {
+  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px linear-gradient(135deg, #ff6b6b, #4ecdc4);
+}
+
+.photoButton:active {
+  transform: translateY(0);
+}
+
+.photoButton svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Photo Grid */
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
+  gap: 1rem;
+}
+
+.photoItem {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  aspect-ratio: 1;
+}
+
+.photoItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.removePhoto {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.removePhoto:hover {
+  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  transform: scale(1.1);
+}
+
+.removePhoto svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ============================================
+   SUBMIT BUTTONS
+   ============================================ */
+.submitButton {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px linear-gradient(135deg, #ff6b6b, #4ecdc4);
+}
+
+.submitButton:hover {
+  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px linear-gradient(135deg, #ff6b6b, #4ecdc4);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+.submitButton:first-of-type {
+  margin-top: clamp(2rem, 5vh, 2.5rem);
+}
+
+/* ============================================
+   MODAL & OVERLAY
+   ============================================ */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+}
+
+.modalBox {
+  background: #252839;
+  border: 2px solid rgba(255, 107, 107, 0.3);
+  color: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  animation: modalFadeIn 0.3s ease;
+}
+
+.modalMessage {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.modalButton {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  box-shadow: 0 4px 12px linear-gradient(135deg, #ff6b6b, #4ecdc4);
+}
+
+.modalButton:hover {
+  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px linear-gradient(135deg, #ff6b6b, #4ecdc4);
+}
+
+.modalButton:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   LOADING SPINNER
+   ============================================ */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: conic-gradient(#ff6b6b, #4ecdc4);
+  mask: radial-gradient(farthest-side, transparent 70%, black 71%);
+  -webkit-mask: radial-gradient(farthest-side, transparent 70%, black 71%);
+  animation: spin 0.8s linear infinite;
+  margin: 1rem auto 0;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   RESPONSIVE: MOBILE
+   ============================================ */
+@media (max-width: 640px) {
+  .pageContainer {
+    padding: 1rem;
+  }
+
+  .formWrapper {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .pageTitle {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .grid,
+  .checklistGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .photoActions {
+    flex-direction: column;
+  }
+
+  .photoButton {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .photoGrid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .submitButton {
+    padding: 0.875rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* ============================================
+   RESPONSIVE: TABLET
+   ============================================ */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .checklistGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

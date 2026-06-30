@@ -1,0 +1,187 @@
+:root {
+  --bg-page: rgba(15, 15, 35, 0.95);
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --border: rgba(255, 255, 255, 0.12);
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.75);
+
+  --radius: clamp(8px, 2vw, 16px);
+  --fs-sm: clamp(0.8rem, 1.5vw, 0.9rem);
+  --fs-md: clamp(0.9rem, 2vw, 1.1rem);
+  --fs-lg: clamp(1rem, 2.5vw, 1.25rem);
+
+  --space-sm: clamp(0.5rem, 1.5vw, 0.75rem);
+  --space-md: clamp(0.8rem, 2vw, 1.2rem);
+  --space-lg: clamp(1.2rem, 3vw, 2rem);
+}
+
+/* Page wrapper */
+.pageWrapper {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 6rem;
+}
+
+/* Back button */
+.backButton {
+  align-self: flex-start;
+  margin-bottom: var(--space-lg);
+
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--fs-md);
+
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+
+  transition: all 0.25s ease;
+}
+.backButton:hover {
+  background: var(--bg-card);
+  border-color: var(--text-dim);
+  transform: translateY(-2px);
+}
+.backIcon {
+  font-size: 1.1em;
+}
+
+/* Grid container */
+.pageContainer {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(clamp(200px, 30vw, 280px), 1fr)
+  );
+  gap: var(--space-lg);
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Card button */
+.cardButton {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+
+  padding: var(--space-md);
+  min-height: clamp(120px, 18vh, 160px);
+  border-radius: var(--radius);
+
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+.cardButton:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cardIcon {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.cardTitle {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+}
+
+.cardSubtitle {
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+
+/* Responsive behavior is automatic thanks to clamp + auto-fit grid */
+/* Popup Overlay */
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 15, 35, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Popup Card */
+.popupCard {
+  background: rgba(25, 25, 50, 0.95);
+  border: 2px solid rgba(255, 107, 107, 0.5);
+  border-radius: clamp(0.8rem, 2vw, 1.5rem);
+  padding: clamp(1.5rem, 4vw, 3rem);
+  max-width: clamp(300px, 80vw, 500px);
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 2rem rgba(0, 0, 0, 0.4);
+  animation: popupFadeIn 0.3s ease-out;
+}
+
+/* Popup Icon */
+.popupIcon {
+  font-size: clamp(2rem, 6vw, 3rem);
+  color: #ff6b6b;
+  margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+/* Title */
+.popupTitle {
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  font-weight: 700;
+  margin-bottom: clamp(0.5rem, 1vw, 1rem);
+}
+
+/* Message */
+.popupMessage {
+  font-size: clamp(0.9rem, 2.2vw, 1.1rem);
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+  line-height: 1.5;
+}
+
+/* Close Button */
+.popupCloseBtn {
+  background: transparent;
+  color: white;
+  border: 2px solid rgba(255, 107, 107, 0.6);
+  padding: clamp(0.5rem, 1vw, 0.8rem) clamp(1rem, 2vw, 1.5rem);
+  border-radius: 1rem;
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.popupCloseBtn:hover {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: #ff6b6b;
+  box-shadow: 0 0 1rem rgba(255, 107, 107, 0.4);
+}
+
+/* Animation */
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -1,0 +1,131 @@
+:root {
+  --bg-page: rgba(15, 15, 35, 0.95);
+
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.7);
+
+  --accent: #ffffff;
+
+  --radius: clamp(10px, 2vw, 14px);
+  --fs-md: clamp(14px, 1.8vw, 16px);
+  --fs-lg: clamp(16px, 2.5vw, 20px);
+  --fs-xl: clamp(18px, 3vw, 24px);
+
+  --space-sm: clamp(8px, 1.5vw, 12px);
+  --space-md: clamp(12px, 2vw, 20px);
+  --space-lg: clamp(20px, 4vw, 40px);
+}
+
+/* Page container */
+.centerPage {
+  min-height: 100vh;
+  background: var(--bg-page);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: var(--space-lg);
+  padding-top: clamp(60px, 8vh, 80px);
+  padding-bottom: clamp(60px, 8vh, 80px);
+  margin-top: 2rem;
+}
+
+/* Main container */
+.centerContainer {
+  width: 100%;
+  max-width: min(95vw, 800px);
+  background: var(--bg-page); /* SAME background */
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+  text-align: center;
+  border: none; /* remove border to avoid mismatched edges */
+}
+
+.pageTitle {
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: var(--space-lg);
+}
+
+/* Grid */
+.actionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-md);
+}
+
+/* Buttons */
+.actionCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: clamp(16px, 5vh, 28px);
+  border-radius: var(--radius);
+  font-size: var(--fs-md);
+  font-weight: 500;
+  color: var(--text);
+  background: var(--bg-page); /* FORCE same background */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* faint outline */
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
+}
+
+.actionCard:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.icon {
+  font-size: clamp(28px, 6vw, 34px);
+  color: var(--text);
+}
+/* Popup Overlay */
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Popup Box */
+.popupBox {
+  background: rgba(30, 30, 50, 0.95);
+  padding: 24px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 350px;
+  width: 90%;
+  text-align: center;
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1.6;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Popup Button */
+.closeButton {
+  margin-top: 16px;
+  padding: 10px 20px;
+  border: none;
+  background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+  border-radius: 8px;
+  color: white;
+  font-size: 25px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.closeButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4);
+}
