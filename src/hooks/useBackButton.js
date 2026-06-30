@@ -23,6 +23,11 @@ export const useBackButton = () => {
         return;
       }
 
+      // If we are in the audit module subroutes, let the audit module's back handler manage it.
+      if (currentPath.startsWith("/audit/")) {
+        return;
+      }
+
       // If not on dashboard, navigate to dashboard
       if (currentPath !== "/dashboard") {
         navigate("/dashboard");

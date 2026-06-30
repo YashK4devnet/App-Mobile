@@ -1,0 +1,7 @@
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
+
+/* Import scoped preflight specifically for the audit module */
+@import "./components/audit/audit-preflight.css";

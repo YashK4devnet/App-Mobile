@@ -141,6 +141,8 @@ const Dashboard = () => {
       navigate("/center");
     } else if (path === "/expenses") {
       navigate("/expenses");
+    } else if (path === "/audit") {
+      navigate("/audit");
     }
   };
 
@@ -279,9 +281,8 @@ const Dashboard = () => {
             </div>
             <div className={styles.statusIndicator}>
               <span
-                className={`${styles.statusDot} ${
-                  isCheckedIn ? styles.checkedIn : styles.checkedOut
-                }`}
+                className={`${styles.statusDot} ${isCheckedIn ? styles.checkedIn : styles.checkedOut
+                  }`}
               ></span>
               {isCheckedIn ? "Checked In" : "Checked Out"}
             </div>
@@ -489,6 +490,14 @@ const Dashboard = () => {
               <div className={styles.quickActionIcon}>📝</div>
               <h3>Center Management</h3>
               <p>Manage your center activity</p>
+            </a>
+            <a
+              className={styles.quickActionCard}
+              onClick={() => handleQuickLinks("/audit")}
+            >
+              <div className={styles.quickActionIcon}>✍️</div>
+              <h3>Audit</h3>
+              <p>Manage your audit activity</p>
             </a>
             {/* <button
               className={`${styles.quickActionCard} ${styles.refreshCard}`}

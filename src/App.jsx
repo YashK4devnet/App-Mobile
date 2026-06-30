@@ -8,7 +8,7 @@ import AttendanceHistory from "./components/AttendanceHistory/AttendanceHistory"
 import Expenses from "./components/Expenses/Expenses";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ManualAttendance from "./components/ManualAttendance/ManualAttendance";
-
+import AuditRoutes from './components/audit/AuditRoutes';
 import Navbar from "./components/Navbar/Navbar";
 import Incident from "./components/Incidents/Incident";
 import TicketTable from "./components/Tickets/TicketTable";
@@ -103,6 +103,15 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      {/* Audit routes */}
+      <Route
+        path="/audit/*"
+        element={
+          <ProtectedRoute requireAuth={true}>
+            <AuditRoutes />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/about"
         element={
@@ -176,6 +185,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
     </Routes>
   );
 }
