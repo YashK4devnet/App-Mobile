@@ -13,7 +13,10 @@ export default function Header({
   const handleBack = onBackClick || (() => navigate('/dashboard'));
 
   return (
-    <header className="flex justify-between items-center px-5 py-4 bg-white border-b border-slate-100 sticky top-0 z-10 shrink-0 select-none">
+    <header 
+      className="flex justify-between items-center px-5 py-4 bg-white border-b border-slate-100 sticky top-0 z-10 shrink-0 select-none"
+      style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1rem)' }}
+    >
       <button 
         onClick={handleBack} 
         className="p-1 text-slate-800 hover:bg-slate-50 rounded-lg active:scale-90 transition-transform cursor-pointer"
