@@ -5,3 +5,24 @@
 
 /* Import scoped preflight specifically for the audit module */
 @import "./components/audit/audit-preflight.css";
+
+/* Custom utilities for safe areas inside the audit feature */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+}
+
+.p-4.pb-safe {
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* Lock viewport scroll for audit theme to keep header and bottom nav fixed */
+body.audit-theme {
+  overflow: hidden !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  width: 100vw !important;
+  position: fixed !important;
+  margin: 0;
+  padding: 0;
+}
+
