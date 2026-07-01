@@ -1,3 +1,5 @@
+import { Capacitor, CapacitorHttp } from '@capacitor/core';
+
 /**
  * Service to fetch saved venues from the API.
  */
@@ -20,15 +22,40 @@ export const fetchSavedVenues = async () => {
 
   activePromise = (async () => {
     try {
-      // Use /api proxy to bypass CORS during development
-      const url = "/api/venues";
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch venues: ${response.status} ${response.statusText}`);
-      }
+      let data;
       
-      const data = await response.json();
+      if (Capacitor.isNativePlatform()) {
+        const ipAddress = process.env.AUDIT_API_IP;
+        if (!ipAddress) {
+          throw new Error("API IP address is not configured");
+        }
+        const cleanIp = ipAddress.replace(/^(https?:\/\/)?/, '').replace(/\/$/, '');
+        const url = `http://${cleanIp}/venues`;
+        
+        const response = await CapacitorHttp.request({
+          method: 'GET',
+          url: url,
+        });
+        
+        if (response.status < 200 || response.status >= 300) {
+          throw new Error(`Failed to fetch venues (Capacitor): ${response.status}`);
+        }
+        
+        data = response.data;
+        // In case CapacitorHttp didn't parse it automatically
+        if (typeof data === 'string') {
+          try { data = JSON.parse(data); } catch (e) {}
+        }
+      } else {
+        // Use /api proxy to bypass CORS during browser development
+        const url = "/api/venues";
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch venues: ${response.status} ${response.statusText}`);
+        }
+        data = await response.json();
+      }
+
       console.log("fetchSavedVenues response data:", data);
 
       let venuesList = [];

@@ -61,11 +61,11 @@ export const useBackButton = () => {
     };
 
     // Add event listener
-    const listener = App.addListener("backButton", handleBackButton);
+    const listenerPromise = App.addListener("backButton", handleBackButton);
 
     // Cleanup
     return () => {
-      listener.remove();
+      listenerPromise.then(handle => handle.remove()).catch(() => {});
       if (backPressTimeout.current) {
         clearTimeout(backPressTimeout.current);
       }
