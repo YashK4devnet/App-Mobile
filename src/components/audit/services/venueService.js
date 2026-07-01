@@ -26,12 +26,23 @@ export const fetchSavedVenues = async () => {
       
       if (Capacitor.isNativePlatform()) {
         const ipAddress = process.env.AUDIT_API_IP;
-        if (!ipAddress) {
-          throw new Error("API IP address is not configured");
-        }
-        const cleanIp = ipAddress.replace(/^(https?:\/\/)?/, '').replace(/\/$/, '');
-        const url = `http://${cleanIp}/venues`;
+        let url;
         
+        if (ipAddress) {
+          const cleanIp = ipAddress.replace(/^(https?:\/\/)?/, '').replace(/\/$/, '');
+          url = `http://${cleanIp}/venues`;
+        } else {
+          // If no IP is configured, check if we're running via live-reload (which exposes the developer host IP)
+          const hostname = window.location.hostname;
+          if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1' && hostname !== '0.0.0.0') {
+            url = `http://${hostname}:8089/venues`;
+          } else {
+            // Fall back to the configured local host IP address 192.168.29.191:8089
+            url = 'http://192.168.29.191:8089/venues';
+          }
+        }
+        
+        console.log("fetchSavedVenues requesting native URL:", url);
         const response = await CapacitorHttp.request({
           method: 'GET',
           url: url,

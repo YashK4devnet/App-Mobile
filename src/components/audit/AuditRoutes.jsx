@@ -144,7 +144,7 @@ export default function AuditRoutes() {
       >
         <div className="relative h-full w-full overflow-hidden">
           <AnimatePresence mode="popLayout">
-            <Routes key={isAuditActive ? 'audit-wizard' : currentIndex}>
+            <Routes location={location} key={isAuditActive ? 'audit-wizard' : currentIndex}>
             {/* Main Tabs */}
             <Route index element={<PageTransition direction={direction}><AuditDashboardPage /></PageTransition>} />
             <Route path="home" element={<PageTransition direction={direction}><AuditDashboardPage /></PageTransition>} />
