@@ -1,11 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BuildingIcon, ChevronRightIcon } from './Icons';
-import { SAVED_VENUES } from '../services/mockVenueData';
+import { fetchSavedVenues } from '../services/venueService';
 
 export default function VenueSelectPage({ onSelectVenue, onNewVenue }) {
+  const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredVenues = SAVED_VENUES.filter((venue) => {
+  const loadVenues = () => {
+    setLoading(true);
+    setError(null);
+    fetchSavedVenues()
+      .then((data) => {
+        setVenues(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message || 'Failed to load venues');
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    loadVenues();
+  }, []);
+
+  const filteredVenues = (Array.isArray(venues) ? venues : []).filter((venue) => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return true;
     return (
@@ -60,7 +81,38 @@ export default function VenueSelectPage({ onSelectVenue, onNewVenue }) {
 
       {/* Venue List */}
       <div className="flex-1 overflow-y-auto px-5 pt-5 pb-28 scrollbar-none space-y-4">
-        {filteredVenues.length === 0 ? (
+        {loading ? (
+          <div className="space-y-4 animate-pulse">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="w-full bg-white border border-slate-100 rounded-2xl p-4 flex items-center shadow-sm">
+                <div className="w-12 h-12 bg-slate-100 rounded-xl shrink-0" />
+                <div className="ml-4 flex-1 pr-2 space-y-2">
+                  <div className="h-4 bg-slate-100 rounded w-2/3" />
+                  <div className="h-3 bg-slate-100 rounded w-1/3" />
+                  <div className="h-3 bg-slate-100 rounded w-full" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+            <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center text-red-500 mb-3">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h4 className="text-sm font-bold text-slate-800">Connection Failed</h4>
+            <p className="text-xs text-slate-500 mt-2 max-w-[260px] leading-relaxed">
+              Could not retrieve venues from the server. Please check the network settings or try again.
+            </p>
+            <button
+              onClick={loadVenues}
+              className="mt-4 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-lg transition-all cursor-pointer"
+            >
+              Retry Connection
+            </button>
+          </div>
+        ) : filteredVenues.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
             <div className="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-3">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
