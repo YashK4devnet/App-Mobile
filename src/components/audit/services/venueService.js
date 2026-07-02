@@ -23,43 +23,43 @@ export const fetchSavedVenues = async () => {
   activePromise = (async () => {
     try {
       let data;
-      
+
       if (Capacitor.isNativePlatform()) {
         const ipAddress = process.env.AUDIT_API_IP;
         let url;
-        
+
         if (ipAddress) {
           const cleanIp = ipAddress.replace(/^(https?:\/\/)?/, '').replace(/\/$/, '');
-          url = `http://${cleanIp}/venues`;
+          url = `http://${cleanIp}/api/audit/locations`;
         } else {
           // If no IP is configured, check if we're running via live-reload (which exposes the developer host IP)
           const hostname = window.location.hostname;
           if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1' && hostname !== '0.0.0.0') {
-            url = `http://${hostname}:8089/venues`;
+            url = `http://${hostname}:8099/api/audit/locations`;
           } else {
-            // Fall back to the configured local host IP address 192.168.29.191:8089
-            url = 'http://192.168.29.191:8089/venues';
+            // Fall back to the configured local host IP address 192.168.29.191:8099
+            url = 'http://192.168.29.191:8099/api/audit/locations';
           }
         }
-        
+
         console.log("fetchSavedVenues requesting native URL:", url);
         const response = await CapacitorHttp.request({
           method: 'GET',
           url: url,
         });
-        
+
         if (response.status < 200 || response.status >= 300) {
           throw new Error(`Failed to fetch venues (Capacitor): ${response.status}`);
         }
-        
+
         data = response.data;
         // In case CapacitorHttp didn't parse it automatically
         if (typeof data === 'string') {
-          try { data = JSON.parse(data); } catch (e) {}
+          try { data = JSON.parse(data); } catch (e) { }
         }
       } else {
         // Use /api proxy to bypass CORS during browser development
-        const url = "/api/venues";
+        const url = "/api/audit/locations";
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`Failed to fetch venues: ${response.status} ${response.statusText}`);

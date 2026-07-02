@@ -12,7 +12,7 @@ export default function BottomNav() {
   ];
 
   return (
-    <nav className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex justify-between items-center z-10 shrink-0 select-none pb-safe">
+    <nav className="absolute bottom-0 left-0 right-0 bg-[#0F0F23]/80 backdrop-blur-2xl border-t border-white/10 flex justify-between items-center z-10 shrink-0 select-none pb-safe">
       <div className="flex w-full justify-around pt-3 pb-4">
         {tabs.map((tab) => {
           const IconComponent = tab.icon;
@@ -25,8 +25,8 @@ export default function BottomNav() {
                 const target = tab.id === 'home' ? basePath : `${basePath}/${tab.id}`;
                 navigate(target);
               }}
-              className="flex flex-col items-center justify-center gap-1 text-[11px] font-bold transition-all relative flex-1 cursor-pointer"
-              style={{ color: isActive ? '#F98A15' : '#94A3B8' }}
+              className="flex flex-col items-center justify-center gap-1 text-[11px] font-light tracking-widest uppercase transition-all relative flex-1 cursor-pointer"
+              style={{ color: isActive ? '#ff6b6b' : 'rgba(255, 255, 255, 0.4)' }}
             >
               <IconComponent className="w-6 h-6 transition-transform active:scale-90" />
               <span>{tab.label}</span>

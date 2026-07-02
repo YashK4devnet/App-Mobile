@@ -87,7 +87,7 @@ const WizardTransition = ({ children }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 15 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="h-full w-full bg-white z-50 absolute top-0 left-0"
+      className="h-full w-full bg-transparent z-50 absolute top-0 left-0"
     >
       {children}
     </motion.div>
@@ -96,8 +96,8 @@ const WizardTransition = ({ children }) => {
 
 function LoadingFallback() {
   return (
-    <div className="flex h-full w-full items-center justify-center bg-slate-50 z-50 absolute top-0 left-0">
-      <div className="w-8 h-8 border-4 border-[#FFF4E8] border-t-[#F98A15] rounded-full animate-spin"></div>
+    <div className="flex h-full w-full items-center justify-center bg-transparent z-50 absolute top-0 left-0">
+      <div className="w-8 h-8 border-4 border-[#4ecdc4]/20 border-t-[#4ecdc4] rounded-full animate-spin"></div>
     </div>
   );
 }

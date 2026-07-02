@@ -80,7 +80,7 @@ export function FormImageUpload({
             ? 'border-transparent' 
             : error 
               ? 'border-red-300 bg-red-50' 
-              : 'border-slate-300 bg-slate-50'
+              : 'border-white/20 bg-white/5'
         }`}
       >
         {hasImage ? (
@@ -106,23 +106,23 @@ export function FormImageUpload({
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm text-slate-400">
+            <div className="w-12 h-12 bg-[#ff6b6b]/10 rounded-full flex items-center justify-center mb-3 shadow-sm text-[#ff6b6b]">
               <CameraIcon className="w-6 h-6" />
             </div>
-            <p className="text-[13px] font-bold text-slate-700 mb-3">{label}</p>
+            <p className="text-[13px] font-medium text-white/90 mb-3">{label}</p>
             
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={triggerCamera}
-                className="bg-[#F98A15] hover:bg-[#e07b0f] text-white px-4 py-2 rounded-xl text-[12px] font-bold transition-colors shadow-sm active:scale-95 cursor-pointer"
+                className="bg-[#ff6b6b] hover:bg-[#ff6b6b]/80 text-white px-4 py-2 rounded-xl text-[12px] font-medium transition-colors shadow-sm active:scale-95 cursor-pointer"
               >
                 Take Photo
               </button>
               <button
                 type="button"
                 onClick={triggerGallery}
-                className="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-xl text-[12px] font-bold transition-colors shadow-sm active:scale-95 cursor-pointer"
+                className="bg-white/10 border border-white/20 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-[12px] font-medium transition-colors shadow-sm active:scale-95 cursor-pointer"
               >
                 Upload
               </button>
@@ -132,8 +132,8 @@ export function FormImageUpload({
       </div>
 
       {hasImage && (
-        <div className="mt-2.5 p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
-          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+        <div className="mt-2.5 p-3 bg-white/5 border border-white/20 rounded-xl space-y-1">
+          <label className="text-[10px] font-medium text-white/50 uppercase tracking-wider block">
             Photo Timestamp (Auto-generated, editable)
           </label>
           <input
@@ -142,13 +142,13 @@ export function FormImageUpload({
             onChange={(e) => {
               onChange(name, { url: imgUrl, timestamp: e.target.value });
             }}
-            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-[13px] text-slate-800 focus:border-[#F98A15] outline-none"
+            className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-1.5 text-[13px] text-white focus:border-[#4ecdc4] outline-none"
           />
         </div>
       )}
 
       {error && (
-        <p className="text-[11px] text-red-500 font-semibold mt-1 flex items-center gap-1">
+        <p className="text-[11px] text-[#ff6b6b] font-medium mt-1 flex items-center gap-1">
           <ExclamationCircleIcon className="w-3.5 h-3.5" />
           {error}
         </p>

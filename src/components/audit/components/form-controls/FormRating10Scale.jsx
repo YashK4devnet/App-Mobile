@@ -17,7 +17,7 @@ export function FormRating10Scale({
       <div className="flex justify-between items-center mb-2">
         <Label text={label} required={required} />
         {value && (
-          <span className="text-[12px] font-black text-[#F98A15] bg-[#FFF4E8] px-2 rounded">
+          <span className="text-[12px] font-medium text-[#ff6b6b] bg-white/10 px-2 rounded">
             {value}/10
           </span>
         )}
@@ -29,10 +29,10 @@ export function FormRating10Scale({
             key={num}
             type="button"
             onClick={() => onChange(name, num)}
-            className={`py-2 text-[14px] font-bold rounded-lg border transition-all active:scale-[0.95] cursor-pointer ${
+            className={`py-2 text-[14px] font-medium rounded-lg border transition-all active:scale-[0.95] cursor-pointer ${
               parseInt(value) === num
-                ? 'bg-[#F98A15] border-[#F98A15] text-white shadow-sm'
-                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                ? 'bg-[#ff6b6b] border-[#ff6b6b] text-white shadow-sm'
+                : 'bg-white/5 backdrop-blur-md border-white/20 text-white hover:bg-white/10'
             }`}
           >
             {num}
@@ -41,12 +41,12 @@ export function FormRating10Scale({
       </div>
       
       <div className="flex justify-between mt-1 px-1">
-        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Poor</span>
-        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Excellent</span>
+        <span className="text-[10px] text-white/50 font-medium uppercase tracking-wider">Poor</span>
+        <span className="text-[10px] text-white/50 font-medium uppercase tracking-wider">Excellent</span>
       </div>
 
       {error && (
-        <p className="text-[11px] text-red-500 font-semibold mt-1 flex items-center gap-1">
+        <p className="text-[11px] text-[#ff6b6b] font-medium mt-1 flex items-center gap-1">
           <ExclamationCircleIcon className="w-3.5 h-3.5" />
           {error}
         </p>

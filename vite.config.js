@@ -10,7 +10,7 @@ dotenv.config({ path: path.resolve(__dirname, "src/components/audit/.env") });
 
 const ipAddress = process.env.AUDIT_API_IP || "";
 const cleanIp = ipAddress.replace(/^(https?:\/\/)?/, "").replace(/\/$/, "");
-const proxyTarget = cleanIp ? `http://${cleanIp}` : "http://localhost:8089";
+const proxyTarget = cleanIp ? `http://${cleanIp}` : "http://localhost:8099";
 
 export default defineConfig({
   define: {
@@ -25,6 +25,11 @@ export default defineConfig({
   ],
   server: {
     proxy: {
+      "/api/audit": {
+        target: proxyTarget,
+        changeOrigin: true,
+        secure: false,
+      },
       "/api": {
         target: proxyTarget,
         changeOrigin: true,

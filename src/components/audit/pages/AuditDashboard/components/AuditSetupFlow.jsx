@@ -67,11 +67,11 @@ export default function AuditSetupFlow() {
   const resolveIcon = (iconName) => {
     switch (iconName) {
       case 'building': 
-        return <BuildingIcon className="w-5 h-5 text-[#F98A15]" />;
+        return <BuildingIcon className="w-5 h-5 text-[#ff6b6b]" />;
       case 'lightning': 
-        return <LightningIcon className="w-5 h-5 text-[#F98A15]" />;
+        return <LightningIcon className="w-5 h-5 text-[#4ecdc4]" />;
       case 'globe': 
-        return <GlobeIcon className="w-5 h-5 text-[#F98A15]" />;
+        return <GlobeIcon className="w-5 h-5 text-[#ff6b6b]" />;
       default: 
         return null;
     }
@@ -79,7 +79,7 @@ export default function AuditSetupFlow() {
 
   if (setupStep === 'venue-select') {
     return (
-      <div className="flex flex-col h-full w-full relative bg-slate-50 animate-fade-in">
+      <div className="flex flex-col h-full w-full relative bg-transparent animate-fade-in">
         <Header 
           title="Venue Selection" 
           showBack={true} 
@@ -97,7 +97,7 @@ export default function AuditSetupFlow() {
 
   // Step 2: Audit Type Selection
   return (
-    <div className="flex flex-col h-full w-full relative bg-slate-50 select-none animate-fade-in">
+    <div className="flex flex-col h-full w-full relative bg-transparent select-none animate-fade-in">
       <Header 
         title="Select Audit Type" 
         showBack={true} 
@@ -107,19 +107,19 @@ export default function AuditSetupFlow() {
       <div className="flex-1 overflow-y-auto px-5 py-5 scrollbar-none space-y-5">
         
         {/* Selected Venue Summary Card */}
-        <div className="p-4 bg-[#FFF4E8] border border-[#F98A15]/10 rounded-2xl flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#F98A15] rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+        <div className="p-4 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl flex items-center gap-3">
+          <div className="w-10 h-10 bg-[#ff6b6b] rounded-xl flex items-center justify-center shrink-0 shadow-sm">
             <BuildingIcon className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <span className="text-[9px] uppercase font-black tracking-wider text-[#F98A15] bg-white px-2 py-0.5 rounded shadow-sm">
+            <span className="text-[9px] uppercase font-black tracking-wider text-[#ff6b6b] bg-[#ff6b6b]/20 px-2 py-0.5 rounded shadow-sm">
               {selectedVenue?.isNew ? 'New Location' : 'Selected Venue'}
             </span>
-            <h4 className="text-[14px] font-bold text-slate-800 mt-1 truncate leading-tight">
+            <h4 className="text-[14px] font-bold text-white mt-1 truncate leading-tight">
               {selectedVenue?.isNew ? 'New Venue / Other Location' : selectedVenue?.venueName}
             </h4>
             {!selectedVenue?.isNew && (
-              <p className="text-[11px] text-slate-500 font-semibold truncate mt-0.5">
+              <p className="text-[11px] text-white/50 font-semibold truncate mt-0.5">
                 {selectedVenue?.city}, {selectedVenue?.state}
               </p>
             )}
@@ -128,10 +128,10 @@ export default function AuditSetupFlow() {
 
         {/* Section Header */}
         <div>
-          <h3 className="text-sm font-bold text-slate-600 tracking-tight">
+          <h3 className="text-sm font-bold text-white tracking-tight">
             Select Audit Procedure
           </h3>
-          <p className="text-[11px] text-slate-400 font-semibold mt-0.5">
+          <p className="text-[11px] text-white/50 font-semibold mt-0.5">
             Choose the audit template to perform for this location
           </p>
         </div>
@@ -145,37 +145,37 @@ export default function AuditSetupFlow() {
                 key={type.id}
                 disabled={!isClickable}
                 onClick={() => handleAuditTypeSelect(type.id)}
-                className={`w-full flex items-center justify-between p-4 bg-white rounded-2xl border transition-all text-left duration-200 ${
+                className={`w-full flex items-center justify-between p-4 bg-white/5 backdrop-blur-md rounded-2xl border transition-all text-left duration-200 ${
                   isClickable 
-                    ? 'border-slate-50 hover:border-slate-100 hover:shadow-[0_4px_12px_rgba(0,0,0,0.03)] active:scale-[0.98] cursor-pointer' 
-                    : 'border-slate-100 opacity-60 cursor-not-allowed'
+                    ? 'border-white/20 hover:border-white/40 hover:bg-white/10 active:scale-[0.98] cursor-pointer' 
+                    : 'border-white/10 opacity-50 cursor-not-allowed'
                 }`}
               >
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
-                    isClickable ? 'bg-[#FFF4E8]' : 'bg-slate-100'
+                    isClickable ? 'bg-white/10' : 'bg-white/5'
                   }`}>
                     {resolveIcon(type.icon)}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <h4 className={`text-[14px] font-bold leading-tight ${
-                        isClickable ? 'text-slate-800' : 'text-slate-500'
+                        isClickable ? 'text-white' : 'text-white/50'
                       }`}>
                         {type.title}
                       </h4>
                       {type.badge && (
-                        <span className="text-[8px] font-black uppercase tracking-wider text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                        <span className="text-[8px] font-black uppercase tracking-wider text-white/50 bg-white/10 px-1.5 py-0.5 rounded">
                           {type.badge}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-400 font-bold mt-0.5 leading-tight">
+                    <p className="text-xs text-white/50 font-medium mt-0.5 leading-tight">
                       {type.description}
                     </p>
                   </div>
                 </div>
-                {isClickable && <ChevronRightIcon className="w-5 h-5 text-slate-300" />}
+                {isClickable && <ChevronRightIcon className="w-5 h-5 text-white/30" />}
               </button>
             );
           })}

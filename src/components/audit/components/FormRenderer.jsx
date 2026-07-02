@@ -53,7 +53,7 @@ function renderField(field, formData, errors, onChange) {
     case 'heading':
       return (
         <h4 
-          className={`text-xs font-bold uppercase tracking-widest border-b pb-2 mb-4 pt-2 ${field.className || 'text-slate-400 border-slate-100'}`} 
+          className={`text-xs font-medium uppercase tracking-widest border-b pb-2 mb-4 pt-2 ${field.className || 'text-white/50 border-white/10'}`} 
           key={field.label}
         >
           {field.label}
@@ -209,16 +209,16 @@ function AccordionSection({ heading, fields, formData, errors, onChange, renderI
   }, [hasErrors]);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-4">
+    <div className="bg-white/5 backdrop-blur-md border border-white/20 rounded-xl mb-4">
       <button 
         type="button" 
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100 transition-colors rounded-t-xl ${
-          isOpen ? 'sticky top-0 z-10 border-b border-slate-200/80 shadow-sm' : 'rounded-b-xl'
+        className={`w-full flex justify-between items-center p-4 bg-white/10 hover:bg-white/20 transition-colors rounded-t-xl ${
+          isOpen ? 'sticky top-0 z-10 border-b border-white/20' : 'rounded-b-xl'
         }`}
       >
         <div className="flex items-center gap-3">
-          <span className={`font-bold text-[14px] ${hasErrors ? 'text-rose-500' : (heading.className?.includes('text-[#F98A15]') ? 'text-[#F98A15]' : 'text-slate-800')}`}>
+          <span className={`font-medium text-[14px] ${hasErrors ? 'text-[#ff6b6b]' : (heading.className?.includes('text-[#ff6b6b]') ? 'text-[#ff6b6b]' : 'text-white')}`}>
             {heading.label}
           </span>
           {hasErrors && (
@@ -228,14 +228,14 @@ function AccordionSection({ heading, fields, formData, errors, onChange, renderI
             </span>
           )}
         </div>
-        <svg className={`w-5 h-5 text-slate-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className={`w-5 h-5 text-white/50 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
       
       {/* CSS Transition for height is tricky, so we conditionally render. Animate-slide-down can be used if available. */}
       {isOpen && (
-        <div className="p-5 space-y-5 bg-white rounded-b-xl">
+        <div className="p-5 space-y-5 bg-transparent rounded-b-xl">
           {fields.map((subField, idx) => renderItem(subField, idx))}
         </div>
       )}

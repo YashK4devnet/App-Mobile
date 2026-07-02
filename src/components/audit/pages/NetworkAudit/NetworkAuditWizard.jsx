@@ -117,10 +117,10 @@ export default function NetworkAuditWizard() {
 
   if (isInitializing) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-slate-500 text-sm">Loading Draft...</p>
+          <div className="w-8 h-8 border-4 border-[#4ecdc4] border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-white/50 text-sm">Loading Draft...</p>
         </div>
       </div>
     );
@@ -185,7 +185,7 @@ export default function NetworkAuditWizard() {
     // Header pill
     const currentIndex = STEPS.findIndex(s => s.id === currentSubsection) + 1;
     const stepPill = (
-      <span className="text-[11px] font-black text-[#F98A15] bg-[#FFF4E8] px-2.5 py-1 rounded-full">
+      <span className="text-[11px] font-black text-[#ff6b6b] bg-[#ff6b6b]/20 px-2.5 py-1 rounded-full">
         {currentIndex} / {STEPS.length}
       </span>
     );
@@ -209,7 +209,7 @@ export default function NetworkAuditWizard() {
     const currentSubObj = subsections.find(s => s.id === currentSubsection);
 
     return (
-      <div className="flex flex-col h-full w-full relative bg-white animate-fade-in">
+      <div className="flex flex-col h-full w-full relative bg-transparent animate-fade-in">
         <Header 
           title="Network Audit Details" 
           showBack={true} 
@@ -229,23 +229,23 @@ export default function NetworkAuditWizard() {
         />
 
         {/* Subsection Selector Accordion */}
-        <div className="relative bg-white border-b border-slate-100 z-30">
+        <div className="relative bg-transparent border-b border-white/10 z-30">
           <button
             type="button"
             onClick={() => setIsAccordionOpen(!isAccordionOpen)}
-            className="w-full px-5 py-3.5 flex justify-between items-center text-left hover:bg-slate-50/50 transition-colors cursor-pointer"
+            className="w-full px-5 py-3.5 flex justify-between items-center text-left hover:bg-white/5 transition-colors cursor-pointer"
           >
-            <span className="text-[14px] font-bold text-[#F98A15] tracking-tight">
+            <span className="text-[14px] font-bold text-white tracking-tight">
               {currentSubObj?.label}
             </span>
             <ChevronDownIcon
-              className={`w-5 h-5 text-slate-500 transition-transform duration-350 ${isAccordionOpen ? 'rotate-180' : ''
+              className={`w-5 h-5 text-white/50 transition-transform duration-350 ${isAccordionOpen ? 'rotate-180' : ''
                 }`}
             />
           </button>
 
           {isAccordionOpen && (
-            <div className="absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-xl z-40 divide-y divide-slate-100 animate-slide-down">
+            <div className="absolute top-full left-0 right-0 bg-[#0F0F23] border-b border-white/20 shadow-2xl z-40 divide-y divide-white/10 animate-slide-down">
               {subsections.map((sub) => {
                 const isActive = sub.id === currentSubsection;
                 const isCompleted = sub.status === 'valid';
@@ -262,23 +262,23 @@ export default function NetworkAuditWizard() {
                       const container = document.getElementById('audit-form-container');
                       if (container) container.scrollTo({ top: 0 });
                     }}
-                    className={`w-full px-5 py-3 flex items-center justify-between text-[13px] transition-all hover:bg-slate-50 cursor-pointer ${isActive ? 'font-bold text-[#F98A15] bg-[#FFF4E8]/20' : 'text-slate-700 font-medium'
+                    className={`w-full px-5 py-3 flex items-center justify-between text-[13px] transition-all hover:bg-white/5 cursor-pointer ${isActive ? 'font-bold text-white bg-white/10' : 'text-white/70 font-medium'
                       }`}
                   >
                     <span>{sub.label}</span>
                     <div className="flex items-center gap-2">
                       {isCompleted && (
-                        <span className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                        <span className="w-5 h-5 bg-[#4ecdc4] rounded-full flex items-center justify-center">
                           <CheckIcon className="w-3.5 h-3.5 text-white" />
                         </span>
                       )}
                       {hasErrors && (
-                        <span className="w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center">
+                        <span className="w-5 h-5 bg-[#ff6b6b] rounded-full flex items-center justify-center">
                           <ExclamationCircleIcon className="w-3.5 h-3.5 text-white" />
                         </span>
                       )}
                       {isActive && (
-                        <span className="text-[10px] uppercase font-black tracking-wider text-[#F98A15] bg-[#FFF4E8] px-2 py-0.5 rounded">
+                        <span className="text-[10px] uppercase font-black tracking-wider text-[#ff6b6b] bg-[#ff6b6b]/20 px-2 py-0.5 rounded">
                           Active
                         </span>
                       )}
@@ -291,7 +291,7 @@ export default function NetworkAuditWizard() {
         </div>
 
         <div id="audit-form-container" className="flex-1 overflow-y-auto scrollbar-none pb-28">
-          <div className="transition-all duration-300 ease-in-out pt-3 bg-white px-5 pt-2 pb-6">
+          <div className="transition-all duration-300 ease-in-out pt-3 bg-transparent px-5 pt-2 pb-6">
             <FormRenderer
               schema={SUBSECTION_SCHEMAS[currentSubsection]}
               formData={formData}
@@ -303,17 +303,17 @@ export default function NetworkAuditWizard() {
         </div>
 
         {/* Action Footer */}
-        <div className="bg-white border-t border-slate-200 p-4 pb-safe z-10 shrink-0 shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
+        <div className="bg-white/5 backdrop-blur-md border-t border-white/10 p-4 pb-safe z-10 shrink-0">
           <div className="flex gap-3">
             <button
               onClick={handlePrevClick}
-              className="px-5 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+              className="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
             >
               {isFirst ? 'Exit' : 'Previous'}
             </button>
             <button
               onClick={handleNextClick}
-              className="flex-1 bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold rounded-xl shadow-lg shadow-slate-900/20 transition-all active:scale-95 cursor-pointer"
+              className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
             >
               {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit Audit' : 'Save & Next'}
             </button>
@@ -324,7 +324,7 @@ export default function NetworkAuditWizard() {
   };
 
   return (
-    <div className="h-full w-full absolute inset-0 bg-white z-0">
+    <div className="h-full w-full absolute inset-0 bg-transparent z-0">
       {viewMode === 'index' ? (
         renderIndexView()
       ) : (
@@ -334,20 +334,20 @@ export default function NetworkAuditWizard() {
       {/* Premium Success Overlay */}
       {showSuccessOverlay && (
         <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-6 animate-fade-in">
-          <div className="bg-white rounded-2xl p-6 text-center max-w-sm w-full shadow-2xl border border-slate-100/50 scale-100 transition-transform duration-300">
-            <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-100">
-              <CheckIcon className="w-8 h-8 text-emerald-500" />
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 text-center max-w-sm w-full shadow-2xl border border-white/20 scale-100 transition-transform duration-300">
+            <div className="w-16 h-16 bg-[#4ecdc4]/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-[#4ecdc4]/40">
+              <CheckIcon className="w-8 h-8 text-[#4ecdc4]" />
             </div>
-            <h4 className="text-lg font-bold text-slate-800 mb-1 leading-tight">
+            <h4 className="text-lg font-bold text-white mb-1 leading-tight">
               Network Audit Saved
             </h4>
-            <p className="text-xs text-slate-400 font-bold mb-6">
+            <p className="text-xs text-white/50 font-bold mb-6">
               The network system audit has been completed and verified successfully.
             </p>
             <button
               type="button"
               onClick={() => navigate('..')}
-              className="w-full py-3.5 bg-[#F98A15] hover:bg-[#e07b0f] text-white font-bold rounded-xl shadow-lg shadow-orange-500/20 active:scale-[0.98] transition-all text-[14px] cursor-pointer"
+              className="w-full py-3.5 bg-[#ff6b6b] hover:bg-rose-600 text-white font-bold rounded-xl shadow-lg shadow-rose-900/20 active:scale-[0.98] transition-all text-[14px] cursor-pointer"
             >
               Back to Dashboard
             </button>
