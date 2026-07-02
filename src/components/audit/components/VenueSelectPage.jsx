@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BuildingIcon, ChevronRightIcon } from './Icons';
-import { fetchSavedVenues } from '../services/venueService';
+import { fetchSavedVenues, createFullAuditRecord } from '../services/venueService';
 
 export default function VenueSelectPage({ onSelectVenue, onNewVenue }) {
   const [venues, setVenues] = useState([]);
@@ -38,8 +38,56 @@ export default function VenueSelectPage({ onSelectVenue, onNewVenue }) {
     );
   });
 
+  const [creatingRecord, setCreatingRecord] = useState(false);
+
+  const handleSelectVenue = async (venue) => {
+    setCreatingRecord(true);
+    try {
+      const payload = {
+        venue: {
+          id: venue.id,
+          venueName: venue.venueName || "",
+          region: venue.region || "",
+          state: venue.state || "",
+          city: venue.city || "",
+          address: venue.address || "",
+          pinCode: venue.pinCode || ""
+        },
+        report: {
+          reportType: "venue_audit"
+        },
+        contacts: {},
+        auditeeAuditor: {},
+        accessibility: {},
+        administrativeDetails: {},
+        systemDetails: {},
+        labDetails: {},
+        conclusion: {}
+      };
+
+      const data = await createFullAuditRecord(payload);
+      
+      if (data) {
+        const updatedVenue = {
+          ...venue,
+          report_id: data.report_id,
+          venue_id: data.venue_id
+        };
+        onSelectVenue(updatedVenue);
+        return;
+      }
+    } catch (err) {
+      console.error("API error, proceeding with offline mode:", err);
+    } finally {
+      setCreatingRecord(false);
+    }
+    
+    // Proceed if API fails (offline backups keep IndexedDB flow)
+    onSelectVenue(venue);
+  };
+
   return (
-    <div className="h-full flex flex-col bg-transparent select-none pb-safe">
+    <div className="h-full flex flex-col bg-transparent select-none pb-safe relative">
       
       {/* Intro Header */}
       <div className="px-5 pt-6 pb-4 bg-transparent border-b border-white/10 shrink-0">
@@ -78,6 +126,14 @@ export default function VenueSelectPage({ onSelectVenue, onNewVenue }) {
           )}
         </div>
       </div>
+
+      {/* Full-screen Loading Overlay for Record Creation */}
+      {creatingRecord && (
+        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex flex-col items-center justify-center animate-fade-in">
+          <div className="w-10 h-10 border-4 border-[#4ecdc4] border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-white text-sm font-medium tracking-wide">Creating Full Audit Record...</p>
+        </div>
+      )}
 
       {/* Venue List */}
       <div className="flex-1 overflow-y-auto px-5 pt-5 pb-28 scrollbar-none space-y-4">
@@ -128,7 +184,8 @@ export default function VenueSelectPage({ onSelectVenue, onNewVenue }) {
           filteredVenues.map((venue) => (
             <button
               key={venue.id}
-              onClick={() => onSelectVenue(venue)}
+              onClick={() => handleSelectVenue(venue)}
+              disabled={creatingRecord}
               className="w-full text-left bg-white/5 backdrop-blur-xl border border-white/10 hover:border-[#4ecdc4] hover:bg-white/10 hover:shadow-[0_4px_20px_rgba(78,205,196,0.2)] active:scale-[0.98] transition-all duration-300 rounded-3xl p-4 flex items-center cursor-pointer group"
             >
               <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#4ecdc4]/20">
