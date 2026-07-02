@@ -92,9 +92,22 @@ export const fetchSavedVenues = async () => {
         }
       }
 
-      cachedData = venuesList;
+      // Map the API fields to the fields expected by the frontend
+      const mappedVenues = venuesList.map(venue => ({
+        id: venue.id,
+        venueName: venue.venue_name || venue.name || '',
+        region: venue.region || '',
+        state: venue.state || '',
+        city: venue.city || '',
+        address: venue.complete_venue_address || '',
+        pinCode: venue.pin_code || '',
+        // Keep original properties as well
+        ...venue
+      }));
+
+      cachedData = mappedVenues;
       cacheTime = Date.now();
-      return venuesList;
+      return mappedVenues;
     } finally {
       activePromise = null;
     }
