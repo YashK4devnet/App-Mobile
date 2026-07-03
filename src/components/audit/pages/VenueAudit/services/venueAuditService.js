@@ -32,6 +32,12 @@ export const generateInitialState = (schemas) => {
   // Specific defaults handled automatically by schema mapping, 
   // but we ensure these are empty strings initially to trigger empty checks.
   state.isMapAccurate = '';
+
+  // Auto-generate default datetime to now
+  const now = new Date();
+  const offset = now.getTimezoneOffset() * 60000;
+  state.auditDateTime = (new Date(now - offset)).toISOString().slice(0, 16);
+
   return state;
 };
 

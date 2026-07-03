@@ -7,6 +7,8 @@ import AuditIndex from '../../components/AuditIndex';
 import ProgressBar from '../../components/ProgressBar';
 import FormRenderer from '../../components/FormRenderer';
 import VenueSelectPage from '../../components/VenueSelectPage';
+import AuditSuccessOverlay from '../../components/AuditSuccessOverlay';
+import SubsectionAccordion from '../../components/SubsectionAccordion';
 import {
   VENUE_REPORT_INFO_SCHEMA,
   VENUE_PERSONNEL_INFO_SCHEMA,
@@ -81,14 +83,15 @@ export default function VenueAuditWizard() {
   const location = useLocation();
   const initialVenue = location.state?.venue || null;
 
+  const [viewMode, setViewMode] = useState('index');
+  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+  const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
+
   const {
-    viewMode, setViewMode,
     currentSubsection, setCurrentSubsection,
     formData, setFormData,
     errors, setErrors,
-    showSuccessOverlay, setShowSuccessOverlay,
     isInitializing,
-    isAccordionOpen, setIsAccordionOpen,
     handleFieldChange, getSectionStatus,
     progressPercent, handleSectionSelect,
     handleNextClick, handlePrevClick
@@ -103,23 +106,12 @@ export default function VenueAuditWizard() {
     auditName: 'Venue Audit Report',
     nextAuditMonths: 3,
     apiSyncFunction: updateFullAuditRecord,
-    sectionToPayloadKey: SECTION_TO_PAYLOAD_KEY
+    sectionToPayloadKey: SECTION_TO_PAYLOAD_KEY,
+    onComplete: () => setShowSuccessOverlay(true),
+    onExitForm: () => setViewMode('index')
   });
 
-  // Set default datetime to now if empty on mount
-  useEffect(() => {
-    if (!formData.auditDateTime) {
-      const now = new Date();
-      const offset = now.getTimezoneOffset() * 60000;
-      const localISOTime = (new Date(now - offset)).toISOString().slice(0, 16);
-      setFormData(prev => {
-        if (!prev.auditDateTime) {
-          return { ...prev, auditDateTime: localISOTime };
-        }
-        return prev;
-      });
-    }
-  }, []);
+
 
   const statusReportInfo = getSectionStatus('ReportInfo');
   const statusPersonnel = getSectionStatus('PersonnelInfo');
@@ -247,68 +239,19 @@ export default function VenueAuditWizard() {
         />
 
         {/* Subsection Selector Accordion */}
-        <div className="relative bg-transparent border-b border-white/10 z-30">
-          <button
-            type="button"
-            onClick={() => setIsAccordionOpen(!isAccordionOpen)}
-            className="w-full px-5 py-3.5 flex justify-between items-center text-left hover:bg-white/5 transition-colors cursor-pointer"
-          >
-            <span className="text-[14px] font-bold text-white tracking-tight">
-              {currentSubObj?.label}
-            </span>
-            <ChevronDownIcon 
-              className={`w-5 h-5 text-white/50 transition-transform duration-350 ${
-                isAccordionOpen ? 'rotate-180' : ''
-              }`} 
-            />
-          </button>
-
-          {isAccordionOpen && (
-            <div className="absolute top-full left-0 right-0 bg-[#0F0F23] border-b border-white/20 shadow-2xl z-40 divide-y divide-white/10 animate-slide-down">
-              {subsections.map((sub) => {
-                const isActive = sub.id === currentSubsection;
-                const isCompleted = sub.status === 'valid';
-                const hasErrors = sub.status === 'invalid';
-
-                return (
-                  <button
-                    key={sub.id}
-                    type="button"
-                    onClick={() => {
-                      setCurrentSubsection(sub.id);
-                      setIsAccordionOpen(false);
-                      setErrors({});
-                      const container = document.getElementById('audit-form-container');
-                      if (container) container.scrollTo({ top: 0 });
-                    }}
-                    className={`w-full px-5 py-3 flex items-center justify-between text-[13px] transition-all hover:bg-white/5 cursor-pointer ${
-                      isActive ? 'font-bold text-white bg-white/10' : 'text-white/70 font-medium'
-                    }`}
-                  >
-                    <span>{sub.label}</span>
-                    <div className="flex items-center gap-2">
-                      {isCompleted && (
-                        <span className="w-5 h-5 bg-[#4ecdc4] rounded-full flex items-center justify-center">
-                          <CheckIcon className="w-3.5 h-3.5 text-white" />
-                        </span>
-                      )}
-                      {hasErrors && (
-                        <span className="w-5 h-5 bg-[#ff6b6b] rounded-full flex items-center justify-center">
-                          <ExclamationCircleIcon className="w-3.5 h-3.5 text-white" />
-                        </span>
-                      )}
-                      {isActive && (
-                        <span className="text-[10px] uppercase font-black tracking-wider text-[#ff6b6b] bg-[#ff6b6b]/20 px-2 py-0.5 rounded">
-                          Active
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        <SubsectionAccordion 
+          subsections={subsections}
+          currentSubsection={currentSubsection}
+          isOpen={isAccordionOpen}
+          onToggle={() => setIsAccordionOpen(!isAccordionOpen)}
+          onSelect={(subId) => {
+            setCurrentSubsection(subId);
+            setIsAccordionOpen(false);
+            setErrors({});
+            const container = document.getElementById('audit-form-container');
+            if (container) container.scrollTo({ top: 0 });
+          }}
+        />
 
         <div id="audit-form-container" className="flex-1 overflow-y-auto scrollbar-none pb-28">
           {/* Form Content */}
@@ -352,28 +295,11 @@ export default function VenueAuditWizard() {
       )}
 
       {/* Premium Success Overlay */}
-      {showSuccessOverlay && (
-        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-6 animate-fade-in">
-          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 text-center max-w-sm w-full shadow-2xl border border-white/20 scale-100 transition-transform duration-300">
-            <div className="w-16 h-16 bg-[#4ecdc4]/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-[#4ecdc4]/40">
-              <CheckIcon className="w-8 h-8 text-[#4ecdc4]" />
-            </div>
-            <h4 className="text-lg font-bold text-white mb-1 leading-tight">
-              Audit Assessment Saved
-            </h4>
-            <p className="text-xs text-white/50 font-bold mb-6">
-              The venue assessment has been completed and verified successfully.
-            </p>
-            <button
-              type="button"
-              onClick={() => navigate('..')}
-              className="w-full py-3.5 bg-[#ff6b6b] hover:bg-rose-600 text-white font-bold rounded-xl shadow-lg shadow-rose-900/20 active:scale-[0.98] transition-all text-[14px] cursor-pointer"
-            >
-              Back to Dashboard
-            </button>
-          </div>
-        </div>
-      )}
+      <AuditSuccessOverlay 
+        show={showSuccessOverlay} 
+        title="Audit Assessment Saved"
+        message="The venue assessment has been completed and verified successfully."
+      />
     </div>
   );
 }

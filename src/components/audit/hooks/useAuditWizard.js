@@ -13,7 +13,9 @@ export function useAuditWizard({
   auditName,
   nextAuditMonths = 3,
   apiSyncFunction,
-  sectionToPayloadKey
+  sectionToPayloadKey,
+  onComplete,
+  onExitForm
 }) {
   const extractKeysFromSchema = (schema) => {
     const keys = [];
@@ -36,9 +38,7 @@ export function useAuditWizard({
   };
 
   const location = useLocation();
-  const [viewMode, setViewMode] = useState('index');
   const [currentSubsection, setCurrentSubsection] = useState(steps[0].id);
-  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
 
   const venueId = initialVenue?.id || 'new';
   const typeId = auditName === 'Venue Audit Report' ? 'venue-audit' : auditName === 'Venue Power Audit Report' ? 'power-audit' : 'network-audit';
@@ -76,7 +76,6 @@ export function useAuditWizard({
   });
   
   const [errors, setErrors] = useState({});
-  const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
   const navigate = useNavigate();
 
   // Convert "new" drafts to "resumed" drafts in history state 
@@ -114,12 +113,7 @@ export function useAuditWizard({
     }
   }, [formData, storageKey, isInitializing]);
 
-  // Remove draft upon successful completion
-  useEffect(() => {
-    if (showSuccessOverlay) {
-      storageService.deleteDraft(storageKey).catch(err => console.error(err));
-    }
-  }, [showSuccessOverlay, storageKey]);
+
 
   const handleFieldChange = (fieldName, value) => {
     setFormData(prev => {
@@ -162,7 +156,6 @@ export function useAuditWizard({
   const handleSectionSelect = (sectionId) => {
     setCurrentSubsection(sectionId);
     setErrors({});
-    setViewMode('form');
   };
 
   const handleNextClick = () => {
@@ -197,7 +190,9 @@ export function useAuditWizard({
       const container = document.getElementById('audit-form-container');
       if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      setShowSuccessOverlay(true);
+      // Clear draft upon successful completion
+      storageService.deleteDraft(storageKey).catch(err => console.error(err));
+      if (onComplete) onComplete();
     }
   };
 
@@ -208,18 +203,15 @@ export function useAuditWizard({
       const container = document.getElementById('audit-form-container');
       if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      setViewMode('index');
+      if (onExitForm) onExitForm();
     }
   };
 
   return {
-    viewMode, setViewMode,
     currentSubsection, setCurrentSubsection,
     formData, setFormData,
     errors, setErrors,
-    showSuccessOverlay, setShowSuccessOverlay,
     isInitializing,
-    isAccordionOpen, setIsAccordionOpen,
     handleFieldChange, getSectionStatus,
     progressPercent, handleSectionSelect,
     handleNextClick, handlePrevClick
