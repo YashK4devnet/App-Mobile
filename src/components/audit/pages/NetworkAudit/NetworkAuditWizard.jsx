@@ -183,7 +183,7 @@ export default function NetworkAuditWizard() {
         <Header 
           title="Network System Assessment" 
           showBack={true} 
-          onBackClick={() => navigate('..')} 
+          onBackClick={() => navigate(-1)} 
         />
         <div className="flex-1 overflow-hidden">
           <AuditIndex

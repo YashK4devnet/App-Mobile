@@ -83,7 +83,7 @@ export default function AuditSetupFlow() {
         <Header 
           title="Venue Selection" 
           showBack={true} 
-          onBackClick={() => navigate('..')} 
+          onBackClick={() => navigate(-1)} 
         />
         <div className="flex-1 overflow-hidden">
           <VenueSelectPage 

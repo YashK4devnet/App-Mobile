@@ -178,7 +178,7 @@ export default function PowerAuditWizard() {
         <Header 
           title="Power System Assessment" 
           showBack={true} 
-          onBackClick={() => navigate('..')} 
+          onBackClick={() => navigate(-1)} 
         />
         <div className="flex-1 overflow-hidden">
           <AuditIndex 

@@ -186,7 +186,7 @@ export default function VenueAuditWizard() {
         <Header 
           title="Venue Assessment" 
           showBack={true} 
-          onBackClick={() => navigate('..')} 
+          onBackClick={() => navigate(-1)} 
         />
         <div className="flex-1 overflow-hidden">
           <AuditIndex 
