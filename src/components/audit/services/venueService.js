@@ -176,3 +176,66 @@ export const createFullAuditRecord = async (payload) => {
 
   return responseData;
 };
+
+/**
+ * Service to update a full audit record on the backend via PATCH.
+ */
+export const updateFullAuditRecord = async (reportNo, payload) => {
+  if (!reportNo) throw new Error("Report Number is required for PATCH update.");
+  
+  let responseData;
+
+  if (Capacitor.isNativePlatform()) {
+    const ipAddress = process.env.AUDIT_API_IP;
+    let url;
+
+    if (ipAddress) {
+      const cleanIp = ipAddress.replace(/^(https?:\/\/)?/, '').replace(/\/$/, '');
+      url = `http://${cleanIp}/api/audit/full-record/${reportNo}`;
+    } else {
+      const hostname = window.location.hostname;
+      if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1' && hostname !== '0.0.0.0') {
+        url = `http://${hostname}:8099/api/audit/full-record/${reportNo}`;
+      } else {
+        url = `http://192.168.29.191:8099/api/audit/full-record/${reportNo}`;
+      }
+    }
+
+    console.log("updateFullAuditRecord requesting native URL:", url);
+    const response = await CapacitorHttp.request({
+      method: 'PATCH',
+      url: url,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: payload
+    });
+
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(`Failed to update full audit record (Capacitor): ${response.status}`);
+    }
+
+    responseData = response.data;
+    if (typeof responseData === 'string') {
+      try { responseData = JSON.parse(responseData); } catch (e) { }
+    }
+  } else {
+    // Use /api proxy to bypass CORS during browser development
+    const url = `/api/audit/full-record/${reportNo}`;
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update full audit record: ${response.status} ${response.statusText}`);
+    }
+    
+    responseData = await response.json();
+  }
+
+  return responseData;
+};

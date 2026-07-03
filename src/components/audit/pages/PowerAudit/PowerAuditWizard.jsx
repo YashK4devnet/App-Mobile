@@ -37,6 +37,7 @@ import {
   calculateSchemaProgress,
   calculateGlobalProgress
 } from './services/powerAuditService';
+import { updateFullAuditRecord } from '../../services/venueService';
 
 const SUBSECTION_SCHEMAS = {
   'ReportInfo': POWER_REPORT_INFO_SCHEMA,
@@ -70,6 +71,22 @@ const STEPS = [
   { id: 'Section10' }
 ];
 
+const SECTION_TO_PAYLOAD_KEY = {
+  'ReportInfo': 'report',
+  'VenueInfo': 'venue',
+  'PersonnelInfo': 'auditeeAuditor',
+  'Section1': 'section1',
+  'Section2': 'section2',
+  'Section3': 'section3',
+  'Section4': 'section4',
+  'Section5': 'section5',
+  'Section6': 'section6',
+  'Section7': 'section7',
+  'Section8': 'section8',
+  'Section9': 'section9',
+  'Section10': 'section10'
+};
+
 // Initialize dynamically from schemas
 const INITIAL_POWER_AUDIT_STATE = generateInitialState(SUBSECTION_SCHEMAS);
 
@@ -98,7 +115,9 @@ export default function PowerAuditWizard() {
     calculateGlobalProgress,
     initialVenue,
     auditName: 'Venue Power Audit Report',
-    nextAuditMonths: 3
+    nextAuditMonths: 3,
+    apiSyncFunction: updateFullAuditRecord,
+    sectionToPayloadKey: SECTION_TO_PAYLOAD_KEY
   });
 
   const statusReportInfo = getSectionStatus('ReportInfo');

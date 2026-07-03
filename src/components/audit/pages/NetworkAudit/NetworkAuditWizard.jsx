@@ -37,6 +37,7 @@ import {
   calculateSchemaProgress,
   calculateGlobalProgress
 } from './services/networkAuditService';
+import { updateFullAuditRecord } from '../../services/venueService';
 
 const SUBSECTION_SCHEMAS = {
   'ReportInfo': NETWORK_REPORT_INFO_SCHEMA,
@@ -70,6 +71,22 @@ const STEPS = [
   { id: 'Observations' }
 ];
 
+const SECTION_TO_PAYLOAD_KEY = {
+  'ReportInfo': 'report',
+  'VenueInfo': 'venue',
+  'PersonnelInfo': 'auditeeAuditor',
+  'NetworkArchitecture': 'networkArchitecture',
+  'PublicNetworkHardening': 'publicNetworkHardening',
+  'NetworkInfrastructure': 'networkInfrastructure',
+  'WanInfrastructure': 'wanInfrastructure',
+  'SystemConfiguration': 'systemConfiguration',
+  'NetworkConfiguration': 'networkConfiguration',
+  'BackupDevices': 'backupDevices',
+  'NetworkSecurityCompliance': 'networkSecurityCompliance',
+  'PhotoEvidence': 'photoEvidence',
+  'Observations': 'observations'
+};
+
 // Initialize dynamically from schemas
 const INITIAL_NETWORK_AUDIT_STATE = generateInitialState(SUBSECTION_SCHEMAS);
 
@@ -98,7 +115,9 @@ export default function NetworkAuditWizard() {
     calculateGlobalProgress,
     initialVenue,
     auditName: 'Venue Network Audit Report',
-    nextAuditMonths: 6
+    nextAuditMonths: 6,
+    apiSyncFunction: updateFullAuditRecord,
+    sectionToPayloadKey: SECTION_TO_PAYLOAD_KEY
   });
 
   const statusReportInfo = getSectionStatus('ReportInfo');

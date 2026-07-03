@@ -70,7 +70,7 @@ export default function VenueSelectPage({ onSelectVenue, onNewVenue }) {
       if (data) {
         const updatedVenue = {
           ...venue,
-          report_id: data.report_id,
+          reportNumber: data.report_id || data.reportNumber,
           venue_id: data.venue_id
         };
         onSelectVenue(updatedVenue);

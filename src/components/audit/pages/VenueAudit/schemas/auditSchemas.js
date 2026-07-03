@@ -6,7 +6,6 @@ export const VENUE_REPORT_INFO_SCHEMA = [
   { name: 'auditManager', label: 'Audit Manager', type: 'text', required: true, placeholder: 'e.g. Jane Smith' },
   { name: 'previousAuditDate', label: 'Previous Audit Date', type: 'date', required: true },
   { name: 'reportNumber', label: 'Report Number', type: 'text', readOnly: true },
-  { name: 'report_id', label: 'Backend Report ID', type: 'text', readOnly: true },
   { name: 'systemAuditName', label: 'System Audit Name', type: 'text', readOnly: true, value: 'Venue Audit Report' },
   { name: 'version', label: 'Version', type: 'number', required: true, placeholder: 'e.g. 1' },
   { name: 'nextAuditDate', label: 'Next Audit Date', type: 'date' }

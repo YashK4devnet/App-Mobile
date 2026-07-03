@@ -35,6 +35,7 @@ import {
   calculateSchemaProgress,
   calculateGlobalProgress
 } from './services/venueAuditService';
+import { updateFullAuditRecord } from '../../services/venueService';
 
 const SUBSECTION_SCHEMAS = {
   'ReportInfo': VENUE_REPORT_INFO_SCHEMA,
@@ -59,6 +60,18 @@ const STEPS = [
   { id: 'B.3' },
   { id: 'Conclusion' }
 ];
+
+const SECTION_TO_PAYLOAD_KEY = {
+  'ReportInfo': 'report',
+  'PersonnelInfo': 'auditeeAuditor',
+  'A.1': 'venue',
+  'A.2': 'venue',
+  'A.3': 'accessibility',
+  'A.4': 'administrativeDetails',
+  'B.1': 'systemDetails',
+  'B.3': 'labDetails',
+  'Conclusion': 'conclusion'
+};
 
 // Initialize dynamically from schemas
 const INITIAL_AUDIT_STATE = generateInitialState(SUBSECTION_SCHEMAS);
@@ -88,7 +101,9 @@ export default function VenueAuditWizard() {
     calculateGlobalProgress,
     initialVenue,
     auditName: 'Venue Audit Report',
-    nextAuditMonths: 3
+    nextAuditMonths: 3,
+    apiSyncFunction: updateFullAuditRecord,
+    sectionToPayloadKey: SECTION_TO_PAYLOAD_KEY
   });
 
   // Set default datetime to now if empty on mount

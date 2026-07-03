@@ -11,8 +11,30 @@ export function useAuditWizard({
   calculateGlobalProgress,
   initialVenue,
   auditName,
-  nextAuditMonths = 3
+  nextAuditMonths = 3,
+  apiSyncFunction,
+  sectionToPayloadKey
 }) {
+  const extractKeysFromSchema = (schema) => {
+    const keys = [];
+    const processField = (f) => {
+      if (f.type === 'heading') return;
+      if (f.type === 'row' || f.type === 'group') {
+        if (f.fields) f.fields.forEach(processField);
+        return;
+      }
+      if (f.type === 'node-counts') {
+        keys.push(`${f.prefix}Available`, `${f.prefix}Working`);
+        return;
+      }
+      if (f.name) keys.push(f.name);
+    };
+    if (schema && Array.isArray(schema)) {
+      schema.forEach(processField);
+    }
+    return keys;
+  };
+
   const location = useLocation();
   const [viewMode, setViewMode] = useState('index');
   const [currentSubsection, setCurrentSubsection] = useState(steps[0].id);
@@ -148,6 +170,27 @@ export function useAuditWizard({
     if (currentIndex === -1) return;
 
     setErrors({});
+
+    // Auto-sync via PATCH API
+    if (formData.reportNumber && apiSyncFunction && sectionToPayloadKey) {
+      const patchPayload = {};
+      Object.entries(sectionToPayloadKey).forEach(([sectionId, payloadKey]) => {
+        if (!patchPayload[payloadKey]) patchPayload[payloadKey] = {};
+        
+        const sectionSchema = schemas[sectionId];
+        if (sectionSchema) {
+          extractKeysFromSchema(sectionSchema).forEach(key => {
+            if (formData[key] !== undefined) {
+              patchPayload[payloadKey][key] = formData[key];
+            }
+          });
+        }
+      });
+      
+      apiSyncFunction(formData.reportNumber, patchPayload)
+        .catch(err => console.error("Background sync failed:", err));
+    }
+
     const nextStep = steps[currentIndex + 1];
     if (nextStep) {
       setCurrentSubsection(nextStep.id);
