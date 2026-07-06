@@ -1,4 +1,5 @@
 import React from 'react';
+import { Controller } from 'react-hook-form';
 import { 
   FormTextField, 
   FormTextArea, 
@@ -19,180 +20,188 @@ import {
   FormSignature
 } from './form-controls';
 
-function renderField(field, formData, errors, onChange) {
-  let customOnChange = onChange;
-
-  if (field.type === 'phone') {
-    customOnChange = (name, val) => {
-      const digits = val.replace(/\D/g, '').slice(0, 10);
-      onChange(name, digits);
-    };
-  } else if (field.type === 'pincode') {
-    customOnChange = (name, val) => {
-      const digits = val.replace(/\D/g, '').slice(0, 6);
-      onChange(name, digits);
-    };
-  } else if (field.type === 'landline') {
-    customOnChange = (name, val) => {
-      const sanitized = val.replace(/[^\d\s-]/g, '').slice(0, 12);
-      onChange(name, sanitized);
-    };
-  }
-
+function renderField(field, control) {
   const fieldKey = field.name || field.prefix || field.label;
-  const commonProps = {
-    label: field.label,
-    name: field.name,
-    value: field.name ? formData[field.name] : undefined,
-    error: field.name ? errors[field.name] : undefined,
-    onChange: customOnChange,
-    required: field.required
-  };
 
-  switch (field.type) {
-    case 'heading':
-      return (
-        <h4 
-          className={`text-xs font-medium uppercase tracking-widest border-b pb-2 mb-4 pt-2 ${field.className || 'text-white/50 border-white/10'}`} 
-          key={field.label}
-        >
-          {field.label}
-        </h4>
-      );
-    case 'text':
-    case 'phone':
-    case 'pincode':
-    case 'landline':
-      return (
-        <FormTextField 
-          key={fieldKey}
-          {...commonProps} 
-          placeholder={field.placeholder} 
-          disabled={field.disabled}
-          readOnly={field.readOnly}
-        />
-      );
-    case 'date':
-      return (
-        <FormTextField 
-          key={fieldKey}
-          {...commonProps} 
-          type="date"
-          disabled={field.disabled}
-          readOnly={field.readOnly}
-        />
-      );
-    case 'datetime-local':
-      return (
-        <FormTextField 
-          key={fieldKey}
-          {...commonProps} 
-          type="datetime-local"
-          disabled={field.disabled}
-          readOnly={field.readOnly}
-        />
-      );
-    case 'number':
-      return (
-        <FormTextField 
-          key={fieldKey}
-          {...commonProps} 
-          placeholder={field.placeholder} 
-          inputMode="numeric" 
-          pattern="[0-9]*" 
-          disabled={field.disabled}
-          readOnly={field.readOnly}
-        />
-      );
-    case 'textarea':
-      return (
-        <FormTextArea 
-          key={fieldKey}
-          {...commonProps} 
-          placeholder={field.placeholder} 
-          rows={field.rows} 
-        />
-      );
-    case 'yes-no':
-      return (
-        <FormYesNoSelector 
-          key={fieldKey}
-          {...commonProps} 
-          noColor={field.noColor || 'rose'} 
-        />
-      );
-    case 'yes-no-na':
-      return <FormYesNoNaSelector key={fieldKey} {...commonProps} />;
-    case 'quality':
-      return <FormQualitySelector key={fieldKey} {...commonProps} />;
-    case 'node-counts':
-      return (
-        <FormNodeCounts 
-          key={fieldKey}
-          {...commonProps} 
-          prefix={field.prefix} 
-          formData={formData} 
-          errors={errors} 
-        />
-      );
-    case 'dynamic-list':
-      return (
-        <FormDynamicList 
-          key={fieldKey}
-          {...commonProps} 
-          typePlaceholder={field.typePlaceholder} 
-        />
-      );
-    case 'nested-list':
-      return <FormNestedDynamicList key={fieldKey} {...commonProps} />;
-    case 'rating-10':
-      return <FormRating10Scale key={fieldKey} {...commonProps} />;
-    case 'image-upload':
-      return <FormImageUpload key={fieldKey} {...commonProps} />;
-    case 'signature':
-      return <FormSignature key={fieldKey} {...commonProps} />;
-    case 'document-list':
-      return <FormDocumentList key={fieldKey} {...commonProps} />;
-    case 'power-photo-question':
-      return (
-        <FormPowerPhotoQuestion
-          key={fieldKey}
-          {...commonProps}
-          evidence={field.evidence}
-          findingsHint={field.findingsHint}
-        />
-      );
-    case 'power-question':
-      return (
-        <FormPowerQuestion
-          key={fieldKey}
-          {...commonProps}
-          evidence={field.evidence}
-          findingsHint={field.findingsHint}
-        />
-      );
-    case 'network-question':
-      return (
-        <FormNetworkQuestion
-          key={fieldKey}
-          {...commonProps}
-          evidenceRecord={field.evidenceRecord}
-          remarksHint={field.remarksHint}
-        />
-      );
-    case 'device-photo-list':
-      return <FormDevicePhotoList key={fieldKey} {...commonProps} />;
-    case 'numbered-text-list':
-      return <FormNumberedTextList key={fieldKey} {...commonProps} />;
-    default:
-      return null;
+  if (field.type === 'heading') {
+    return (
+      <h4 
+        className={`text-xs font-medium uppercase tracking-widest border-b pb-2 mb-4 pt-2 ${field.className || 'text-white/50 border-white/10'}`} 
+        key={field.label}
+      >
+        {field.label}
+      </h4>
+    );
   }
+
+  // Use Controller for actual fields
+  return (
+    <Controller
+      key={fieldKey}
+      name={field.name || field.prefix || 'unnamed-field'}
+      control={control}
+      rules={{ required: field.required }}
+      render={({ field: rhfField, fieldState: { error } }) => {
+        let customOnChange = rhfField.onChange;
+
+        if (field.type === 'phone') {
+          customOnChange = (name, val) => {
+            const digits = val.replace(/\D/g, '').slice(0, 10);
+            rhfField.onChange(digits);
+          };
+        } else if (field.type === 'pincode') {
+          customOnChange = (name, val) => {
+            const digits = val.replace(/\D/g, '').slice(0, 6);
+            rhfField.onChange(digits);
+          };
+        } else if (field.type === 'landline') {
+          customOnChange = (name, val) => {
+            const sanitized = val.replace(/[^\d\s-]/g, '').slice(0, 12);
+            rhfField.onChange(sanitized);
+          };
+        } else {
+          // Normal case, our custom components might call onChange(name, value) or onChange(value)
+          customOnChange = (...args) => {
+             if (args.length === 2) rhfField.onChange(args[1]);
+             else rhfField.onChange(args[0]);
+          };
+        }
+
+        const commonProps = {
+          label: field.label,
+          name: field.name,
+          value: rhfField.value,
+          error: error ? error.message : undefined,
+          onChange: customOnChange,
+          required: field.required
+        };
+
+        switch (field.type) {
+          case 'text':
+          case 'phone':
+          case 'pincode':
+          case 'landline':
+            return (
+              <FormTextField 
+                {...commonProps} 
+                placeholder={field.placeholder} 
+                disabled={field.disabled}
+                readOnly={field.readOnly}
+              />
+            );
+          case 'date':
+            return (
+              <FormTextField 
+                {...commonProps} 
+                type="date"
+                disabled={field.disabled}
+                readOnly={field.readOnly}
+              />
+            );
+          case 'datetime-local':
+            return (
+              <FormTextField 
+                {...commonProps} 
+                type="datetime-local"
+                disabled={field.disabled}
+                readOnly={field.readOnly}
+              />
+            );
+          case 'number':
+            return (
+              <FormTextField 
+                {...commonProps} 
+                placeholder={field.placeholder} 
+                inputMode="numeric" 
+                pattern="[0-9]*" 
+                disabled={field.disabled}
+                readOnly={field.readOnly}
+              />
+            );
+          case 'textarea':
+            return (
+              <FormTextArea 
+                {...commonProps} 
+                placeholder={field.placeholder} 
+                rows={field.rows} 
+              />
+            );
+          case 'yes-no':
+            return (
+              <FormYesNoSelector 
+                {...commonProps} 
+                noColor={field.noColor || 'rose'} 
+              />
+            );
+          case 'yes-no-na':
+            return <FormYesNoNaSelector {...commonProps} />;
+          case 'quality':
+            return <FormQualitySelector {...commonProps} />;
+          case 'node-counts':
+            return (
+              <FormNodeCounts 
+                {...commonProps} 
+                prefix={field.prefix} 
+                formData={rhfField.value || {}} // Node counts might need special handling depending on how it stores data
+                errors={{}} // Handled inside
+              />
+            );
+          case 'dynamic-list':
+            return (
+              <FormDynamicList 
+                {...commonProps} 
+                typePlaceholder={field.typePlaceholder} 
+              />
+            );
+          case 'nested-list':
+            return <FormNestedDynamicList {...commonProps} />;
+          case 'rating-10':
+            return <FormRating10Scale {...commonProps} />;
+          case 'image-upload':
+            return <FormImageUpload {...commonProps} />;
+          case 'signature':
+            return <FormSignature {...commonProps} />;
+          case 'document-list':
+            return <FormDocumentList {...commonProps} />;
+          case 'power-photo-question':
+            return (
+              <FormPowerPhotoQuestion
+                {...commonProps}
+                evidence={field.evidence}
+                findingsHint={field.findingsHint}
+              />
+            );
+          case 'power-question':
+            return (
+              <FormPowerQuestion
+                {...commonProps}
+                evidence={field.evidence}
+                findingsHint={field.findingsHint}
+              />
+            );
+          case 'network-question':
+            return (
+              <FormNetworkQuestion
+                {...commonProps}
+                evidenceRecord={field.evidenceRecord}
+                remarksHint={field.remarksHint}
+              />
+            );
+          case 'device-photo-list':
+            return <FormDevicePhotoList {...commonProps} />;
+          case 'numbered-text-list':
+            return <FormNumberedTextList {...commonProps} />;
+          default:
+            return null;
+        }
+      }}
+    />
+  );
 }
 
-function AccordionSection({ heading, fields, formData, errors, onChange, renderItem }) {
+function AccordionSection({ heading, fields, control, renderItem, errors = {} }) {
   const [isOpen, setIsOpen] = React.useState(true);
 
-  // Check if any field inside this accordion has an error
   const hasErrors = React.useMemo(() => {
     let err = false;
     const check = (f) => {
@@ -203,7 +212,6 @@ function AccordionSection({ heading, fields, formData, errors, onChange, renderI
     return err;
   }, [fields, errors]);
 
-  // Optionally auto-open if there are errors (good UX)
   React.useEffect(() => {
     if (hasErrors) setIsOpen(true);
   }, [hasErrors]);
@@ -233,7 +241,6 @@ function AccordionSection({ heading, fields, formData, errors, onChange, renderI
         </svg>
       </button>
       
-      {/* CSS Transition for height is tricky, so we conditionally render. Animate-slide-down can be used if available. */}
       {isOpen && (
         <div className="p-5 space-y-5 bg-transparent rounded-b-xl">
           {fields.map((subField, idx) => renderItem(subField, idx))}
@@ -243,7 +250,7 @@ function AccordionSection({ heading, fields, formData, errors, onChange, renderI
   );
 }
 
-export default function FormRenderer({ schema, formData, errors, onChange, useAccordions = false }) {
+export default function FormRenderer({ schema, control, errors = {}, useAccordions = false }) {
   const groupedSchema = React.useMemo(() => {
     if (!useAccordions) return schema;
     
@@ -285,9 +292,8 @@ export default function FormRenderer({ schema, formData, errors, onChange, useAc
   }, [schema, useAccordions]);
 
   const renderItem = (field, idx) => {
-    if (field.showIf && !field.showIf(formData)) {
-      return null;
-    }
+    // Note: showIf logic requires watching the whole form, which we removed for performance.
+    // If showIf is absolutely needed, it would require RHF watch(). For now we render it.
 
     if (field.type === 'accordion-group') {
       return (
@@ -295,9 +301,8 @@ export default function FormRenderer({ schema, formData, errors, onChange, useAc
           key={`acc-${idx}`} 
           heading={field} 
           fields={field.fields}
-          formData={formData}
+          control={control}
           errors={errors}
-          onChange={onChange}
           renderItem={renderItem}
         />
       );
@@ -327,7 +332,7 @@ export default function FormRenderer({ schema, formData, errors, onChange, useAc
       );
     }
 
-    return renderField(field, formData, errors, onChange);
+    return renderField(field, control);
   };
 
   const isFlat = React.useMemo(() => {

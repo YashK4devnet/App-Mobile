@@ -103,11 +103,11 @@ export default function NetworkAuditWizard() {
 
   const {
     currentSubsection, setCurrentSubsection,
-    formData, setFormData,
-    errors, setErrors,
+    control, getValues, watch, setValue,
+    errors,
     isInitializing,
-    handleFieldChange, getSectionStatus,
-    progressPercent, handleSectionSelect,
+    getSectionStatus,
+    handleSectionSelect,
     handleNextClick, handlePrevClick
   } = useAuditWizard({
     schemas: SUBSECTION_SCHEMAS,
@@ -125,19 +125,22 @@ export default function NetworkAuditWizard() {
     onExitForm: () => setViewMode('index')
   });
 
-  const statusReportInfo = getSectionStatus('ReportInfo');
-  const statusVenue = getSectionStatus('VenueInfo');
-  const statusPersonnel = getSectionStatus('PersonnelInfo');
-  const statusNetworkArchitecture = getSectionStatus('NetworkArchitecture');
-  const statusPublicNetworkHardening = getSectionStatus('PublicNetworkHardening');
-  const statusNetworkInfrastructure = getSectionStatus('NetworkInfrastructure');
-  const statusWanInfrastructure = getSectionStatus('WanInfrastructure');
-  const statusSystemConfiguration = getSectionStatus('SystemConfiguration');
-  const statusNetworkConfiguration = getSectionStatus('NetworkConfiguration');
-  const statusBackupDevices = getSectionStatus('BackupDevices');
-  const statusNetworkSecurityCompliance = getSectionStatus('NetworkSecurityCompliance');
-  const statusPhotoEvidence = getSectionStatus('PhotoEvidence');
-  const statusObservations = getSectionStatus('Observations');
+  const currentData = getValues();
+  const progressPercent = calculateGlobalProgress(SUBSECTION_SCHEMAS, currentData);
+
+  const statusReportInfo = getSectionStatus('ReportInfo', currentData);
+  const statusVenue = getSectionStatus('VenueInfo', currentData);
+  const statusPersonnel = getSectionStatus('PersonnelInfo', currentData);
+  const statusNetworkArchitecture = getSectionStatus('NetworkArchitecture', currentData);
+  const statusPublicNetworkHardening = getSectionStatus('PublicNetworkHardening', currentData);
+  const statusNetworkInfrastructure = getSectionStatus('NetworkInfrastructure', currentData);
+  const statusWanInfrastructure = getSectionStatus('WanInfrastructure', currentData);
+  const statusSystemConfiguration = getSectionStatus('SystemConfiguration', currentData);
+  const statusNetworkConfiguration = getSectionStatus('NetworkConfiguration', currentData);
+  const statusBackupDevices = getSectionStatus('BackupDevices', currentData);
+  const statusNetworkSecurityCompliance = getSectionStatus('NetworkSecurityCompliance', currentData);
+  const statusPhotoEvidence = getSectionStatus('PhotoEvidence', currentData);
+  const statusObservations = getSectionStatus('Observations', currentData);
 
   if (isInitializing) {
     return (
@@ -153,7 +156,7 @@ export default function NetworkAuditWizard() {
   // Rendering Helpers
   const renderIndexView = () => {
     const getItemsCount = (sectionId) => {
-      const { total } = calculateSchemaProgress(SUBSECTION_SCHEMAS[sectionId], formData);
+      const { total } = calculateSchemaProgress(SUBSECTION_SCHEMAS[sectionId], getValues());
       return `${total} items`;
     };
 
@@ -193,7 +196,10 @@ export default function NetworkAuditWizard() {
         <div className="flex-1 overflow-hidden">
           <AuditIndex
             groups={auditGroups}
-            onSectionSelect={handleSectionSelect}
+            onSectionSelect={(sectionId) => {
+              handleSectionSelect(sectionId);
+              setViewMode('form');
+            }}
             progressPercent={progressPercent}
           />
         </div>
@@ -204,8 +210,8 @@ export default function NetworkAuditWizard() {
 
   const renderFormView = () => {
     const isFirst = currentSubsection === 'ReportInfo';
-    const subProgress = calculateSchemaProgress(SUBSECTION_SCHEMAS[currentSubsection], formData);
-
+    const subProgress = calculateSchemaProgress(SUBSECTION_SCHEMAS[currentSubsection], getValues());
+    
     // Header pill
     const currentIndex = STEPS.findIndex(s => s.id === currentSubsection) + 1;
     const stepPill = (
@@ -233,7 +239,7 @@ export default function NetworkAuditWizard() {
     const currentSubObj = subsections.find(s => s.id === currentSubsection);
 
     return (
-      <div className="flex flex-col h-full w-full relative bg-transparent animate-fade-in">
+      <div className="flex flex-col h-full w-full relative bg-transparent">
         <Header 
           title="Network Audit Details" 
           showBack={true} 
@@ -243,9 +249,9 @@ export default function NetworkAuditWizard() {
           }} 
           headerRight={stepPill}
         />
-
+        
         {/* Subsection Progress Indicator (Sticky) */}
-        <ProgressBar
+        <ProgressBar 
           percent={subProgress.percent}
           filled={subProgress.filled}
           total={subProgress.total}
@@ -268,12 +274,12 @@ export default function NetworkAuditWizard() {
         />
 
         <div id="audit-form-container" className="flex-1 overflow-y-auto scrollbar-none pb-28">
+          {/* Form Content */}
           <div className="transition-all duration-300 ease-in-out pt-3 bg-transparent px-5 pt-2 pb-6">
             <FormRenderer
               schema={SUBSECTION_SCHEMAS[currentSubsection]}
-              formData={formData}
+              control={control}
               errors={errors}
-              onChange={handleFieldChange}
               useAccordions={true}
             />
           </div>

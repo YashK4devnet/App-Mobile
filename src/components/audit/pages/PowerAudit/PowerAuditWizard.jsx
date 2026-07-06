@@ -103,11 +103,11 @@ export default function PowerAuditWizard() {
 
   const {
     currentSubsection, setCurrentSubsection,
-    formData, setFormData,
-    errors, setErrors,
+    control, getValues, watch, setValue,
+    errors,
     isInitializing,
-    handleFieldChange, getSectionStatus,
-    progressPercent, handleSectionSelect,
+    getSectionStatus,
+    handleSectionSelect,
     handleNextClick, handlePrevClick
   } = useAuditWizard({
     schemas: SUBSECTION_SCHEMAS,
@@ -125,19 +125,22 @@ export default function PowerAuditWizard() {
     onExitForm: () => setViewMode('index')
   });
 
-  const statusReportInfo = getSectionStatus('ReportInfo');
-  const statusVenue = getSectionStatus('VenueInfo');
-  const statusPersonnel = getSectionStatus('PersonnelInfo');
-  const statusSec1 = getSectionStatus('Section1');
-  const statusSec2 = getSectionStatus('Section2');
-  const statusSec3 = getSectionStatus('Section3');
-  const statusSec4 = getSectionStatus('Section4');
-  const statusSec5 = getSectionStatus('Section5');
-  const statusSec6 = getSectionStatus('Section6');
-  const statusSec7 = getSectionStatus('Section7');
-  const statusSec8 = getSectionStatus('Section8');
-  const statusSec9 = getSectionStatus('Section9');
-  const statusSec10 = getSectionStatus('Section10');
+  const currentData = getValues();
+  const progressPercent = calculateGlobalProgress(SUBSECTION_SCHEMAS, currentData);
+
+  const statusReportInfo = getSectionStatus('ReportInfo', currentData);
+  const statusVenue = getSectionStatus('VenueInfo', currentData);
+  const statusPersonnel = getSectionStatus('PersonnelInfo', currentData);
+  const statusSec1 = getSectionStatus('Section1', currentData);
+  const statusSec2 = getSectionStatus('Section2', currentData);
+  const statusSec3 = getSectionStatus('Section3', currentData);
+  const statusSec4 = getSectionStatus('Section4', currentData);
+  const statusSec5 = getSectionStatus('Section5', currentData);
+  const statusSec6 = getSectionStatus('Section6', currentData);
+  const statusSec7 = getSectionStatus('Section7', currentData);
+  const statusSec8 = getSectionStatus('Section8', currentData);
+  const statusSec9 = getSectionStatus('Section9', currentData);
+  const statusSec10 = getSectionStatus('Section10', currentData);
 
   if (isInitializing) {
     return (
@@ -153,7 +156,7 @@ export default function PowerAuditWizard() {
   // Rendering Helpers
   const renderIndexView = () => {
     const getItemsCount = (sectionId) => {
-      const { total } = calculateSchemaProgress(SUBSECTION_SCHEMAS[sectionId], formData);
+      const { total } = calculateSchemaProgress(SUBSECTION_SCHEMAS[sectionId], getValues());
       return `${total} items`;
     };
 
@@ -188,7 +191,10 @@ export default function PowerAuditWizard() {
         <div className="flex-1 overflow-hidden">
           <AuditIndex 
             groups={auditGroups}
-            onSectionSelect={handleSectionSelect}
+            onSectionSelect={(sectionId) => {
+              handleSectionSelect(sectionId);
+              setViewMode('form');
+            }}
             progressPercent={progressPercent}
           />
         </div>
@@ -199,7 +205,7 @@ export default function PowerAuditWizard() {
 
   const renderFormView = () => {
     const isFirst = currentSubsection === 'ReportInfo';
-    const subProgress = calculateSchemaProgress(SUBSECTION_SCHEMAS[currentSubsection], formData);
+    const subProgress = calculateSchemaProgress(SUBSECTION_SCHEMAS[currentSubsection], getValues());
     
     // Header pill
     const currentIndex = STEPS.findIndex(s => s.id === currentSubsection) + 1;
@@ -267,9 +273,8 @@ export default function PowerAuditWizard() {
           <div className="transition-all duration-300 ease-in-out pt-3 bg-transparent px-5 pt-2 pb-6">
             <FormRenderer
               schema={SUBSECTION_SCHEMAS[currentSubsection]}
-              formData={formData}
+              control={control}
               errors={errors}
-              onChange={handleFieldChange}
               useAccordions={true}
             />
           </div>

@@ -89,11 +89,11 @@ export default function VenueAuditWizard() {
 
   const {
     currentSubsection, setCurrentSubsection,
-    formData, setFormData,
-    errors, setErrors,
+    control, getValues, watch, setValue,
+    errors,
     isInitializing,
-    handleFieldChange, getSectionStatus,
-    progressPercent, handleSectionSelect,
+    getSectionStatus,
+    handleSectionSelect,
     handleNextClick, handlePrevClick
   } = useAuditWizard({
     schemas: SUBSECTION_SCHEMAS,
@@ -113,15 +113,19 @@ export default function VenueAuditWizard() {
 
 
 
-  const statusReportInfo = getSectionStatus('ReportInfo');
-  const statusPersonnel = getSectionStatus('PersonnelInfo');
-  const statusA1 = getSectionStatus('A.1');
-  const statusA2 = getSectionStatus('A.2');
-  const statusA3 = getSectionStatus('A.3');
-  const statusA4 = getSectionStatus('A.4');
-  const statusB1 = getSectionStatus('B.1');
-  const statusB3 = getSectionStatus('B.3');
-  const statusConclusion = getSectionStatus('Conclusion');
+  // Get current form data for status checks (doesn't trigger re-render on keystrokes)
+  const currentData = getValues();
+  const progressPercent = calculateGlobalProgress(SUBSECTION_SCHEMAS, currentData);
+
+  const statusReportInfo = getSectionStatus('ReportInfo', currentData);
+  const statusPersonnel = getSectionStatus('PersonnelInfo', currentData);
+  const statusA1 = getSectionStatus('A.1', currentData);
+  const statusA2 = getSectionStatus('A.2', currentData);
+  const statusA3 = getSectionStatus('A.3', currentData);
+  const statusA4 = getSectionStatus('A.4', currentData);
+  const statusB1 = getSectionStatus('B.1', currentData);
+  const statusB3 = getSectionStatus('B.3', currentData);
+  const statusConclusion = getSectionStatus('Conclusion', currentData);
 
   if (isInitializing) {
     return (
@@ -137,7 +141,7 @@ export default function VenueAuditWizard() {
   // Rendering Helpers
   const renderIndexView = () => {
     const getItemsCount = (sectionId) => {
-      const { total } = calculateSchemaProgress(SUBSECTION_SCHEMAS[sectionId], formData);
+      const { total } = calculateSchemaProgress(SUBSECTION_SCHEMAS[sectionId], getValues());
       return `${total} items`;
     };
 
@@ -183,7 +187,10 @@ export default function VenueAuditWizard() {
         <div className="flex-1 overflow-hidden">
           <AuditIndex 
             groups={auditGroups}
-            onSectionSelect={handleSectionSelect}
+            onSectionSelect={(sectionId) => {
+              handleSectionSelect(sectionId);
+              setViewMode('form');
+            }}
             progressPercent={progressPercent}
           />
         </div>
@@ -194,7 +201,7 @@ export default function VenueAuditWizard() {
 
   const renderFormView = () => {
     const isFirst = currentSubsection === 'ReportInfo';
-    const subProgress = calculateSchemaProgress(SUBSECTION_SCHEMAS[currentSubsection], formData);
+    const subProgress = calculateSchemaProgress(SUBSECTION_SCHEMAS[currentSubsection], getValues());
     
     // Header pill
     const currentIndex = STEPS.findIndex(s => s.id === currentSubsection) + 1;
@@ -258,9 +265,8 @@ export default function VenueAuditWizard() {
           <div className="transition-all duration-300 ease-in-out pt-3 bg-transparent px-5 pt-2 pb-6">
             <FormRenderer
               schema={SUBSECTION_SCHEMAS[currentSubsection]}
-              formData={formData}
+              control={control}
               errors={errors}
-              onChange={handleFieldChange}
             />
           </div>
         </div>

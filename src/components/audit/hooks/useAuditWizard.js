@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { storageService } from '../services/storageService';
 
 export function useAuditWizard({
@@ -46,10 +47,10 @@ export function useAuditWizard({
   
   const [isInitializing, setIsInitializing] = useState(!!location.state?.loadDraft);
   
-  const [formData, setFormData] = useState(() => {
+  // Evaluate default values before passing to useForm, as RHF expects a Promise if a function is passed.
+  const initialFormValues = (() => {
     const baseState = (initialVenue ? { ...initialStateGenerator(schemas), ...initialVenue } : initialStateGenerator(schemas));
     
-    // Auto-generate default date and report number
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
     const todayStr = new Date(now - offset).toISOString().split('T')[0];
@@ -73,13 +74,15 @@ export function useAuditWizard({
       ...baseState,
       auditTypeId: typeId
     };
+  })();
+
+  const { control, getValues, setValue, watch, reset, formState: { errors: formErrors } } = useForm({
+    defaultValues: initialFormValues,
+    mode: 'onBlur'
   });
   
-  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  // Convert "new" drafts to "resumed" drafts in history state 
-  // so browser back-buttons don't overwrite them with blank copies
   useEffect(() => {
     if (!location.state?.loadDraft) {
       navigate(location.pathname, {
@@ -89,12 +92,11 @@ export function useAuditWizard({
     }
   }, [location.pathname, location.state, navigate]);
 
-  // Async initialization for draft
   useEffect(() => {
     if (location.state?.loadDraft) {
       storageService.getDraft(storageKey).then(draftData => {
         if (draftData) {
-          setFormData(draftData);
+          reset(draftData); // Load draft into RHF
         }
       }).catch(err => {
         console.error("Failed to load draft from IndexedDB", err);
@@ -102,70 +104,39 @@ export function useAuditWizard({
         setIsInitializing(false);
       });
     }
-  }, [location.state?.loadDraft, storageKey]);
+  }, [location.state?.loadDraft, storageKey, reset]);
 
-  // Automatically save draft when formData changes (only after initialized)
+  // Subscribe to changes for auto-save, using watch
   useEffect(() => {
     if (!isInitializing) {
-      storageService.saveDraft(storageKey, formData).catch(err => {
-        console.error("Failed to save draft to IndexedDB", err);
+      const subscription = watch((value) => {
+        storageService.saveDraft(storageKey, value).catch(err => {
+          console.error("Failed to save draft to IndexedDB", err);
+        });
       });
+      return () => subscription.unsubscribe();
     }
-  }, [formData, storageKey, isInitializing]);
+  }, [watch, storageKey, isInitializing]);
 
-
-
-  const handleFieldChange = (fieldName, value) => {
-    setFormData(prev => {
-      const newState = { ...prev, [fieldName]: value };
-
-      if (fieldName === 'auditDate' && value) {
-        try {
-          const date = new Date(value);
-          if (!isNaN(date.getTime())) {
-            date.setMonth(date.getMonth() + nextAuditMonths);
-            newState.nextAuditDate = date.toISOString().split('T')[0];
-          }
-        } catch (e) {
-          console.error("Error calculating next audit date", e);
-        }
-      }
-
-      return newState;
-    });
-
-    if (errors[fieldName]) {
-      setErrors(prev => {
-        const copy = { ...prev };
-        delete copy[fieldName];
-        return copy;
-      });
-    }
-  };
-
-  const getSectionStatus = (sectionId) => {
+  const getSectionStatus = (sectionId, currentData) => {
     const schema = schemas[sectionId];
     if (!schema) return 'empty';
-    const sectionErrors = validateSchema(schema, formData);
+    const sectionErrors = validateSchema(schema, currentData);
     if (Object.keys(sectionErrors).length > 0) return 'invalid';
-    return isSchemaEmpty(schema, formData) ? 'empty' : 'valid';
+    return isSchemaEmpty(schema, currentData) ? 'empty' : 'valid';
   };
-
-  const progressPercent = calculateGlobalProgress(schemas, formData);
 
   const handleSectionSelect = (sectionId) => {
     setCurrentSubsection(sectionId);
-    setErrors({});
   };
 
   const handleNextClick = () => {
     const currentIndex = steps.findIndex(s => s.id === currentSubsection);
     if (currentIndex === -1) return;
 
-    setErrors({});
+    const currentData = getValues();
 
-    // Auto-sync via PATCH API
-    if (formData.reportNumber && apiSyncFunction && sectionToPayloadKey) {
+    if (currentData.reportNumber && apiSyncFunction && sectionToPayloadKey) {
       const patchPayload = {};
       Object.entries(sectionToPayloadKey).forEach(([sectionId, payloadKey]) => {
         if (!patchPayload[payloadKey]) patchPayload[payloadKey] = {};
@@ -173,14 +144,14 @@ export function useAuditWizard({
         const sectionSchema = schemas[sectionId];
         if (sectionSchema) {
           extractKeysFromSchema(sectionSchema).forEach(key => {
-            if (formData[key] !== undefined) {
-              patchPayload[payloadKey][key] = formData[key];
+            if (currentData[key] !== undefined) {
+              patchPayload[payloadKey][key] = currentData[key];
             }
           });
         }
       });
       
-      apiSyncFunction(formData.reportNumber, patchPayload)
+      apiSyncFunction(currentData.reportNumber, patchPayload)
         .catch(err => console.error("Background sync failed:", err));
     }
 
@@ -190,7 +161,6 @@ export function useAuditWizard({
       const container = document.getElementById('audit-form-container');
       if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      // Clear draft upon successful completion
       storageService.deleteDraft(storageKey).catch(err => console.error(err));
       if (onComplete) onComplete();
     }
@@ -207,13 +177,15 @@ export function useAuditWizard({
     }
   };
 
+  // Provide everything needed for RHF integration
   return {
     currentSubsection, setCurrentSubsection,
-    formData, setFormData,
-    errors, setErrors,
+    control, getValues, watch, setValue,
+    errors: formErrors,
     isInitializing,
-    handleFieldChange, getSectionStatus,
-    progressPercent, handleSectionSelect,
+    getSectionStatus,
+    calculateGlobalProgress,
+    handleSectionSelect,
     handleNextClick, handlePrevClick
   };
 }

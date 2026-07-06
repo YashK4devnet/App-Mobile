@@ -496,7 +496,7 @@ const Dashboard = () => {
               onClick={() => handleQuickLinks("/audit")}
             >
               <div className={styles.quickActionIcon}>✍️</div>
-              <h3>Audit</h3>
+              <h3>Venue Audit</h3>
               <p>Manage your audit activity</p>
             </a>
             {/* <button
