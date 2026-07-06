@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ManualAttendance from "./components/ManualAttendance/ManualAttendance";
 import AuditRoutes from './components/audit/AuditRoutes';
 import Navbar from "./components/Navbar/Navbar";
+
 import Incident from "./components/Incidents/Incident";
 import TicketTable from "./components/Tickets/TicketTable";
 import About from "./components/About/About";

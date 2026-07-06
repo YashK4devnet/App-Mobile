@@ -12,12 +12,19 @@ import AuditDashboardPage from './pages/AuditDashboard/AuditDashboardPage';
 import AuditReportsPage from './pages/AuditReports/AuditReportsPage';
 import AuditSettingsPage from './pages/AuditSettings/AuditSettingsPage';
 
+const getHeaderTitle = (pathname) => {
+  if (pathname === '/audit/reports' || pathname === '/audit/reports/') return "Audit Reports";
+  if (pathname === '/audit/settings' || pathname === '/audit/settings/') return "Settings";
+  return "Management System";
+};
+
+
 const VenueAuditWizard = lazy(() => import('./pages/VenueAudit/VenueAuditWizard'));
 const PowerAuditWizard = lazy(() => import('./pages/PowerAudit/PowerAuditWizard'));
 const NetworkAuditWizard = lazy(() => import('./pages/NetworkAudit/NetworkAuditWizard'));
 const AuditSetupFlow = lazy(() => import('./pages/AuditDashboard/components/AuditSetupFlow'));
 
-export const ModuleContext = createContext({ basePath: '/audit' });
+const ModuleContext = createContext({ basePath: '/audit' });
 
 const TAB_ROUTES = ['/audit', '/audit/reports', '/audit/settings'];
 
@@ -132,6 +139,7 @@ export default function AuditRoutes() {
         header={
           !isAuditActive && (
             <Header
+              title={getHeaderTitle(location.pathname)}
               onMenuClick={() => console.log('Menu drawer toggled')}
               onNotificationClick={() => console.log('Notifications overlay toggled')}
               hasNotifications={true}
@@ -148,7 +156,7 @@ export default function AuditRoutes() {
             {/* Main Tabs */}
             <Route index element={<PageTransition direction={direction}><AuditDashboardPage /></PageTransition>} />
             <Route path="home" element={<PageTransition direction={direction}><AuditDashboardPage /></PageTransition>} />
-            <Route path="reports" element={<PageTransition direction={direction}><AuditReportsPage /></PageTransition>} />
+            <Route path="reports" element={<PageTransition direction={direction}><AuditReportsPage hideHeader={true} /></PageTransition>} />
             <Route path="settings" element={<PageTransition direction={direction}><AuditSettingsPage /></PageTransition>} />
 
             {/* Audit Wizards */}
