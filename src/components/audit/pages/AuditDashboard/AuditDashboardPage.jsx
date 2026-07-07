@@ -17,11 +17,28 @@ export default function AuditDashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 gap-3 select-none">
-        <div className="w-8 h-8 border-4 border-white/10 border-t-[#4ecdc4] rounded-full animate-spin"></div>
-        <p className="text-xs text-white/70 font-light tracking-widest uppercase animate-pulse">
-          Loading dashboard...
-        </p>
+      <div className="flex flex-col h-full overflow-y-auto pb-6 scrollbar-none px-4 pt-4 animate-pulse select-none">
+        {/* Header Skeleton */}
+        <div className="mb-8 mt-2">
+          <div className="h-6 w-48 bg-white/10 rounded-md mb-2"></div>
+          <div className="h-4 w-32 bg-white/5 rounded-md"></div>
+        </div>
+
+        {/* Quick Stats Skeleton */}
+        <div className="grid grid-cols-3 gap-3 mb-8">
+          <div className="h-24 bg-white/5 rounded-2xl border border-white/5"></div>
+          <div className="h-24 bg-white/5 rounded-2xl border border-white/5"></div>
+          <div className="h-24 bg-white/5 rounded-2xl border border-white/5"></div>
+        </div>
+
+        {/* In Progress List Skeleton */}
+        <div className="mb-8">
+          <div className="h-3 w-36 bg-white/10 rounded mb-4"></div>
+          <div className="flex flex-col gap-3">
+            <div className="w-full h-28 bg-white/5 rounded-2xl border border-white/5"></div>
+            <div className="w-full h-28 bg-white/5 rounded-2xl border border-white/5"></div>
+          </div>
+        </div>
       </div>
     );
   }
