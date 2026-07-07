@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuditReports } from './hooks/useAuditReports';
@@ -7,6 +7,8 @@ import FilterPills from './components/FilterPills';
 import ReportCard from './components/ReportCard';
 import VenueCard from './components/VenueCard';
 import Header from '../../components/Header'; // Reusing your global header
+import { useDebounce } from '../../hooks/useDebounce';
+import { Virtuoso } from 'react-virtuoso';
 
 const FILTERS = ["All", "Assigned", "Completed", "Waiting for Approval", "Approved", "Rejected"];
 
@@ -20,16 +22,35 @@ export default function AuditReportsPage({ hideHeader = false }) {
   
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  const containerRef = useRef(null);
+  const [scrollParent, setScrollParent] = useState(null);
+
+  useEffect(() => {
+    // Find the closest scrollable ancestor to act as the virtuoso scroll parent
+    if (containerRef.current) {
+      let parent = containerRef.current.parentElement;
+      while (parent) {
+        const style = window.getComputedStyle(parent);
+        if (style.overflowY === 'auto' || style.overflowY === 'scroll') {
+          setScrollParent(parent);
+          break;
+        }
+        parent = parent.parentElement;
+      }
+    }
+  }, [venueName]);
 
   const filteredVenues = useMemo(() => {
     return venues.filter(venue => {
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
+      if (debouncedSearchQuery) {
+        const query = debouncedSearchQuery.toLowerCase();
         return venue.name.toLowerCase().includes(query) || venue.location.toLowerCase().includes(query) || venue.id.toLowerCase().includes(query);
       }
       return true;
     });
-  }, [venues, searchQuery]);
+  }, [venues, debouncedSearchQuery]);
 
   const filteredReports = useMemo(() => {
     return reports.filter(report => {
@@ -40,8 +61,8 @@ export default function AuditReportsPage({ hideHeader = false }) {
       if (activeFilter !== "All" && report.status !== activeFilter) return false;
       
       // Filter by Search Query (matching venueName or ID)
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
+      if (debouncedSearchQuery) {
+        const query = debouncedSearchQuery.toLowerCase();
         const matchesName = report.venueName.toLowerCase().includes(query);
         const matchesId = report.id.toLowerCase().includes(query);
         if (!matchesName && !matchesId) return false;
@@ -49,7 +70,7 @@ export default function AuditReportsPage({ hideHeader = false }) {
 
       return true;
     });
-  }, [reports, activeFilter, searchQuery, venueName]);
+  }, [reports, activeFilter, debouncedSearchQuery, venueName]);
 
   const handleBack = () => {
     if (venueName) {
@@ -60,7 +81,7 @@ export default function AuditReportsPage({ hideHeader = false }) {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4" ref={containerRef}>
       {!hideHeader && (
         <Header 
           title={venueName ? `Reports - ${venueName}` : "Select a Venue"} 
@@ -131,18 +152,23 @@ export default function AuditReportsPage({ hideHeader = false }) {
           ) : (
             <div className="flex flex-col gap-4">
               <h2 className="text-[17px] font-semibold text-white/90 px-1 pt-1">Assigned Venues</h2>
-              <AnimatePresence mode="popLayout">
-                {filteredVenues.map(venue => (
-                  <VenueCard 
-                    key={venue.id} 
-                    venue={venue} 
-                    onClick={() => {
-                      setSearchQuery("");
-                      navigate(`/audit/reports/${encodeURIComponent(venue.name)}`);
-                    }}
-                  />
-                ))}
-              </AnimatePresence>
+              {scrollParent ? (
+                <Virtuoso
+                  customScrollParent={scrollParent}
+                  data={filteredVenues}
+                  itemContent={(index, venue) => (
+                    <div className="pb-4">
+                      <VenueCard 
+                        venue={venue} 
+                        onClick={() => {
+                          setSearchQuery("");
+                          navigate(`/audit/reports/${encodeURIComponent(venue.name)}`);
+                        }}
+                      />
+                    </div>
+                  )}
+                />
+              ) : null}
             </div>
           )
         ) : (
@@ -179,15 +205,20 @@ export default function AuditReportsPage({ hideHeader = false }) {
           ) : (
             <div className="flex flex-col gap-4">
               <h2 className="text-[17px] font-semibold text-white/90 px-1 pt-1">Reports for {venueName}</h2>
-              <AnimatePresence mode="popLayout">
-                {filteredReports.map(report => (
-                  <ReportCard 
-                    key={report.id} 
-                    report={report} 
-                    onClick={() => console.log('Navigate to report', report.id)}
-                  />
-                ))}
-              </AnimatePresence>
+              {scrollParent ? (
+                <Virtuoso
+                  customScrollParent={scrollParent}
+                  data={filteredReports}
+                  itemContent={(index, report) => (
+                    <div className="pb-4">
+                      <ReportCard 
+                        report={report} 
+                        onClick={() => console.log('Navigate to report', report.id)}
+                      />
+                    </div>
+                  )}
+                />
+              ) : null}
             </div>
           )
         )}
@@ -195,3 +226,4 @@ export default function AuditReportsPage({ hideHeader = false }) {
     </div>
   );
 }
+
