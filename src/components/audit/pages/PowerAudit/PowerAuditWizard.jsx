@@ -262,7 +262,6 @@ export default function PowerAuditWizard() {
           onSelect={(subId) => {
             setCurrentSubsection(subId);
             setIsAccordionOpen(false);
-            setErrors({});
             const container = document.getElementById('audit-form-container');
             if (container) container.scrollTo({ top: 0 });
           }}
@@ -276,6 +275,7 @@ export default function PowerAuditWizard() {
               control={control}
               errors={errors}
               useAccordions={true}
+              watch={watch}
             />
           </div>
         </div>

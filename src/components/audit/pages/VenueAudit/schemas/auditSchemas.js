@@ -13,7 +13,7 @@ export const VENUE_REPORT_INFO_SCHEMA = [
 
 export const VENUE_PERSONNEL_INFO_SCHEMA = [
   // Auditee
-  { type: 'heading', label: 'Auditee Information', className: 'text-slate-500 border-slate-200' },
+  { type: 'heading', label: 'Auditee Information', className: 'text-white/50 border-white/10' },
   { name: 'auditeeName', label: 'Name', type: 'text', required: true },
   { name: 'auditeeRole', label: 'Role', type: 'text', required: true, placeholder: 'e.g. CS / Venue Management Representative' },
   { name: 'auditeeContact', label: 'Contact Number & Email ID', type: 'text', required: true },
@@ -92,7 +92,7 @@ export const ADMINISTRATIVE_DETAILS_SCHEMA = [
   { name: 'washroomAvailable', label: 'Washroom Facility Available?', type: 'yes-no' },
   {
     type: 'group',
-    className: 'grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl border border-slate-100 animate-fade-in',
+    className: 'grid grid-cols-2 gap-4 bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
     showIf: (data) => data.washroomAvailable === 'yes',
     fields: [
       { name: 'washroomQuality', label: 'Quality of Washrooms', type: 'quality' },
@@ -103,7 +103,7 @@ export const ADMINISTRATIVE_DETAILS_SCHEMA = [
   { name: 'parkingAvailable', label: 'Open Space Available for Parking?', type: 'yes-no' },
   {
     type: 'group',
-    className: 'bg-slate-50 p-3 rounded-xl border border-slate-100 animate-fade-in',
+    className: 'bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
     showIf: (data) => data.parkingAvailable === 'yes',
     fields: [
       { name: 'parkingToiletAvailable', label: 'Separate Toilet Available at Parking?', type: 'yes-no' }
@@ -164,7 +164,7 @@ export const ADMINISTRATIVE_DETAILS_SCHEMA = [
   { name: 'emergencyExit', label: 'Emergency Exit Available at the Venue?', type: 'yes-no' },
   {
     type: 'group',
-    className: 'bg-slate-50 p-3 rounded-xl border border-slate-100 animate-fade-in',
+    className: 'bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
     showIf: (data) => data.emergencyExit === 'yes',
     fields: [
       { name: 'emergencyExitEveryFloor', label: 'Emergency Exit Access Available on Every Floor?', type: 'yes-no-na' }
@@ -201,7 +201,7 @@ export const SYSTEM_DETAILS_SCHEMA = [
   { name: 'antivirusAvailable', label: 'Antivirus Available at the Center?', type: 'yes-no' },
   {
     type: 'group',
-    className: 'bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-4 animate-fade-in',
+    className: 'bg-white/5 p-3 rounded-xl border border-white/10 space-y-4 animate-fade-in',
     showIf: (data) => data.antivirusAvailable === 'yes',
     fields: [
       { name: 'antivirusName', label: 'Name of Antivirus Installed on PC', type: 'text', placeholder: 'e.g. Windows Defender' },
@@ -228,7 +228,7 @@ export const LAB_DETAILS_SCHEMA = [
   { name: 'labsSameBuilding', label: 'Are All Labs in the Same Building?', type: 'yes-no' },
   {
     type: 'group',
-    className: 'bg-slate-50 p-3 rounded-xl border border-slate-100 animate-fade-in',
+    className: 'bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
     showIf: (data) => data.labsSameBuilding === 'no',
     fields: [
       { name: 'distanceBetweenBuildings', label: 'Distance Between Buildings', type: 'text', placeholder: 'e.g. 50 meters' }
@@ -245,7 +245,7 @@ export const LAB_DETAILS_SCHEMA = [
   { name: 'partitionAvailability', label: 'Is Partition Available Between Nodes?', type: 'yes-no' },
   {
     type: 'group',
-    className: 'bg-slate-50 p-3 rounded-xl border border-slate-100 animate-fade-in',
+    className: 'bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
     showIf: (data) => data.partitionAvailability === 'yes',
     fields: [
       { name: 'partitionType', label: 'Specify Partition Type', type: 'text', placeholder: 'e.g. Cardboard, Wooden' }

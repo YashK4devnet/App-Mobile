@@ -22,7 +22,7 @@ export const NETWORK_VENUE_INFO_SCHEMA = [
 
 export const NETWORK_PERSONNEL_INFO_SCHEMA = [
   // Auditee
-  { type: 'heading', label: 'Auditee Information', className: 'text-slate-500 border-slate-200' },
+  { type: 'heading', label: 'Auditee Information', className: 'text-white/50 border-white/10' },
   { name: 'auditeeName', label: 'Name', type: 'text', required: true },
   { name: 'auditeeRole', label: 'Role', type: 'text', required: true, placeholder: 'e.g. CS / Venue Management Representative' },
   { name: 'auditeeContact', label: 'Contact Number & Email ID', type: 'text', required: true },
@@ -735,7 +735,7 @@ export const NETWORK_OBSERVATIONS_SCHEMA = [
   {
     type: 'heading',
     label: 'Signatures & Verification',
-    className: 'text-slate-500 border-slate-200 mt-6'
+    className: 'text-white/50 border-white/10 mt-6'
   },
   {
     name: 'obs_cs_representative_sig',

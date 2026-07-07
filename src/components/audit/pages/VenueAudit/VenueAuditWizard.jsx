@@ -254,7 +254,6 @@ export default function VenueAuditWizard() {
           onSelect={(subId) => {
             setCurrentSubsection(subId);
             setIsAccordionOpen(false);
-            setErrors({});
             const container = document.getElementById('audit-form-container');
             if (container) container.scrollTo({ top: 0 });
           }}
@@ -267,6 +266,7 @@ export default function VenueAuditWizard() {
               schema={SUBSECTION_SCHEMAS[currentSubsection]}
               control={control}
               errors={errors}
+              watch={watch}
             />
           </div>
         </div>

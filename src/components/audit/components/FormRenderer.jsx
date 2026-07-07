@@ -250,7 +250,9 @@ function AccordionSection({ heading, fields, control, renderItem, errors = {} })
   );
 }
 
-export default function FormRenderer({ schema, control, errors = {}, useAccordions = false }) {
+export default function FormRenderer({ schema, control, errors = {}, useAccordions = false, watch }) {
+  const formData = watch ? watch() : {};
+
   const groupedSchema = React.useMemo(() => {
     if (!useAccordions) return schema;
     
@@ -292,8 +294,9 @@ export default function FormRenderer({ schema, control, errors = {}, useAccordio
   }, [schema, useAccordions]);
 
   const renderItem = (field, idx) => {
-    // Note: showIf logic requires watching the whole form, which we removed for performance.
-    // If showIf is absolutely needed, it would require RHF watch(). For now we render it.
+    if (field.showIf && !field.showIf(formData)) {
+      return null;
+    }
 
     if (field.type === 'accordion-group') {
       return (

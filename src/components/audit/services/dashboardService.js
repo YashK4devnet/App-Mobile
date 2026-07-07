@@ -5,28 +5,7 @@ export function getUserProfile() {
   };
 }
 
-export function getQuickActions() {
-  return [
-    {
-      id: "venue-audit",
-      title: "Venue Audit",
-      description: "Start a venue inspection",
-      icon: "building"
-    },
-    {
-      id: "power-audit",
-      title: "Power System Audit",
-      description: "Start power system audit",
-      icon: "lightning"
-    },
-    {
-      id: "network-audit",
-      title: "Network System Audit",
-      description: "Start network system audit",
-      icon: "globe"
-    }
-  ];
-}
+
 
 export function getRecentReports() {
   return [

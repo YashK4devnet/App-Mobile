@@ -22,7 +22,7 @@ export const POWER_VENUE_INFO_SCHEMA = [
 
 export const POWER_PERSONNEL_INFO_SCHEMA = [
   // Auditee
-  { type: 'heading', label: 'Auditee Information', className: 'text-slate-500 border-slate-200' },
+  { type: 'heading', label: 'Auditee Information', className: 'text-white/50 border-white/10' },
   { name: 'auditeeName', label: 'Name', type: 'text', required: true },
   { name: 'auditeeRole', label: 'Role', type: 'text', required: true, placeholder: 'e.g. CS / Venue Management Representative' },
   { name: 'auditeeContact', label: 'Contact Number & Email ID', type: 'text', required: true },
@@ -38,7 +38,7 @@ export const POWER_PERSONNEL_INFO_SCHEMA = [
 ];
 
 export const POWER_SECTION_1_SCHEMA = [
-  { type: 'heading', label: '1. Supply Transformer and Earth Pit', className: 'text-slate-500 border-slate-200' },
+  { type: 'heading', label: '1. Supply Transformer and Earth Pit', className: 'text-white/50 border-white/10' },
   { name: 'transformerRatingKva', label: '1. Transformer Rating in KVA', type: 'text', placeholder: 'e.g. 500' },
   { name: 'transformerPhase', label: 'Transformer Phase', type: 'text', placeholder: 'e.g. 3-phase or Single phase' },
   { name: 'sanctionedLoadKva', label: '2. Sanctioned Load in KVA', type: 'number', placeholder: 'e.g. 100' },
@@ -136,7 +136,7 @@ export const POWER_SECTION_2_SCHEMA = [
 ];
 
 export const POWER_SECTION_3_SCHEMA = [
-  { type: 'heading', label: 'Diesel Generator', className: 'text-slate-500 border-slate-200' },
+  { type: 'heading', label: 'Diesel Generator', className: 'text-white/50 border-white/10' },
   {
     name: 'q3_0_1',
     type: 'power-photo-question',
@@ -328,7 +328,7 @@ export const POWER_SECTION_4_SCHEMA = [
 ];
 
 export const POWER_SECTION_5_SCHEMA = [
-  { type: 'heading', label: 'UPS (Uninterruptible Power Supply)', className: 'text-slate-500 border-slate-200' },
+  { type: 'heading', label: 'UPS (Uninterruptible Power Supply)', className: 'text-white/50 border-white/10' },
   {
     name: 'q5_0_1',
     type: 'power-photo-question',
@@ -440,7 +440,7 @@ export const POWER_SECTION_5_SCHEMA = [
 ];
 
 export const POWER_SECTION_6_SCHEMA = [
-  { type: 'heading', label: 'UPS Batteries', className: 'text-slate-500 border-slate-200' },
+  { type: 'heading', label: 'UPS Batteries', className: 'text-white/50 border-white/10' },
 
   {
     name: 'q6_0_2',

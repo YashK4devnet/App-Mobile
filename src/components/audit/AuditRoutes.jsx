@@ -13,7 +13,11 @@ import AuditReportsPage from './pages/AuditReports/AuditReportsPage';
 import AuditSettingsPage from './pages/AuditSettings/AuditSettingsPage';
 
 const getHeaderTitle = (pathname) => {
-  if (pathname === '/audit/reports' || pathname === '/audit/reports/') return "Audit Reports";
+  if (pathname.startsWith('/audit/reports/')) {
+    const venueName = decodeURIComponent(pathname.split('/audit/reports/')[1]);
+    return `Reports - ${venueName}`;
+  }
+  if (pathname === '/audit/reports' || pathname === '/audit/reports/') return "Select a Venue";
   if (pathname === '/audit/settings' || pathname === '/audit/settings/') return "Settings";
   return "Management System";
 };
@@ -29,7 +33,10 @@ const ModuleContext = createContext({ basePath: '/audit' });
 const TAB_ROUTES = ['/audit', '/audit/reports', '/audit/settings'];
 
 const getPathIndex = (path) => {
-  const normalizedPath = path === '/audit/home' ? '/audit' : path;
+  let normalizedPath = path === '/audit/home' ? '/audit' : path;
+  if (normalizedPath.startsWith('/audit/reports/')) {
+    normalizedPath = '/audit/reports';
+  }
   return TAB_ROUTES.indexOf(normalizedPath);
 };
 
@@ -157,6 +164,7 @@ export default function AuditRoutes() {
             <Route index element={<PageTransition direction={direction}><AuditDashboardPage /></PageTransition>} />
             <Route path="home" element={<PageTransition direction={direction}><AuditDashboardPage /></PageTransition>} />
             <Route path="reports" element={<PageTransition direction={direction}><AuditReportsPage hideHeader={true} /></PageTransition>} />
+            <Route path="reports/:venueName" element={<PageTransition direction={direction}><AuditReportsPage hideHeader={true} /></PageTransition>} />
             <Route path="settings" element={<PageTransition direction={direction}><AuditSettingsPage /></PageTransition>} />
 
             {/* Audit Wizards */}

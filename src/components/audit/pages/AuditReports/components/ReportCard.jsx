@@ -37,9 +37,14 @@ export default function ReportCard({ report, onClick }) {
       <div className="flex justify-between items-start mb-3">
         <div>
           <h3 className="text-white font-medium text-[16px] leading-tight">
-            {report.venueName}
+            {report.auditType}
           </h3>
-          <p className="text-white/50 text-[12px] mt-1 flex items-center gap-1.5">
+          {report.reportName && (
+            <p className="text-white/90 text-[14px] mt-1 font-medium">
+              {report.reportName}
+            </p>
+          )}
+          <p className="text-white/50 text-[12px] mt-1.5 flex items-center gap-1.5">
             {/* SVG for Document */}
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -47,18 +52,18 @@ export default function ReportCard({ report, onClick }) {
             {report.id}
           </p>
         </div>
-        <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${statusClasses}`}>
+        <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border shrink-0 ml-3 ${statusClasses}`}>
           {report.status}
         </span>
       </div>
 
       <div className="flex items-center gap-4 mt-4 text-[13px] text-white/70">
         <div className="flex items-center gap-1.5">
-           {/* SVG for Audit Type */}
+           {/* SVG for User/Auditor */}
            <svg className="w-4 h-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
-          {report.auditType}
+          {report.auditorName}
         </div>
         <div className="flex items-center gap-1.5">
            {/* SVG for Date */}

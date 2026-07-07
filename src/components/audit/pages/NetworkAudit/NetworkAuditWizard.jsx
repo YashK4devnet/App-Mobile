@@ -267,7 +267,6 @@ export default function NetworkAuditWizard() {
           onSelect={(subId) => {
             setCurrentSubsection(subId);
             setIsAccordionOpen(false);
-            setErrors({});
             const container = document.getElementById('audit-form-container');
             if (container) container.scrollTo({ top: 0 });
           }}
@@ -281,6 +280,7 @@ export default function NetworkAuditWizard() {
               control={control}
               errors={errors}
               useAccordions={true}
+              watch={watch}
             />
           </div>
         </div>
