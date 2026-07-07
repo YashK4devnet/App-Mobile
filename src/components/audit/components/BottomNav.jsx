@@ -26,7 +26,7 @@ export default function BottomNav() {
                 navigate(target);
               }}
               className="flex flex-col items-center justify-center gap-1 text-[11px] font-light tracking-widest uppercase transition-all relative flex-1 cursor-pointer"
-              style={{ color: isActive ? '#ff6b6b' : 'rgba(255, 255, 255, 0.4)' }}
+              style={{ color: isActive ? '#4ECDC4' : 'rgba(255, 255, 255, 0.4)' }}
             >
               <IconComponent className="w-6 h-6 transition-transform active:scale-90" />
               <span>{tab.label}</span>

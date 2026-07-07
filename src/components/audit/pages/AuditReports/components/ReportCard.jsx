@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 // No heroicons import needed as SVGs are defined inline below
 
 // Note: If you don't have heroicons, we can fallback to your local Icons.js. 
@@ -16,20 +15,13 @@ const getStatusColor = (status) => {
   }
 };
 
-export default function ReportCard({ report, onClick }) {
+export default React.memo(function ReportCard({ report, onClick }) {
   const statusClasses = getStatusColor(report.status);
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ duration: 0.2 }}
+    <div
       onClick={onClick}
-      className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 cursor-pointer hover:bg-white/10 transition-colors group relative overflow-hidden"
+      className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 cursor-pointer hover:bg-white/10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] animate-fade-in group relative overflow-hidden"
     >
       {/* Decorative gradient orb */}
       <div className="absolute -top-10 -right-10 w-24 h-24 bg-white/5 rounded-full blur-2xl group-hover:bg-[#4ecdc4]/10 transition-colors" />
@@ -100,6 +92,6 @@ export default function ReportCard({ report, onClick }) {
           </span>
         </div>
       )}
-    </motion.div>
+    </div>
   );
-}
+});
