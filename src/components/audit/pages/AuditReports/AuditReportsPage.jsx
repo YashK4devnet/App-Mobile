@@ -14,11 +14,13 @@ const FILTERS = ["All", "Assigned", "Completed", "Waiting for Approval", "Approv
 
 export default function AuditReportsPage({ hideHeader = false }) {
   const navigate = useNavigate();
-  const { venueName: rawVenueName } = useParams();
-  const venueName = rawVenueName ? decodeURIComponent(rawVenueName) : null;
+  const { venueId } = useParams();
   
-  const { reports, isLoading: isReportsLoading, error: reportsError } = useAuditReports();
   const { venues, isLoading: isVenuesLoading, error: venuesError } = useAssignedVenues();
+  const selectedVenue = venues.find(v => v.id === venueId);
+  const venueName = selectedVenue ? selectedVenue.name : null;
+  
+  const { reports, isLoading: isReportsLoading, error: reportsError } = useAuditReports(venueId);
   
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,7 +42,7 @@ export default function AuditReportsPage({ hideHeader = false }) {
         parent = parent.parentElement;
       }
     }
-  }, [venueName]);
+  }, [venueId]);
 
   const filteredVenues = useMemo(() => {
     return venues.filter(venue => {
@@ -54,8 +56,6 @@ export default function AuditReportsPage({ hideHeader = false }) {
 
   const filteredReports = useMemo(() => {
     return reports.filter(report => {
-      // Filter by selected venue (from URL params)
-      if (venueName && report.venueName !== venueName) return false;
       
       // Filter by Status
       if (activeFilter !== "All" && report.status !== activeFilter) return false;
@@ -70,14 +70,10 @@ export default function AuditReportsPage({ hideHeader = false }) {
 
       return true;
     });
-  }, [reports, activeFilter, debouncedSearchQuery, venueName]);
+  }, [reports, activeFilter, debouncedSearchQuery]);
 
   const handleBack = () => {
-    if (venueName) {
-      navigate(-1);
-    } else {
-      navigate(-1);
-    }
+    navigate(-1);
   };
 
   return (
@@ -162,7 +158,7 @@ export default function AuditReportsPage({ hideHeader = false }) {
                         venue={venue} 
                         onClick={() => {
                           setSearchQuery("");
-                          navigate(`/audit/reports/${encodeURIComponent(venue.name)}`);
+                          navigate(`/audit/reports/${encodeURIComponent(venue.id)}`);
                         }}
                       />
                     </div>

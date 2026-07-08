@@ -15,6 +15,7 @@ const proxyTarget = cleanIp ? `http://${cleanIp}` : "http://localhost:8099";
 export default defineConfig({
   define: {
     "process.env.AUDIT_API_IP": JSON.stringify(process.env.AUDIT_API_IP),
+    "import.meta.env.VITE_API_URL": JSON.stringify(process.env.VITE_API_URL),
   },
   plugins: [
     tailwindcss(),

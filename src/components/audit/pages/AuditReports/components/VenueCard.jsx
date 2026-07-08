@@ -39,39 +39,6 @@ export default React.memo(function VenueCard({ venue, onClick }) {
         </span>
       </div>
 
-      <div className="flex items-center gap-4 mt-4 text-[13px] text-white/70">
-        <div className="flex items-center gap-1.5">
-           <svg className="w-4 h-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-          </svg>
-          {venue.type}
-        </div>
-        <div className="flex items-center gap-1.5">
-           <svg className="w-4 h-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          {new Date(venue.lastAuditDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-        </div>
-      </div>
-
-      <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
-        <span className="text-[12px] text-white/50">Total Reports</span>
-        <span className="text-[12px] font-bold text-white bg-white/10 px-2 py-0.5 rounded">
-          {venue.totalReports}
-        </span>
-      </div>
-      
-      {venue.pendingReports > 0 && (
-        <div className="mt-2 flex items-center justify-between">
-          <span className="text-[12px] text-white/50">Pending Reports</span>
-          <span className="text-[12px] font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded flex items-center gap-1">
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {venue.pendingReports}
-          </span>
-        </div>
-      )}
     </div>
   );
 });

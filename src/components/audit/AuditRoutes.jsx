@@ -14,8 +14,7 @@ import AuditSettingsPage from './pages/AuditSettings/AuditSettingsPage';
 
 const getHeaderTitle = (pathname) => {
   if (pathname.startsWith('/audit/reports/')) {
-    const venueName = decodeURIComponent(pathname.split('/audit/reports/')[1]);
-    return `Reports - ${venueName}`;
+    return `Reports`;
   }
   if (pathname === '/audit/reports' || pathname === '/audit/reports/') return "Select a Venue";
   if (pathname === '/audit/settings' || pathname === '/audit/settings/') return "Settings";
@@ -164,7 +163,7 @@ export default function AuditRoutes() {
             <Route index element={<PageTransition direction={direction}><AuditDashboardPage /></PageTransition>} />
             <Route path="home" element={<PageTransition direction={direction}><AuditDashboardPage /></PageTransition>} />
             <Route path="reports" element={<PageTransition direction={direction}><AuditReportsPage hideHeader={true} /></PageTransition>} />
-            <Route path="reports/:venueName" element={<PageTransition direction={direction}><AuditReportsPage hideHeader={true} /></PageTransition>} />
+            <Route path="reports/:venueId" element={<PageTransition direction={direction}><AuditReportsPage hideHeader={true} /></PageTransition>} />
             <Route path="settings" element={<PageTransition direction={direction}><AuditSettingsPage /></PageTransition>} />
 
             {/* Audit Wizards */}
