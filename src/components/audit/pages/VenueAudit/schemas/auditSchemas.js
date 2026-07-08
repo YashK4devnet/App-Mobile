@@ -58,31 +58,31 @@ export const CONTACT_DETAILS_SCHEMA = [
 ];
 
 export const ACCESSIBILITY_DETAILS_SCHEMA = [
-  { name: 'distCityCentre', label: 'Distance from City Centre', type: 'text', placeholder: 'e.g. 5 km' },
-  { name: 'distAirport', label: 'Distance from Airport', type: 'text', placeholder: 'e.g. 15 km' },
-  { name: 'distRailway', label: 'Distance from Railway Station', type: 'text', placeholder: 'e.g. 2.5 km' },
+  { name: 'distCityCentre', label: 'Distance from City Centre', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
+  { name: 'distAirport', label: 'Distance from Airport', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
+  { name: 'distRailway', label: 'Distance from Railway Station', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
   {
     type: 'row',
     fields: [
-      { name: 'distBusStop', label: 'Distance from Nearest Bus Stop', type: 'text', placeholder: 'e.g. 500 meters' },
+      { name: 'distBusStop', label: 'Distance from Nearest Bus Stop', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
       { name: 'busStopName', label: 'Nearest Bus Stop Name', type: 'text', placeholder: 'Enter stop name' }
     ]
   },
   {
     type: 'row',
     fields: [
-      { name: 'distPoliceStation', label: 'Distance from Police Station', type: 'text', placeholder: 'e.g. 1.2 km' },
+      { name: 'distPoliceStation', label: 'Distance from Police Station', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
       { name: 'policeStationName', label: 'Police Station Name', type: 'text', placeholder: 'Enter station name' }
     ]
   },
   {
     type: 'row',
     fields: [
-      { name: 'distHospital', label: 'Distance from Nearest Hospital', type: 'text', placeholder: 'e.g. 800 meters' },
+      { name: 'distHospital', label: 'Distance from Nearest Hospital', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
       { name: 'hospitalName', label: 'Nearest Hospital Name', type: 'text', placeholder: 'Enter hospital name' }
     ]
   },
-  { name: 'distFireStation', label: 'Distance from Fire Station', type: 'text', placeholder: 'e.g. 4 km' },
+  { name: 'distFireStation', label: 'Distance from Fire Station', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
   { name: 'approachRoadQuality', label: 'Approach Road Quality', type: 'quality' },
   { name: 'convenienceFeedback', label: 'Overall Convenience Feedback', type: 'textarea', placeholder: 'Enter feedback' }
 ];
@@ -95,8 +95,8 @@ export const ADMINISTRATIVE_DETAILS_SCHEMA = [
     className: 'grid grid-cols-2 gap-4 bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
     showIf: (data) => data.washroomAvailable === 'yes',
     fields: [
-      { name: 'washroomQuality', label: 'Quality of Washrooms', type: 'quality' },
-      { name: 'washroomCleanliness', label: 'Cleanliness of Washrooms', type: 'quality' }
+      { name: 'washroomQuality', label: 'Quality of Washrooms', type: 'select', options: ['0-3', '4-7', '8-10'] },
+      { name: 'washroomCleanliness', label: 'Cleanliness of Washrooms', type: 'select', options: ['0-3', '4-7', '8-10'] }
     ]
   },
   { name: 'drinkingWaterAvailable', label: 'Safe Drinking Water Facilities Available?', type: 'yes-no' },
@@ -117,7 +117,7 @@ export const ADMINISTRATIVE_DETAILS_SCHEMA = [
   { name: 'lockersAvailable', label: 'Lockers Available to Keep Candidate Electronic Gadgets?', type: 'yes-no' },
   { name: 'comfortableSeats', label: 'Does Computer Lab Have Comfortable Seats?', type: 'yes-no' },
   { name: 'adequateSpaceCandidates', label: 'Adequate Space Available Between Two Adjacent Candidates?', type: 'yes-no' },
-  { name: 'approxSpaceSeats', label: 'Approximate Space Between Two Seats/Candidates', type: 'text', placeholder: 'e.g. 3 feet' },
+  { name: 'approxSpaceSeats', label: 'Approximate Space Between Two Seats/Candidates', type: 'select', options: ['3FT', 'More than 3FT'] },
   { name: 'liftFacility', label: 'Lift Facility Available If There Are Multiple Floors?', type: 'yes-no-na' },
   { name: 'wheelchairRamp', label: 'Wheel Chair/Ramp Facility Available for PH Candidates?', type: 'yes-no' },
   { name: 'groundFloorLab', label: 'Lab Available on Ground Floor for PH Candidates?', type: 'yes-no-na' },
@@ -126,36 +126,19 @@ export const ADMINISTRATIVE_DETAILS_SCHEMA = [
   { name: 'acAdequate', label: 'Is the Air Conditioning Facility Adequate?', type: 'yes-no-na' },
 
   { type: 'heading', label: 'Manpower & Verification' },
-  { name: 'totalManpower', label: 'Total Number of Venue Manpower Available', type: 'number', placeholder: 'e.g. 25', required: true },
-  { name: 'manpowerType', label: 'Type of Staff/Manpower Engaged', type: 'text', placeholder: 'e.g. Technical, Security', required: true },
+  { name: 'totalManpower', label: 'Total Number of Venue Manpower Available', type: 'select', options: ['<10', '10-20', '>20'] },
+  { name: 'manpowerType', label: 'Type of Staff/Manpower Engaged', type: 'select', options: ['EMPLOYEE', 'CONTRACT', 'MIXED'] },
   { name: 'policeVerification', label: 'Background/Police Verification of Staff Available?', type: 'yes-no' },
-  { name: 'staffComputerKnowledge', label: 'No. of Faculty/Staff with Computer Knowledge', type: 'number', placeholder: 'e.g. 10', required: true },
+  { name: 'staffComputerKnowledge', label: 'No. of Faculty/Staff with Computer Knowledge', type: 'select', options: ['<10', '10-20', '>20'] },
 
   { type: 'heading', label: 'Technical & IT Facilities' },
   { name: 'separateAreaScanningPrinting', label: 'Separate Area for Scanning/Printing?', type: 'yes-no' },
-  {
-    type: 'row',
-    fields: [
-      { name: 'printersCount', label: 'Number of Printers Available', type: 'number', placeholder: 'e.g. 2', required: true },
-      { name: 'scannersCount', label: 'Number of Scanners Available', type: 'number', placeholder: 'e.g. 2', required: true }
-    ]
-  },
-  {
-    type: 'group',
-    className: 'animate-fade-in',
-    showIf: (data) => parseInt(data.printersCount) > 0,
-    fields: [
-      { name: 'printersType', label: 'Type of Printers', type: 'text', placeholder: 'e.g. Laserjet', required: true }
-    ]
-  },
-  {
-    type: 'group',
-    className: 'animate-fade-in',
-    showIf: (data) => parseInt(data.scannersCount) > 0,
-    fields: [
-      { name: 'scannersType', label: 'Type of Scanners', type: 'text', placeholder: 'e.g. Flatbed', required: true }
-    ]
-  },
+
+  { name: 'printersCount', label: 'Number of Printers Available', type: 'number', placeholder: 'e.g. 2', required: true },
+  { name: 'printersType', label: 'Type of Printers', type: 'select', options: ['Laser', 'DeskJet'] },
+  { name: 'scannersCount', label: 'Number of Scanners Available', type: 'number', placeholder: 'e.g. 2', required: true },
+  { name: 'scannersType', label: 'Type of Scanners', type: 'select', options: ['FlatBed', 'Feeder'] },
+
 
   { type: 'heading', label: 'Campus & Safety' },
   { name: 'closedBoundary', label: 'Is the Entire Campus Inside a Closed Boundary?', type: 'yes-no' },
@@ -188,12 +171,48 @@ export const SYSTEM_DETAILS_SCHEMA = [
   { prefix: 'aadharNodes', label: 'Aadhar Desk Nodes', type: 'node-counts' },
   { prefix: 'videoRecordingMachine', label: 'Video Recording Machine', type: 'node-counts' },
 
-  { type: 'heading', label: 'Hardware & Specifications' },
-  { name: 'processors', label: 'Processors', type: 'dynamic-list', typePlaceholder: 'e.g. Intel Core i5 / AMD Ryzen 5' },
-  { name: 'osSpecifications', label: 'OS Specifications', type: 'dynamic-list', typePlaceholder: 'e.g. Windows 10 Pro / Ubuntu' },
-  { name: 'ramDetails', label: 'RAM Details', type: 'dynamic-list', typePlaceholder: 'e.g. 8GB DDR4' },
-  { name: 'hddDetails', label: 'HDD / Storage Details', type: 'dynamic-list', typePlaceholder: 'e.g. 500GB SSD' },
-  { name: 'monitorTypes', label: 'Monitor Types', type: 'dynamic-list', typePlaceholder: 'e.g. 21-inch Dell LED' },
+  { type: 'heading', label: 'Types of Processors' },
+  { name: 'i3available', label: 'Number of available INTEL Core i3 processors', type: 'number' },
+  { name: 'i3working', label: 'Number of working INTEL Core i3 processors', type: 'number' },
+  { name: 'i3speed', label: 'speef of the INTEL Core i3 processors', type: 'number' },
+  { name: 'i5available', label: 'Number of available INTEL Core i5 processors', type: 'number' },
+  { name: 'i5working', label: 'Number of working INTEL Core i5 processors', type: 'number' },
+  { name: 'i5speed', label: 'speef of the INTEL Core i5 processors', type: 'number' },
+  { name: 'i7available', label: 'Number of available INTEL Core i7 processors', type: 'number' },
+  { name: 'i7working', label: 'Number of working INTEL Core i7 processors', type: 'number' },
+  { name: 'i7speed', label: 'speef of the INTEL Core i7 processors', type: 'number' },
+  { type: 'heading', label: 'Types of OS' },
+  { name: 'win7available', label: 'Number of available win7 pcs', type: 'number' },
+  { name: 'win7working', label: 'Number of working win7 pcs', type: 'number' },
+  { name: 'win8available', label: 'Number of available win8 pcs', type: 'number' },
+  { name: 'win8working', label: 'Number of working win8 pcs', type: 'number' },
+  { name: 'win10available', label: 'Number of available win10 pcs', type: 'number' },
+  { name: 'win10working', label: 'Number of working win10 pcs', type: 'number' },
+  { name: 'win11available', label: 'Number of available win11 pcs', type: 'number' },
+  { name: 'win11working', label: 'Number of working win11 pcs', type: 'number' },
+  { name: 'linuxavailable', label: 'Number of available linux pcs', type: 'number' },
+  { name: 'linuxworking', label: 'Number of working linux pcs', type: 'number' },
+  { name: 'otheravailable', label: 'Number of available other os pcs', type: 'number' },
+  { name: 'otherworking', label: 'Number of working other os pcs', type: 'number' },
+  { name: 'ieVersion', label: 'Internet explorer version available', type: 'select', options: ['IE8', 'IE9', 'IE10'] },
+  { name: 'twoGBramAvail', label: 'Number of available 2GB ram', type: 'number' },
+  { name: 'twoGBramWork', label: 'Number of working 2GB ram', type: 'number' },
+  { name: 'fourGBramAvail', label: 'Number of available 4GB ram', type: 'number' },
+  { name: 'fourGBramWork', label: 'Number of working 4GB ram', type: 'number' },
+  { name: 'eightGBramAvail', label: 'Number of available 8GB ram', type: 'number' },
+  { name: 'eightGBramWork', label: 'Number of working 8GB ram', type: 'number' },
+  { name: 'hddAvail256', label: 'Number of available 256GB HDD', type: 'number' },
+  { name: 'hddwork256', label: 'Number of working 256GB HDD', type: 'number' },
+  { name: 'hddAvail512', label: 'Number of available 512GB HDD', type: 'number' },
+  { name: 'hddwork512', label: 'Number of working 512GB HDD', type: 'number' },
+  { name: 'hddAvail1', label: 'Number of available 1TB HDD', type: 'number' },
+  { name: 'hddwork1', label: 'Number of working 1TB HDD', type: 'number' },
+  { name: 'monitorAvail15', label: 'Number of available 15 inch monitors', type: 'number' },
+  { name: 'monitorwork15', label: 'Number of working 15 inch monitors', type: 'number' },
+  { name: 'monitorAvail17', label: 'Number of available 17 inch monitors', type: 'number' },
+  { name: 'monitorwork17', label: 'Number of working 17 inch monitors', type: 'number' },
+  { name: 'monitorAvail19', label: 'Number of available 19 inch monitors', type: 'number' },
+  { name: 'monitorwork19', label: 'Number of working 19 inch monitors', type: 'number' },
 
   { type: 'heading', label: 'Policies & Software' },
   { name: 'osLicenseOnAllNodes', label: 'OS License Available on All Client Nodes?', type: 'yes-no' },
@@ -231,7 +250,7 @@ export const LAB_DETAILS_SCHEMA = [
     className: 'bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
     showIf: (data) => data.labsSameBuilding === 'no',
     fields: [
-      { name: 'distanceBetweenBuildings', label: 'Distance Between Buildings', type: 'text', placeholder: 'e.g. 50 meters' }
+      { name: 'distanceBetweenBuildings', label: 'Distance Between Buildings', type: 'select', options: ['<1KM', '1-2KMS', '>2KMS'] }
     ]
   },
   { name: 'labsSameFloor', label: 'Are All Labs on the Same Floor?', type: 'yes-no' },
@@ -239,7 +258,25 @@ export const LAB_DETAILS_SCHEMA = [
 
   { type: 'heading', label: 'Node Distribution & Floors' },
   { name: 'labsFloorCount', label: 'Total Labs Floor Count', type: 'number', placeholder: 'e.g. 3' },
-  { name: 'nodeBifurcation', label: 'Count of Nodes Bifurcation', type: 'nested-list' },
+  { 
+    name: 'nodeBifurcation', 
+    label: 'Count of Nodes Bifurcation', 
+    type: 'array',
+    itemLabel: 'Floor',
+    fields: [
+      { name: 'floorName', label: 'Floor Name', type: 'text', placeholder: 'e.g. 1st Floor, Ground Floor', required: true },
+      {
+        name: 'labs',
+        label: 'Labs on this floor',
+        type: 'array',
+        itemLabel: 'Lab',
+        fields: [
+          { name: 'labName', label: 'Lab Name', type: 'text', placeholder: 'e.g. Lab A', required: true },
+          { name: 'nodesCount', label: 'Nodes Count', type: 'number', placeholder: 'e.g. 50', required: true }
+        ]
+      }
+    ]
+  },
 
   { type: 'heading', label: 'Partition & Seating Matrix' },
   { name: 'partitionAvailability', label: 'Is Partition Available Between Nodes?', type: 'yes-no' },
@@ -273,8 +310,31 @@ export const CCTV_DETAILS_SCHEMA = [
   { name: 'cctvsConnectedToMonitors', label: 'All CCTV cameras are connected to the monitors?', type: 'yes-no' },
 
   { type: 'heading', label: 'Camera Count & Specifications' },
-  { name: 'cctvNodeBifurcation', label: 'Specify count of CCTV camera (Floor & Lab wise)', type: 'nested-list' },
-  { name: 'cctvHardwareSpecifications', label: 'Define the specifics of the resolution', type: 'dynamic-list', typePlaceholder: 'e.g. 1080p, 4MP' },
+  { 
+    name: 'cctvNodeBifurcation', 
+    label: 'Specify count of CCTV camera (Floor & Lab wise)', 
+    type: 'array',
+    itemLabel: 'Floor',
+    fields: [
+      { name: 'floorName', label: 'Floor Name', type: 'text', placeholder: 'e.g. 1st Floor', required: true },
+      {
+        name: 'labs',
+        label: 'Labs on this floor',
+        type: 'array',
+        itemLabel: 'Lab',
+        fields: [
+          { name: 'labName', label: 'Lab Name', type: 'text', placeholder: 'e.g. Lab A', required: true },
+          { name: 'nodesCount', label: 'CCTV Cameras Count', type: 'number', placeholder: 'e.g. 5', required: true }
+        ]
+      }
+    ]
+  },
+  { name: 'cctvAvail2mp', label: 'No of available 2MP cameras', type: 'number' },
+  { name: 'cctvWork2mp', label: 'No of working 2MP cameras', type: 'number' },
+  { name: 'cctvAvail5mp', label: 'No of available 5MP cameras', type: 'number' },
+  { name: 'cctvWork5mp', label: 'No of working 5MP cameras', type: 'number' },
+  { name: 'cctvAvailHigher', label: 'No of available higher resolution cameras', type: 'number' },
+  { name: 'cctvWorkHigher', label: 'No of working higher resolution cameras', type: 'number' },
 
 
   { type: 'heading', label: 'Recording & DVR/NVR Details' },
@@ -288,7 +348,7 @@ export const CCTV_DETAILS_SCHEMA = [
     ]
   },
   { name: 'venueReadyLiveCctv', label: 'Venue ready to give for live CCTV feeding?', type: 'yes-no' },
-  { name: 'dvrOwnership', label: 'DVR belongs to the venue or to any third party?', type: 'text', placeholder: 'e.g. self owned or hired/borrowed' },
+  { name: 'dvrOwnership', label: 'DVR belongs to the venue or to any third party?', type: 'yes-no' },
   { name: 'cctvPassageCovered', label: 'CCTV covering the passage area?', type: 'yes-no' },
   { name: 'dvrNvrType', label: 'Type of DVR/NVR', type: 'text', placeholder: 'e.g. DVR / NVR' },
   { name: 'dvrNvrMakeModel', label: 'Make and model no of the DVR/NVR', type: 'text' },
@@ -300,12 +360,21 @@ export const CCTV_DETAILS_SCHEMA = [
 export const CONCLUSION_SCHEMA = [
   { type: 'heading', label: 'Audit Details' },
   { name: 'auditDateTime', label: 'Audit Date & Time', type: 'datetime-local' },
-  { name: 'auditDuration', label: 'Audit Duration', type: 'text', placeholder: 'e.g. 2 hours 30 mins' },
+  { name: 'auditDuration', label: 'Audit Duration', type: 'select', options: ['<2HRS', '2-4HRS', '>4HRS'] },
   { name: 'auditorName', label: 'Auditor Name', type: 'text', placeholder: 'e.g. R CHARAN KUMAR' },
   { type: 'heading', label: 'Final Assessment' },
   { name: 'overallVenueRating', label: 'Overall Venue Rating', type: 'rating-10' },
   { name: 'recommendedForExam', label: 'Is Venue Recommended for Exam?', type: 'yes-no' },
-  { name: 'otherPersonnelDetails', label: 'Other Personnel Details', type: 'textarea', placeholder: 'Enter details of any other personnel present during audit...' },
+  { 
+    name: 'otherPersonnelDetails', 
+    label: 'Other Personnel Details', 
+    type: 'array', 
+    itemLabel: 'Person',
+    fields: [
+      { name: 'name', label: 'Name', type: 'text', placeholder: 'Enter name' },
+      { name: 'contact', label: 'Contact Number', type: 'phone', placeholder: 'Enter contact number' }
+    ]
+  },
   { type: 'heading', label: 'Signatures & Seals' },
   { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature', required: true },
   { name: 'venueAdminSignature', label: 'Venue Administrator Signature & Seal', type: 'signature', required: true },

@@ -16,3 +16,5 @@ export * from './FormNetworkQuestion';
 export * from './FormDevicePhotoList';
 export * from './FormNumberedTextList';
 export * from './FormSignature';
+export * from './FormSelectWithCounts';
+export * from './FormSelect';

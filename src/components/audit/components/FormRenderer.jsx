@@ -1,5 +1,7 @@
 import React from 'react';
-import { Controller } from 'react-hook-form';
+import { Controller, useFieldArray } from 'react-hook-form';
+import { PlusIcon, TrashIcon } from './Icons';
+import { Label } from './form-controls/Label';
 import { 
   FormTextField, 
   FormTextArea, 
@@ -17,7 +19,9 @@ import {
   FormNetworkQuestion,
   FormDevicePhotoList,
   FormNumberedTextList,
-  FormSignature
+  FormSignature,
+  FormSelectWithCounts,
+  FormSelect
 } from './form-controls';
 
 function renderField(field, control) {
@@ -155,6 +159,10 @@ function renderField(field, control) {
             );
           case 'nested-list':
             return <FormNestedDynamicList {...commonProps} />;
+          case 'select-with-counts':
+            return <FormSelectWithCounts {...commonProps} options={field.options} />;
+          case 'select':
+            return <FormSelect {...commonProps} options={field.options} />;
           case 'rating-10':
             return <FormRating10Scale {...commonProps} />;
           case 'image-upload':
@@ -250,6 +258,76 @@ function AccordionSection({ heading, fields, control, renderItem, errors = {} })
   );
 }
 
+function ObjectSection({ field, control, renderItem, formData }) {
+  return (
+    <div className={`space-y-4 p-4 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl select-none ${field.className || ''}`}>
+      {field.label && <Label text={field.label} required={field.required} />}
+      <div className="space-y-4">
+        {field.fields.map((subField, sIdx) => {
+          const prefixedField = {
+            ...subField,
+            name: `${field.name}.${subField.name}`
+          };
+          return renderItem(prefixedField, sIdx);
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ArraySection({ field, control, renderItem, formData }) {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: field.name
+  });
+
+  return (
+    <div className={`space-y-4 p-4 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl select-none ${field.className || ''}`}>
+      <div className="flex justify-between items-center mb-1">
+        <Label text={field.label} required={field.required} />
+        <button
+          type="button"
+          onClick={() => append({})}
+          className="flex items-center gap-1 text-[12px] font-medium text-[#ff6b6b] hover:text-white bg-[#ff6b6b]/10 hover:bg-[#ff6b6b]/20 active:scale-[0.98] transition-all px-3 py-1.5 rounded-lg cursor-pointer"
+        >
+          <PlusIcon className="w-3.5 h-3.5" />
+          Add {field.itemLabel || 'Item'}
+        </button>
+      </div>
+
+      {fields.length === 0 ? (
+        <div className="text-center py-6 bg-white/5 rounded-xl border border-dashed border-white/20">
+          <p className="text-[13px] text-white/50 font-light">No {field.itemLabel?.toLowerCase() || 'items'} added yet.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {fields.map((item, index) => (
+            <div key={item.id} className="relative p-4 bg-white/10 border border-white/10 rounded-xl animate-fade-in shadow-sm">
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="absolute -top-3 -right-3 w-7 h-7 bg-[#ff6b6b] border border-white/10 text-white hover:bg-rose-600 hover:border-rose-200 rounded-full flex items-center justify-center shadow-sm cursor-pointer z-10 transition-colors"
+              >
+                <TrashIcon className="w-4 h-4" />
+              </button>
+              
+              <div className="space-y-4">
+                {field.fields.map((subField, sIdx) => {
+                  const prefixedField = {
+                    ...subField,
+                    name: `${field.name}.${index}.${subField.name}`
+                  };
+                  return renderItem(prefixedField, sIdx, item);
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function FormRenderer({ schema, control, errors = {}, useAccordions = false, watch }) {
   const formData = watch ? watch() : {};
 
@@ -293,8 +371,8 @@ export default function FormRenderer({ schema, control, errors = {}, useAccordio
     return result;
   }, [schema, useAccordions]);
 
-  const renderItem = (field, idx) => {
-    if (field.showIf && !field.showIf(formData)) {
+  const renderItem = (field, idx, itemContext = null) => {
+    if (field.showIf && !field.showIf(formData, itemContext)) {
       return null;
     }
 
@@ -333,6 +411,14 @@ export default function FormRenderer({ schema, control, errors = {}, useAccordio
           {field.fields.map((subField, sIdx) => renderItem(subField, sIdx))}
         </div>
       );
+    }
+
+    if (field.type === 'object') {
+      return <ObjectSection key={`obj-${idx}`} field={field} control={control} renderItem={renderItem} formData={formData} />;
+    }
+
+    if (field.type === 'array') {
+      return <ArraySection key={`arr-${idx}`} field={field} control={control} renderItem={renderItem} formData={formData} />;
     }
 
     return renderField(field, control);
