@@ -30,12 +30,12 @@ export const VENUE_PERSONNEL_INFO_SCHEMA = [
 
 export const LOCATION_DETAILS_SCHEMA = [
   { name: 'region', label: 'Region', type: 'text' },
-  { 
-    type: 'row', 
+  {
+    type: 'row',
     fields: [
       { name: 'state', label: 'State', type: 'text' },
       { name: 'city', label: 'City', type: 'text' }
-    ] 
+    ]
   },
   { name: 'venueName', label: 'Venue Name', type: 'text' },
   { name: 'address', label: 'Complete Venue Address', type: 'textarea', placeholder: 'Enter complete address' },
@@ -61,26 +61,26 @@ export const ACCESSIBILITY_DETAILS_SCHEMA = [
   { name: 'distCityCentre', label: 'Distance from City Centre', type: 'text', placeholder: 'e.g. 5 km' },
   { name: 'distAirport', label: 'Distance from Airport', type: 'text', placeholder: 'e.g. 15 km' },
   { name: 'distRailway', label: 'Distance from Railway Station', type: 'text', placeholder: 'e.g. 2.5 km' },
-  { 
-    type: 'row', 
+  {
+    type: 'row',
     fields: [
       { name: 'distBusStop', label: 'Distance from Nearest Bus Stop', type: 'text', placeholder: 'e.g. 500 meters' },
       { name: 'busStopName', label: 'Nearest Bus Stop Name', type: 'text', placeholder: 'Enter stop name' }
-    ] 
+    ]
   },
-  { 
-    type: 'row', 
+  {
+    type: 'row',
     fields: [
       { name: 'distPoliceStation', label: 'Distance from Police Station', type: 'text', placeholder: 'e.g. 1.2 km' },
       { name: 'policeStationName', label: 'Police Station Name', type: 'text', placeholder: 'Enter station name' }
-    ] 
+    ]
   },
-  { 
-    type: 'row', 
+  {
+    type: 'row',
     fields: [
       { name: 'distHospital', label: 'Distance from Nearest Hospital', type: 'text', placeholder: 'e.g. 800 meters' },
       { name: 'hospitalName', label: 'Nearest Hospital Name', type: 'text', placeholder: 'Enter hospital name' }
-    ] 
+    ]
   },
   { name: 'distFireStation', label: 'Distance from Fire Station', type: 'text', placeholder: 'e.g. 4 km' },
   { name: 'approachRoadQuality', label: 'Approach Road Quality', type: 'quality' },
@@ -133,12 +133,12 @@ export const ADMINISTRATIVE_DETAILS_SCHEMA = [
 
   { type: 'heading', label: 'Technical & IT Facilities' },
   { name: 'separateAreaScanningPrinting', label: 'Separate Area for Scanning/Printing?', type: 'yes-no' },
-  { 
-    type: 'row', 
+  {
+    type: 'row',
     fields: [
       { name: 'printersCount', label: 'Number of Printers Available', type: 'number', placeholder: 'e.g. 2', required: true },
       { name: 'scannersCount', label: 'Number of Scanners Available', type: 'number', placeholder: 'e.g. 2', required: true }
-    ] 
+    ]
   },
   {
     type: 'group',
@@ -216,12 +216,12 @@ export const SYSTEM_DETAILS_SCHEMA = [
 
 export const LAB_DETAILS_SCHEMA = [
   { type: 'heading', label: 'Lab Capacity' },
-  { 
-    type: 'row', 
+  {
+    type: 'row',
     fields: [
       { name: 'totalLabsAvailable', label: 'Total Labs Available', type: 'number', placeholder: 'e.g. 10' },
       { name: 'totalLabsAllocated', label: 'Total Labs Allocated for Exam', type: 'number', placeholder: 'e.g. 8' }
-    ] 
+    ]
   },
 
   { type: 'heading', label: 'Physical Arrangement' },
@@ -261,6 +261,40 @@ export const LAB_DETAILS_SCHEMA = [
 
   { type: 'heading', label: 'Feedback' },
   { name: 'labFeedback', label: 'Overall Lab Feedback', type: 'textarea', placeholder: 'Enter remarks...' }
+];
+
+export const CCTV_DETAILS_SCHEMA = [
+  { type: 'heading', label: 'CCTV Camera Overview' },
+  { name: 'cctvEntryExitCovered', label: 'Is CCTV camera covering complete entry and exit?', type: 'yes-no' },
+  { name: 'cctvsInAllLabs', label: 'CCTVs available in all labs without any blind spots?', type: 'yes-no' },
+  { name: 'serverRoomCctvCovered', label: 'Is the server room covered under the CCTV camera?', type: 'yes-no' },
+  { name: 'registrationCctvAvailable', label: 'CCTV cameras available in registration area to capture movement and candidate faces?', type: 'yes-no' },
+  { name: 'totalCctvCameras', label: 'Total no of cameras', type: 'number' },
+  { name: 'cctvsConnectedToMonitors', label: 'All CCTV cameras are connected to the monitors?', type: 'yes-no' },
+
+  { type: 'heading', label: 'Camera Count & Specifications' },
+  { name: 'cctvNodeBifurcation', label: 'Specify count of CCTV camera (Floor & Lab wise)', type: 'nested-list' },
+  { name: 'cctvHardwareSpecifications', label: 'Define the specifics of the resolution', type: 'dynamic-list', typePlaceholder: 'e.g. 1080p, 4MP' },
+
+
+  { type: 'heading', label: 'Recording & DVR/NVR Details' },
+  { name: 'cctvLiveFeedRecorded', label: 'Is the CCTV/LIVE feed being recorded?', type: 'yes-no' },
+  {
+    type: 'group',
+    className: 'bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
+    showIf: (data) => data.cctvLiveFeedRecorded === 'yes',
+    fields: [
+      { name: 'dvrNvrRecordingCapacity', label: 'Recording capacity of DVR/NVR?', type: 'text', placeholder: 'e.g. 1TB, 30 days' }
+    ]
+  },
+  { name: 'venueReadyLiveCctv', label: 'Venue ready to give for live CCTV feeding?', type: 'yes-no' },
+  { name: 'dvrOwnership', label: 'DVR belongs to the venue or to any third party?', type: 'text', placeholder: 'e.g. self owned or hired/borrowed' },
+  { name: 'cctvPassageCovered', label: 'CCTV covering the passage area?', type: 'yes-no' },
+  { name: 'dvrNvrType', label: 'Type of DVR/NVR', type: 'text', placeholder: 'e.g. DVR / NVR' },
+  { name: 'dvrNvrMakeModel', label: 'Make and model no of the DVR/NVR', type: 'text' },
+
+  { type: 'heading', label: 'Feedback' },
+  { name: 'overallCctvFeedback', label: 'Overall CCTV coverage feedback', type: 'textarea', placeholder: 'Enter remarks...' }
 ];
 
 export const CONCLUSION_SCHEMA = [

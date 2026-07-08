@@ -18,6 +18,7 @@ import {
   ADMINISTRATIVE_DETAILS_SCHEMA,
   SYSTEM_DETAILS_SCHEMA,
   LAB_DETAILS_SCHEMA,
+  CCTV_DETAILS_SCHEMA,
   CONCLUSION_SCHEMA
 } from './schemas/auditSchemas';
 import { 
@@ -48,6 +49,7 @@ const SUBSECTION_SCHEMAS = {
   'A.4': ADMINISTRATIVE_DETAILS_SCHEMA,
   'B.1': SYSTEM_DETAILS_SCHEMA,
   'B.3': LAB_DETAILS_SCHEMA,
+  'B.4': CCTV_DETAILS_SCHEMA,
   'Conclusion': CONCLUSION_SCHEMA
 };
 
@@ -60,6 +62,7 @@ const STEPS = [
   { id: 'A.4' },
   { id: 'B.1' },
   { id: 'B.3' },
+  { id: 'B.4' },
   { id: 'Conclusion' }
 ];
 
@@ -72,6 +75,7 @@ const SECTION_TO_PAYLOAD_KEY = {
   'A.4': 'administrativeDetails',
   'B.1': 'systemDetails',
   'B.3': 'labDetails',
+  'B.4': 'cctvDetails',
   'Conclusion': 'conclusion'
 };
 
@@ -125,6 +129,7 @@ export default function VenueAuditWizard() {
   const statusA4 = getSectionStatus('A.4', currentData);
   const statusB1 = getSectionStatus('B.1', currentData);
   const statusB3 = getSectionStatus('B.3', currentData);
+  const statusB4 = getSectionStatus('B.4', currentData);
   const statusConclusion = getSectionStatus('Conclusion', currentData);
 
   if (isInitializing) {
@@ -166,7 +171,8 @@ export default function VenueAuditWizard() {
         title: 'PART B. SYSTEM DETAILS',
         sections: [
           { id: 'B.1', title: 'B.1 System Overview & Count', itemsCount: getItemsCount('B.1'), status: statusB1, icon: CogIcon },
-          { id: 'B.3', title: 'B.3 Lab Details', itemsCount: getItemsCount('B.3'), status: statusB3, icon: BuildingIcon }
+          { id: 'B.3', title: 'B.3 Lab Details', itemsCount: getItemsCount('B.3'), status: statusB3, icon: BuildingIcon },
+          { id: 'B.4', title: 'B.4 CCTV Details', itemsCount: getItemsCount('B.4'), status: statusB4, icon: CogIcon }
         ]
       },
       {
@@ -220,6 +226,7 @@ export default function VenueAuditWizard() {
       { id: 'A.4', label: 'A.4 Administrative Details', status: statusA4 },
       { id: 'B.1', label: 'B.1 System Details', status: statusB1 },
       { id: 'B.3', label: 'B.3 Lab Details', status: statusB3 },
+      { id: 'B.4', label: 'B.4 CCTV Details', status: statusB4 },
       { id: 'Conclusion', label: 'Conclusion', status: statusConclusion }
     ];
 
