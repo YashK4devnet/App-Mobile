@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { auditHttpClient } from '../../services/httpClient';
+import { auditHttpClient } from '../../../services/httpClient';
 
 export function useAssignedVenues() {
   const [venues, setVenues] = useState([]);
