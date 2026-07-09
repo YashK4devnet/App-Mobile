@@ -235,7 +235,6 @@ export const NETWORK_OBSERVATIONS_SCHEMA = [
       { name: 'observation', label: 'Observation Detail', type: 'textarea', placeholder: 'Enter observation' }
     ]
   },
-  createCustomQuestions('observations'),
   {
     type: 'heading',
     label: 'Signatures & Verification',

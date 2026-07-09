@@ -80,7 +80,10 @@ export const validateSchema = (schema, data) => {
         if (list.length === 0) {
           errors[f.name] = "At least one entry is required";
         } else {
-          const hasEmpty = list.some(item => !item || !item.trim());
+          const hasEmpty = list.some(item => {
+            const val = typeof item === 'object' && item !== null ? item.observation : item;
+            return !val || typeof val.trim !== 'function' || !val.trim();
+          });
           if (hasEmpty) errors[f.name] = "Entries cannot be empty";
         }
       } else {
@@ -167,7 +170,10 @@ export const calculateSchemaProgress = (schema, data) => {
       if (validCount > 0) filled++;
     } else if (fieldType === 'numbered-text-list') {
       const list = data[f.name] || [];
-      const validCount = list.filter(item => item && item.trim()).length;
+      const validCount = list.filter(item => {
+        const val = typeof item === 'object' && item !== null ? item.observation : item;
+        return val && typeof val.trim === 'function' && val.trim();
+      }).length;
       if (validCount > 0) filled++;
     } else {
       const val = data[f.name];
