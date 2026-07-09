@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 import { ExclamationCircleIcon, CameraIcon, TrashIcon } from '../Icons';
 import { Label } from './Label';
+import { compressImage } from '../../utils/imageUtils';
 
 // Handle ES module default import mismatch with react-signature-canvas in Vite
 const SignatureCanvasComponent = SignatureCanvas.default || SignatureCanvas;
@@ -45,17 +46,22 @@ export function FormSignature({
     return () => window.removeEventListener('resize', handleResize);
   }, [activeTab, hasImage]);
 
-  const saveSignature = (e) => {
+  const saveSignature = async (e) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
     if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
       const dataURL = sigCanvas.current.getCanvas().toDataURL('image/png');
-      const now = new Date();
-      const offset = now.getTimezoneOffset() * 60000;
-      const localISOTime = (new Date(now - offset)).toISOString().slice(0, 16);
-      onChange(name, { url: dataURL, timestamp: localISOTime });
+      try {
+        const compressedBase64 = await compressImage(dataURL, 800, 0.8);
+        const now = new Date();
+        const offset = now.getTimezoneOffset() * 60000;
+        const localISOTime = (new Date(now - offset)).toISOString().slice(0, 16);
+        onChange(name, { url: compressedBase64, timestamp: localISOTime });
+      } catch (err) {
+        console.error("Failed to compress signature", err);
+      }
     }
   };
 
@@ -69,17 +75,18 @@ export function FormSignature({
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
+      try {
+        const compressedBase64 = await compressImage(file, 1280, 0.7);
         const now = new Date();
         const offset = now.getTimezoneOffset() * 60000;
         const localISOTime = (new Date(now - offset)).toISOString().slice(0, 16);
-        onChange(name, { url: reader.result, timestamp: localISOTime });
-      };
-      reader.readAsDataURL(file);
+        onChange(name, { url: compressedBase64, timestamp: localISOTime });
+      } catch (err) {
+        console.error("Failed to compress uploaded signature", err);
+      }
     }
   };
 
@@ -135,19 +142,17 @@ export function FormSignature({
         }`}
       >
         {hasImage ? (
-          <div className="relative border-2 border-transparent group">
+          <div className="relative border-2 border-transparent">
              <div className="relative aspect-[21/9] w-full bg-white rounded-xl overflow-hidden shadow-sm border border-slate-200">
-               <img src={imgUrl} alt={label} className="w-full h-full object-contain p-2 opacity-90 group-hover:opacity-100 transition-opacity bg-white" />
-               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                 <button 
-                   type="button" 
-                   onClick={removeImage}
-                   className="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
-                 >
-                   <TrashIcon className="w-3.5 h-3.5" />
-                   Discard
-                 </button>
-               </div>
+               <img src={imgUrl} alt={label} className="w-full h-full object-contain p-2 bg-white" />
+               <button 
+                 type="button" 
+                 onClick={removeImage}
+                 className="absolute bottom-2 right-2 bg-rose-500 active:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-md transition-colors flex items-center gap-1 cursor-pointer"
+               >
+                 <TrashIcon className="w-3.5 h-3.5" />
+                 Remove
+               </button>
              </div>
           </div>
         ) : (

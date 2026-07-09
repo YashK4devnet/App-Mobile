@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExclamationCircleIcon, CameraIcon, TrashIcon } from '../Icons';
 import { Label } from './Label';
+import { compressImage } from '../../utils/imageUtils';
 
 export function FormImageUpload({ 
   label, 
@@ -17,17 +18,18 @@ export function FormImageUpload({
   const imgTimestamp = typeof value === 'object' && value !== null ? value.timestamp : '';
   const hasImage = !!imgUrl;
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
+      try {
+        const compressedBase64 = await compressImage(file, 1280, 0.7);
         const now = new Date();
         const offset = now.getTimezoneOffset() * 60000;
         const localISOTime = (new Date(now - offset)).toISOString().slice(0, 16);
-        onChange(name, { url: reader.result, timestamp: localISOTime });
-      };
-      reader.readAsDataURL(file);
+        onChange(name, { url: compressedBase64, timestamp: localISOTime });
+      } catch (err) {
+        console.error("Failed to compress image", err);
+      }
     }
   };
 

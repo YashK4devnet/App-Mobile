@@ -1,5 +1,5 @@
 import React from 'react';
-import { Controller, useFieldArray } from 'react-hook-form';
+import { Controller, useFieldArray, useWatch } from 'react-hook-form';
 import { PlusIcon, TrashIcon } from './Icons';
 import { Label } from './form-controls/Label';
 import { 
@@ -207,6 +207,18 @@ function renderField(field, control) {
   );
 }
 
+function ConditionalWrapper({ field, control, renderItem, idx, itemContext }) {
+  const formData = useWatch({ control });
+  if (!field.showIf(formData, itemContext)) {
+    return null;
+  }
+  
+  const fieldWithoutShowIf = { ...field };
+  delete fieldWithoutShowIf.showIf;
+  
+  return renderItem(fieldWithoutShowIf, idx, itemContext);
+}
+
 function AccordionSection({ heading, fields, control, renderItem, errors = {} }) {
   const [isOpen, setIsOpen] = React.useState(true);
 
@@ -229,8 +241,8 @@ function AccordionSection({ heading, fields, control, renderItem, errors = {} })
       <button 
         type="button" 
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex justify-between items-center p-4 bg-white/10 hover:bg-white/20 transition-colors rounded-t-xl ${
-          isOpen ? 'sticky top-0 z-10 border-b border-white/20' : 'rounded-b-xl'
+        className={`w-full flex justify-between items-center p-4 hover:bg-white/20 transition-colors rounded-t-xl ${
+          isOpen ? 'sticky top-0 z-10 border-b border-white/20 bg-[#0F0F23]/95 backdrop-blur-xl shadow-sm' : 'bg-white/10 rounded-b-xl'
         }`}
       >
         <div className="flex items-center gap-3">
@@ -258,7 +270,7 @@ function AccordionSection({ heading, fields, control, renderItem, errors = {} })
   );
 }
 
-function ObjectSection({ field, control, renderItem, formData }) {
+function ObjectSection({ field, control, renderItem }) {
   return (
     <div className={`space-y-4 p-4 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl select-none ${field.className || ''}`}>
       {field.label && <Label text={field.label} required={field.required} />}
@@ -275,7 +287,7 @@ function ObjectSection({ field, control, renderItem, formData }) {
   );
 }
 
-function ArraySection({ field, control, renderItem, formData }) {
+function ArraySection({ field, control, renderItem }) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: field.name
@@ -328,9 +340,7 @@ function ArraySection({ field, control, renderItem, formData }) {
   );
 }
 
-export default function FormRenderer({ schema, control, errors = {}, useAccordions = false, watch }) {
-  const formData = watch ? watch() : {};
-
+export default function FormRenderer({ schema, control, errors = {}, useAccordions = false }) {
   const groupedSchema = React.useMemo(() => {
     if (!useAccordions) return schema;
     
@@ -372,8 +382,17 @@ export default function FormRenderer({ schema, control, errors = {}, useAccordio
   }, [schema, useAccordions]);
 
   const renderItem = (field, idx, itemContext = null) => {
-    if (field.showIf && !field.showIf(formData, itemContext)) {
-      return null;
+    if (field.showIf) {
+      return (
+        <ConditionalWrapper 
+          key={`cond-${field.name || idx}`} 
+          field={field} 
+          control={control} 
+          renderItem={renderItem} 
+          idx={idx} 
+          itemContext={itemContext} 
+        />
+      );
     }
 
     if (field.type === 'accordion-group') {
@@ -414,11 +433,11 @@ export default function FormRenderer({ schema, control, errors = {}, useAccordio
     }
 
     if (field.type === 'object') {
-      return <ObjectSection key={`obj-${idx}`} field={field} control={control} renderItem={renderItem} formData={formData} />;
+      return <ObjectSection key={`obj-${idx}`} field={field} control={control} renderItem={renderItem} />;
     }
 
     if (field.type === 'array') {
-      return <ArraySection key={`arr-${idx}`} field={field} control={control} renderItem={renderItem} formData={formData} />;
+      return <ArraySection key={`arr-${idx}`} field={field} control={control} renderItem={renderItem} />;
     }
 
     return renderField(field, control);

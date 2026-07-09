@@ -5,6 +5,7 @@ import Header from '../../components/Header';
 import BottomNav from '../../components/BottomNav';
 import AuditIndex from '../../components/AuditIndex';
 import ProgressBar from '../../components/ProgressBar';
+import LiveProgressBar from '../../components/LiveProgressBar';
 import FormRenderer from '../../components/FormRenderer';
 import VenueSelectPage from '../../components/VenueSelectPage';
 import AuditSuccessOverlay from '../../components/AuditSuccessOverlay';
@@ -246,11 +247,10 @@ export default function PowerAuditWizard() {
         />
         
         {/* Subsection Progress Indicator (Sticky) */}
-        <ProgressBar 
-          percent={subProgress.percent}
-          filled={subProgress.filled}
-          total={subProgress.total}
-          label="Subsection Progress"
+        <LiveProgressBar 
+          schema={SUBSECTION_SCHEMAS[currentSubsection]}
+          control={control}
+          calculateProgressFn={calculateSchemaProgress}
         />
 
         {/* Subsection Selector Accordion */}
