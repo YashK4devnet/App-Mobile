@@ -11,13 +11,15 @@ export const generateInitialState = (schemas) => {
     }
     if (!f.name) return;
     
-    if (f.type === 'network-question') {
+    const fieldType = f.subType || f.type;
+    
+    if (fieldType === 'network-question') {
       state[f.name] = { observation: '', remarks: '', image: null };
-    } else if (f.type === 'image-upload') {
+    } else if (fieldType === 'image-upload') {
       state[f.name] = null;
-    } else if (f.type === 'device-photo-list') {
+    } else if (fieldType === 'device-photo-list' || fieldType === 'custom-questions') {
       state[f.name] = [];
-    } else if (f.type === 'numbered-text-list') {
+    } else if (fieldType === 'numbered-text-list') {
       state[f.name] = [];
     } else {
       state[f.name] = f.value || ''; 
@@ -45,8 +47,10 @@ export const validateSchema = (schema, data) => {
     if (!f.name) return;
     if (f.showIf && !f.showIf(data)) return;
 
+    const fieldType = f.subType || f.type;
+
     if (f.required) {
-      if (f.type === 'network-question') {
+      if (fieldType === 'network-question') {
         const err = {};
         if (!data[f.name]?.observation) err.observation = "Observation is required";
         
@@ -55,11 +59,11 @@ export const validateSchema = (schema, data) => {
         if (!hasImg) err.image = "Evidence image is required";
         
         if (Object.keys(err).length > 0) errors[f.name] = err;
-      } else if (f.type === 'image-upload') {
+      } else if (fieldType === 'image-upload') {
         const val = data[f.name];
         const hasImg = typeof val === 'object' && val !== null ? !!val.url : !!val;
         if (!hasImg) errors[f.name] = "Image is required";
-      } else if (f.type === 'device-photo-list') {
+      } else if (fieldType === 'device-photo-list') {
         const list = data[f.name] || [];
         if (list.length === 0) {
           errors[f.name] = "At least one photo is required";
@@ -71,7 +75,7 @@ export const validateSchema = (schema, data) => {
           });
           if (hasInvalid) errors[f.name] = "All entries must have a name and photo";
         }
-      } else if (f.type === 'numbered-text-list') {
+      } else if (fieldType === 'numbered-text-list') {
         const list = data[f.name] || [];
         if (list.length === 0) {
           errors[f.name] = "At least one entry is required";
@@ -104,16 +108,18 @@ export const isSchemaEmpty = (schema, data) => {
     if (f.showIf && !f.showIf(data)) return;
     if (f.disabled) return; 
 
+    const fieldType = f.subType || f.type;
+
     let hasVal = false;
-    if (f.type === 'network-question') {
+    if (fieldType === 'network-question') {
       const qVal = data[f.name];
       const imgVal = qVal?.image;
       const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
       hasVal = !!(qVal?.observation || qVal?.remarks || hasImg);
-    } else if (f.type === 'device-photo-list') {
+    } else if (fieldType === 'device-photo-list' || fieldType === 'custom-questions') {
       const list = data[f.name] || [];
       hasVal = list.length > 0;
-    } else if (f.type === 'numbered-text-list') {
+    } else if (fieldType === 'numbered-text-list') {
       const list = data[f.name] || [];
       hasVal = list.length > 0;
     } else {
@@ -143,21 +149,23 @@ export const calculateSchemaProgress = (schema, data) => {
     if (!f.name) return;
     if (f.showIf && !f.showIf(data)) return;
     
+    const fieldType = f.subType || f.type;
+    
     total++;
-    if (f.type === 'network-question') {
+    if (fieldType === 'network-question') {
       const qVal = data[f.name];
       const imgVal = qVal?.image;
       const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
       if (qVal?.observation && hasImg) filled++;
-    } else if (f.type === 'device-photo-list') {
+    } else if (fieldType === 'device-photo-list' || fieldType === 'custom-questions') {
       const list = data[f.name] || [];
       const validCount = list.filter(item => {
-        const imgVal = item.deviceImage;
+        const imgVal = item.deviceImage || item.image; // handle both device image and custom question image
         const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
-        return item.deviceName && hasImg;
+        return (item.deviceName || item.questionTitle) && hasImg;
       }).length;
       if (validCount > 0) filled++;
-    } else if (f.type === 'numbered-text-list') {
+    } else if (fieldType === 'numbered-text-list') {
       const list = data[f.name] || [];
       const validCount = list.filter(item => item && item.trim()).length;
       if (validCount > 0) filled++;

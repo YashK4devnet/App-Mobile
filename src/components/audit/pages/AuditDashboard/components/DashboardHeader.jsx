@@ -1,7 +1,9 @@
 import React from 'react';
 import { getGreeting } from '../../../utils/formatting';
+import { useNavigate } from 'react-router-dom';
 
 export default function DashboardHeader({ totalAssigned, userName = "Yash" }) {
+  const navigate = useNavigate();
   return (
     <div className="mb-6 flex items-center justify-between">
       <div>
@@ -13,7 +15,7 @@ export default function DashboardHeader({ totalAssigned, userName = "Yash" }) {
         </p>
       </div>
       <button
-        onClick={() => console.log('View all assigned audits clicked')}
+        onClick={() => navigate('/audit/reports')}
         className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-[12px] font-bold active:scale-95 transition-all whitespace-nowrap"
       >
         View All

@@ -2,6 +2,7 @@ const createPowerQuestion = (name, label, evidence = '', findingsHint = '') => (
   name,
   label,
   type: 'object',
+  subType: 'power-question',
   fields: [
     { name: 'findings', label: `Findings${findingsHint ? ` (${findingsHint})` : ''}`, type: 'textarea', placeholder: 'Enter findings here...' },
     { name: 'score', label: 'Score', type: 'select', options: ['S', 'NS', 'U', 'NA'] },
@@ -13,6 +14,7 @@ const createPowerPhotoQuestion = (name, label, evidence = '', findingsHint = '')
   name,
   label,
   type: 'object',
+  subType: 'power-photo-question',
   fields: [
     { name: 'findings', label: `Findings${findingsHint ? ` (${findingsHint})` : ''}`, type: 'textarea', placeholder: 'Enter findings here...' },
     { name: 'image', label: `Evidence Image${evidence ? ` (${evidence})` : ''}`, type: 'image-upload' }
@@ -23,6 +25,7 @@ const createCustomQuestions = (sectionName) => ({
   name: `customQuestions_${sectionName}`,
   label: 'Additional Custom Questions',
   type: 'array',
+  subType: 'custom-questions',
   itemLabel: 'Custom Question',
   fields: [
     { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
@@ -207,6 +210,7 @@ export const POWER_SECTION_10_SCHEMA = [
   {
     name: 'equipmentDocuments',
     type: 'array',
+    subType: 'document-list',
     label: 'Nameplate & Documentation of Equipment(s)',
     itemLabel: 'Document',
     fields: [

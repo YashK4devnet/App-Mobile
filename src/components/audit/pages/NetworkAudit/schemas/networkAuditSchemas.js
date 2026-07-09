@@ -2,6 +2,7 @@ const createNetworkQuestion = (name, label, remarksHint = '') => ({
   name,
   label,
   type: 'object',
+  subType: 'network-question',
   fields: [
     { name: 'remarks', label: `Remarks${remarksHint ? ` (${remarksHint})` : ''}`, type: 'textarea', placeholder: 'Enter remarks here...' },
     { name: 'observation', label: 'Observation', type: 'select', options: ['S', 'NS', 'U', 'NA'] },
@@ -13,6 +14,7 @@ const createCustomQuestions = (sectionName) => ({
   name: `customQuestions_${sectionName}`,
   label: 'Additional Custom Questions',
   type: 'array',
+  subType: 'custom-questions',
   itemLabel: 'Custom Question',
   fields: [
     { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
@@ -190,6 +192,7 @@ export const NETWORK_PHOTO_EVIDENCE_SCHEMA = [
     name: 'devicePhotos',
     label: 'Photo Evidence of Devices',
     type: 'array',
+    subType: 'device-photo-list',
     itemLabel: 'Device Photo',
     fields: [
       { name: 'deviceName', label: 'Device Name', type: 'text', placeholder: 'Enter device name' },
@@ -226,6 +229,7 @@ export const NETWORK_OBSERVATIONS_SCHEMA = [
     name: 'obs_list',
     label: 'Observations List',
     type: 'array',
+    subType: 'numbered-text-list',
     itemLabel: 'Observation',
     fields: [
       { name: 'observation', label: 'Observation Detail', type: 'textarea', placeholder: 'Enter observation' }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { CapacitorHttp, Capacitor } from '@capacitor/core';
+import { auditHttpClient } from '../../services/httpClient';
 
 export function useAssignedVenues() {
   const [venues, setVenues] = useState([]);
@@ -10,22 +10,8 @@ export function useAssignedVenues() {
     setIsLoading(true);
     setError(null);
     try {
-      const baseUrl = Capacitor.isNativePlatform() ? import.meta.env.VITE_API_URL : '/api';
-      const url = `${baseUrl}/users/2/venues`;
-      console.log('Fetching venues from URL:', url);
-      
-      const response = await CapacitorHttp.get({
-        url: url,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      console.log('CapacitorHttp response:', JSON.stringify(response));
-
-      let data = response.data;
-      if (typeof data === 'string') {
-        try { data = JSON.parse(data); } catch(e) {}
-      }
+      const data = await auditHttpClient('/users/2/venues');
+      console.log('auditHttpClient response:', JSON.stringify(data));
 
       if (data && data.success) {
         const mappedVenues = data.venues.map(v => ({

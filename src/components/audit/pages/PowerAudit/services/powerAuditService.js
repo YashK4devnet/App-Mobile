@@ -12,11 +12,13 @@ export const generateInitialState = (schemas) => {
     }
     if (!f.name) return;
     
-    if (f.type === 'power-question') {
+    const fieldType = f.subType || f.type;
+    
+    if (fieldType === 'power-question') {
       state[f.name] = { score: '', findings: '', image: null };
-    } else if (f.type === 'power-photo-question') {
+    } else if (fieldType === 'power-photo-question') {
       state[f.name] = { image: null, findings: '' };
-    } else if (f.type === 'document-list') {
+    } else if (fieldType === 'document-list' || fieldType === 'custom-questions') {
       state[f.name] = [];
     } else if (f.type === 'image-upload') {
       state[f.name] = null;
@@ -46,8 +48,10 @@ export const validateSchema = (schema, data) => {
     if (!f.name) return;
     if (f.showIf && !f.showIf(data)) return;
 
+    const fieldType = f.subType || f.type;
+
     if (f.required) {
-      if (f.type === 'power-question') {
+      if (fieldType === 'power-question') {
         const err = {};
         if (!data[f.name]?.score) err.score = "Score is required";
         
@@ -56,14 +60,14 @@ export const validateSchema = (schema, data) => {
         if (!hasImg) err.image = "Evidence image is required";
         
         if (Object.keys(err).length > 0) errors[f.name] = err;
-      } else if (f.type === 'power-photo-question') {
+      } else if (fieldType === 'power-photo-question') {
         const err = {};
         const imgVal = data[f.name]?.image;
         const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
         if (!hasImg) err.image = "Evidence image is required";
         
         if (Object.keys(err).length > 0) errors[f.name] = err;
-      } else if (f.type === 'image-upload') {
+      } else if (fieldType === 'image-upload') {
         const val = data[f.name];
         const hasImg = typeof val === 'object' && val !== null ? !!val.url : !!val;
         if (!hasImg) errors[f.name] = "Image is required";
@@ -73,7 +77,7 @@ export const validateSchema = (schema, data) => {
     }
 
     // Dynamic list validation: if rows are added, validate they are completely filled
-    if (f.type === 'document-list') {
+    if (fieldType === 'document-list') {
       const rows = data[f.name] || [];
       const incomplete = rows.some(row => {
         const hasImg = typeof row.documentImage === 'object' && row.documentImage !== null 
@@ -106,15 +110,17 @@ export const isSchemaEmpty = (schema, data) => {
     if (f.showIf && !f.showIf(data)) return;
     if (f.disabled) return; 
 
-    if (f.type === 'power-question') {
+    const fieldType = f.subType || f.type;
+
+    if (fieldType === 'power-question') {
       const val = data[f.name];
       const hasImg = typeof val?.image === 'object' && val?.image !== null ? !!val.image.url : !!val?.image;
       if (val?.score || val?.findings || hasImg) empty = false;
-    } else if (f.type === 'power-photo-question') {
+    } else if (fieldType === 'power-photo-question') {
       const val = data[f.name];
       const hasImg = typeof val?.image === 'object' && val?.image !== null ? !!val.image.url : !!val?.image;
       if (hasImg || val?.findings) empty = false;
-    } else if (f.type === 'document-list') {
+    } else if (fieldType === 'document-list' || fieldType === 'custom-questions') {
       if (data[f.name] && data[f.name].length > 0) empty = false;
     } else {
       const val = data[f.name];
@@ -142,15 +148,21 @@ export const calculateSchemaProgress = (schema, data) => {
     if (!f.name) return;
     if (f.showIf && !f.showIf(data)) return;
     
+    const fieldType = f.subType || f.type;
+    
     total++;
-    if (f.type === 'power-question') {
+    if (fieldType === 'power-question') {
       const val = data[f.name];
       const hasImg = typeof val?.image === 'object' && val?.image !== null ? !!val.image.url : !!val?.image;
       if (val?.score && hasImg) filled++;
-    } else if (f.type === 'power-photo-question') {
+    } else if (fieldType === 'power-photo-question') {
       const val = data[f.name];
       const hasImg = typeof val?.image === 'object' && val?.image !== null ? !!val.image.url : !!val?.image;
       if (hasImg) filled++;
+    } else if (fieldType === 'document-list' || fieldType === 'custom-questions') {
+      const list = data[f.name] || [];
+      // count any entries at all
+      if (list.length > 0) filled++;
     } else {
       const val = data[f.name];
       const hasVal = typeof val === 'object' && val !== null ? !!val.url : !!val;

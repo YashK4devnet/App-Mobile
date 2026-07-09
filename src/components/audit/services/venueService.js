@@ -1,4 +1,4 @@
-import { Capacitor, CapacitorHttp } from '@capacitor/core';
+import { auditHttpClient } from './httpClient';
 
 /**
  * Service to fetch saved venues from the API.
@@ -22,50 +22,7 @@ export const fetchSavedVenues = async () => {
 
   activePromise = (async () => {
     try {
-      let data;
-
-      if (Capacitor.isNativePlatform()) {
-        const ipAddress = process.env.AUDIT_API_IP;
-        let url;
-
-        if (ipAddress) {
-          const cleanIp = ipAddress.replace(/^(https?:\/\/)?/, '').replace(/\/$/, '');
-          url = `http://${cleanIp}/api/audit/locations`;
-        } else {
-          // If no IP is configured, check if we're running via live-reload (which exposes the developer host IP)
-          const hostname = window.location.hostname;
-          if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1' && hostname !== '0.0.0.0') {
-            url = `http://${hostname}:8099/api/audit/locations`;
-          } else {
-            // Fall back to the configured local host IP address 192.168.29.191:8099
-            url = 'http://192.168.29.191:8099/api/audit/locations';
-          }
-        }
-
-        console.log("fetchSavedVenues requesting native URL:", url);
-        const response = await CapacitorHttp.request({
-          method: 'GET',
-          url: url,
-        });
-
-        if (response.status < 200 || response.status >= 300) {
-          throw new Error(`Failed to fetch venues (Capacitor): ${response.status}`);
-        }
-
-        data = response.data;
-        // In case CapacitorHttp didn't parse it automatically
-        if (typeof data === 'string') {
-          try { data = JSON.parse(data); } catch (e) { }
-        }
-      } else {
-        // Use /api proxy to bypass CORS during browser development
-        const url = "/api/audit/locations";
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch venues: ${response.status} ${response.statusText}`);
-        }
-        data = await response.json();
-      }
+      const data = await auditHttpClient('/api/audit/locations');
 
       console.log("fetchSavedVenues response data:", data);
 
@@ -120,59 +77,10 @@ export const fetchSavedVenues = async () => {
  * Service to create a full audit record on the backend.
  */
 export const createFullAuditRecord = async (payload) => {
-  let responseData;
-
-  if (Capacitor.isNativePlatform()) {
-    const ipAddress = process.env.AUDIT_API_IP;
-    let url;
-
-    if (ipAddress) {
-      const cleanIp = ipAddress.replace(/^(https?:\/\/)?/, '').replace(/\/$/, '');
-      url = `http://${cleanIp}/api/audit/full-record`;
-    } else {
-      const hostname = window.location.hostname;
-      if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1' && hostname !== '0.0.0.0') {
-        url = `http://${hostname}:8099/api/audit/full-record`;
-      } else {
-        url = 'http://192.168.29.191:8099/api/audit/full-record';
-      }
-    }
-
-    console.log("createFullAuditRecord requesting native URL:", url);
-    const response = await CapacitorHttp.request({
-      method: 'POST',
-      url: url,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: payload
-    });
-
-    if (response.status < 200 || response.status >= 300) {
-      throw new Error(`Failed to create full audit record (Capacitor): ${response.status}`);
-    }
-
-    responseData = response.data;
-    if (typeof responseData === 'string') {
-      try { responseData = JSON.parse(responseData); } catch (e) { }
-    }
-  } else {
-    // Use /api proxy to bypass CORS during browser development
-    const url = "/api/audit/full-record";
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to create full audit record: ${response.status} ${response.statusText}`);
-    }
-    
-    responseData = await response.json();
-  }
+  const responseData = await auditHttpClient('/api/audit/full-record', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
 
   return responseData;
 };
@@ -183,59 +91,10 @@ export const createFullAuditRecord = async (payload) => {
 export const updateFullAuditRecord = async (reportNo, payload) => {
   if (!reportNo) throw new Error("Report Number is required for PATCH update.");
   
-  let responseData;
-
-  if (Capacitor.isNativePlatform()) {
-    const ipAddress = process.env.AUDIT_API_IP;
-    let url;
-
-    if (ipAddress) {
-      const cleanIp = ipAddress.replace(/^(https?:\/\/)?/, '').replace(/\/$/, '');
-      url = `http://${cleanIp}/api/audit/full-record/${reportNo}`;
-    } else {
-      const hostname = window.location.hostname;
-      if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1' && hostname !== '0.0.0.0') {
-        url = `http://${hostname}:8099/api/audit/full-record/${reportNo}`;
-      } else {
-        url = `http://192.168.29.191:8099/api/audit/full-record/${reportNo}`;
-      }
-    }
-
-    console.log("updateFullAuditRecord requesting native URL:", url);
-    const response = await CapacitorHttp.request({
-      method: 'PATCH',
-      url: url,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: payload
-    });
-
-    if (response.status < 200 || response.status >= 300) {
-      throw new Error(`Failed to update full audit record (Capacitor): ${response.status}`);
-    }
-
-    responseData = response.data;
-    if (typeof responseData === 'string') {
-      try { responseData = JSON.parse(responseData); } catch (e) { }
-    }
-  } else {
-    // Use /api proxy to bypass CORS during browser development
-    const url = `/api/audit/full-record/${reportNo}`;
-    const response = await fetch(url, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to update full audit record: ${response.status} ${response.statusText}`);
-    }
-    
-    responseData = await response.json();
-  }
+  const responseData = await auditHttpClient(`/api/audit/full-record/${reportNo}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload)
+  });
 
   return responseData;
 };
