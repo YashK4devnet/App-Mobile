@@ -7,8 +7,8 @@ export default function PullToRefresh({ onRefresh, children }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   const containerRef = useRef(null);
-  const MAX_PULL = 100;
-  const THRESHOLD = 60;
+  const MAX_PULL = 150;
+  const THRESHOLD = 80;
 
   const handleTouchStart = (e) => {
     // Determine if we are at the top of the window or the scroll container
@@ -57,7 +57,7 @@ export default function PullToRefresh({ onRefresh, children }) {
           await onRefresh();
         }
         // Artificial delay to let the spinner spin for a moment
-        await new Promise(resolve => setTimeout(resolve, 600));
+        await new Promise(resolve => setTimeout(resolve, 800));
       } finally {
         setIsRefreshing(false);
         setPullDistance(0);
@@ -81,28 +81,34 @@ export default function PullToRefresh({ onRefresh, children }) {
       <AnimatePresence>
         {(pullDistance > 0 || isRefreshing) && (
           <motion.div
-            initial={{ opacity: 0, y: -40, scale: 0.8 }}
+            initial={{ opacity: 0, y: -50, scale: 0.8 }}
             animate={{ 
               opacity: 1, 
-              y: isRefreshing ? THRESHOLD * 0.4 : pullDistance * 0.5 - 20,
+              y: isRefreshing ? THRESHOLD * 0.2 : pullDistance * 0.5,
               scale: 1,
-              rotate: isRefreshing ? 360 : (pullDistance / MAX_PULL) * 360
             }}
-            exit={{ opacity: 0, y: -40, scale: 0.8, transition: { duration: 0.2 } }}
-            transition={isRefreshing 
-              ? { rotate: { repeat: Infinity, duration: 1, ease: "linear" } } 
-              : { type: 'spring', stiffness: 300, damping: 25 }
-            }
-            className="absolute left-[calc(50%-20px)] top-2 z-[100] flex items-center justify-center w-10 h-10 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full shadow-[0_0_20px_rgba(78,205,196,0.25)]"
+            exit={{ opacity: 0, y: -50, scale: 0.8, transition: { duration: 0.2 } }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            className="absolute left-[calc(50%-20px)] z-[100] flex items-center justify-center w-10 h-10 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full shadow-[0_0_20px_rgba(78,205,196,0.25)]"
           >
-            <svg 
-              className="w-5 h-5 text-[#4ecdc4]" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
+            {isRefreshing ? (
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                className="w-5 h-5 rounded-full border-[2.5px] border-[#4ecdc4]/20 border-t-[#4ecdc4]"
+              />
+            ) : (
+              <motion.svg 
+                animate={{ rotate: pullDistance >= THRESHOLD ? 180 : 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                className="w-5 h-5 text-[#4ecdc4]" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </motion.svg>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
