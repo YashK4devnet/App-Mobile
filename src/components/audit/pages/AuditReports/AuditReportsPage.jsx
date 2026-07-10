@@ -7,6 +7,7 @@ import FilterPills from './components/FilterPills';
 import ReportCard from './components/ReportCard';
 import VenueCard from './components/VenueCard';
 import Header from '../../components/Header'; // Reusing your global header
+import PullToRefresh from '../../components/PullToRefresh';
 import { useDebounce } from '../../hooks/useDebounce';
 import { Virtuoso } from 'react-virtuoso';
 
@@ -16,11 +17,11 @@ export default function AuditReportsPage({ hideHeader = false }) {
   const navigate = useNavigate();
   const { venueId } = useParams();
   
-  const { venues, isLoading: isVenuesLoading, error: venuesError } = useAssignedVenues();
+  const { venues, isLoading: isVenuesLoading, error: venuesError, refreshVenues } = useAssignedVenues();
   const selectedVenue = venues.find(v => v.id === venueId);
   const venueName = selectedVenue ? selectedVenue.name : null;
   
-  const { reports, isLoading: isReportsLoading, error: reportsError } = useAuditReports(venueId);
+  const { reports, isLoading: isReportsLoading, error: reportsError, refreshReports } = useAuditReports(venueId);
   
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -76,8 +77,17 @@ export default function AuditReportsPage({ hideHeader = false }) {
     navigate(-1);
   };
 
+  const handleRefresh = async () => {
+    if (venueName) {
+      await refreshReports();
+    } else {
+      await refreshVenues();
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-4" ref={containerRef}>
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="flex flex-col gap-4 min-h-screen" ref={containerRef}>
       {!hideHeader && (
         <Header 
           title={venueName ? `Reports - ${venueName}` : "Select a Venue"} 
@@ -87,7 +97,7 @@ export default function AuditReportsPage({ hideHeader = false }) {
       )}
 
       {/* Sticky Search and Filter Controls */}
-      <div className="sticky top-[-16px] -mt-4 z-20 bg-[#0F0F23]/95 backdrop-blur-md -mx-5 px-5 pt-4 pb-3 flex flex-col gap-3 border-b border-white/5">
+      <div className="sticky top-[-16px] -mt-4 z-20 bg-transparent -mx-5 px-5 pt-4 pb-3 flex flex-col gap-3">
         <div className="relative group">
           <input
             type="text"
@@ -220,6 +230,7 @@ export default function AuditReportsPage({ hideHeader = false }) {
         )}
       </div>
     </div>
+    </PullToRefresh>
   );
 }
 

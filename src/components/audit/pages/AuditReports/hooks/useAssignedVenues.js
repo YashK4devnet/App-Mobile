@@ -37,7 +37,7 @@ export function useAssignedVenues() {
   }, [fetchVenues]);
 
   const refreshVenues = () => {
-    fetchVenues();
+    return fetchVenues();
   };
 
   return { venues, isLoading, error, refreshVenues };

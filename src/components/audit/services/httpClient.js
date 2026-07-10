@@ -3,7 +3,12 @@ import { Capacitor, CapacitorHttp } from '@capacitor/core';
 // Determine the correct base URL safely without crashing if process/import is undefined
 const getBaseUrl = () => {
   if (!Capacitor.isNativePlatform()) {
-    // If we're not on native, try Vite env first
+    // In development mode on web, use the relative path to route through Vite's proxy (circumvents CORS)
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV) {
+      return '/api';
+    }
+
+    // For production web, try to use full environment URL if available
     if (typeof import.meta !== 'undefined' && import.meta.env) {
       if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
       if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;

@@ -4,6 +4,7 @@ import DashboardHeader from './components/DashboardHeader';
 import QuickStats from './components/QuickStats';
 import InProgressReportsList from './components/InProgressReportsList';
 import CompletedReportsList from './components/CompletedReportsList';
+import PullToRefresh from '../../components/PullToRefresh';
 
 export default function AuditDashboardPage() {
   const {
@@ -13,6 +14,7 @@ export default function AuditDashboardPage() {
     totalAssigned,
     inProgressReports,
     completedReports,
+    refreshDashboard,
   } = useAuditDashboard();
 
   if (loading) {
@@ -52,17 +54,19 @@ export default function AuditDashboardPage() {
   }
 
   return (
-    <div className="transition-opacity duration-300 ease-out opacity-100 flex flex-col h-full overflow-y-auto pb-6 scrollbar-none px-4 pt-4">
-      <DashboardHeader totalAssigned={totalAssigned} />
-      
-      <QuickStats 
-        totalAssigned={totalAssigned}
-        inProgressCount={inProgressReports.length}
-        completedCount={completedReports.length}
-      />
+    <PullToRefresh onRefresh={refreshDashboard}>
+      <div className="transition-opacity duration-300 ease-out opacity-100 flex flex-col h-full overflow-y-auto pb-6 scrollbar-none px-4 pt-4">
+        <DashboardHeader totalAssigned={totalAssigned} />
+        
+        <QuickStats 
+          totalAssigned={totalAssigned}
+          inProgressCount={inProgressReports.length}
+          completedCount={completedReports.length}
+        />
 
-      <InProgressReportsList reports={inProgressReports} />
-      <CompletedReportsList reports={completedReports} />
-    </div>
+        <InProgressReportsList reports={inProgressReports} />
+        <CompletedReportsList reports={completedReports} />
+      </div>
+    </PullToRefresh>
   );
 }

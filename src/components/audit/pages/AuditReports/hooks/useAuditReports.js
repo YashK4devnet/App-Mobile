@@ -61,7 +61,7 @@ export function useAuditReports(venueId) {
   }, [fetchReports]);
 
   const refreshReports = () => {
-    fetchReports();
+    return fetchReports();
   };
 
   return { reports, isLoading, error, refreshReports };

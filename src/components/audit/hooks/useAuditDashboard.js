@@ -6,21 +6,25 @@ export const useAuditDashboard = () => {
   const [reports, setReports] = useState([]);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchAssignedAudits();
-        setReports(data);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadData = async (isRefreshing = false) => {
+    try {
+      if (!isRefreshing) setLoading(true);
+      const data = await fetchAssignedAudits();
+      setReports(data);
+    } catch (err) {
+      setError(err);
+    } finally {
+      if (!isRefreshing) setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     loadData();
   }, []);
+
+  const refreshDashboard = () => {
+    return loadData(true);
+  };
 
   const totalAssigned = reports.length;
   const inProgressReports = reports.filter(r => r.status === 'in_progress');
@@ -33,5 +37,6 @@ export const useAuditDashboard = () => {
     totalAssigned,
     inProgressReports,
     completedReports,
+    refreshDashboard,
   };
 };
