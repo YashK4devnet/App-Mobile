@@ -37,7 +37,8 @@ import {
   validateSchema,
   isSchemaEmpty,
   calculateSchemaProgress,
-  calculateGlobalProgress
+  calculateGlobalProgress,
+  saveVenueSection
 } from './services/venueAuditService';
 import { updateFullAuditRecord } from '../../services/venueService';
 
@@ -111,7 +112,7 @@ export default function VenueAuditWizard() {
     initialVenue,
     auditName: 'Venue Audit Report',
     nextAuditMonths: 3,
-    apiSyncFunction: updateFullAuditRecord,
+    saveSectionData: saveVenueSection,
     sectionToPayloadKey: SECTION_TO_PAYLOAD_KEY,
     onComplete: () => setShowSuccessOverlay(true),
     onExitForm: () => setViewMode('index')

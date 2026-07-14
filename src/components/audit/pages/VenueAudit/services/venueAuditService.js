@@ -1,3 +1,5 @@
+import { reportApiService } from '../../../services/reportApiService';
+
 /**
  * Dynamically generates the initial state object by traversing the provided schemas.
  * Reduces the need for manual state initialization.
@@ -224,4 +226,52 @@ export const calculateGlobalProgress = (schemas, data) => {
   });
 
   return Math.round((globalFilled / (globalTotal || 1)) * 100);
+};
+
+/**
+ * Parses the current section data and saves it to the backend via the PATCH API.
+ */
+export const saveVenueSection = async (reportId, schema, currentData, payloadKey) => {
+  if (!reportId || !schema || !payloadKey) return;
+
+  const payloadData = {};
+
+  const processField = (f) => {
+    if (f.type === 'heading') return;
+    if (f.type === 'row' || f.type === 'group') {
+      if (f.fields) f.fields.forEach(processField);
+      return;
+    }
+
+    if (f.type === 'node-counts') {
+      if (currentData[`${f.prefix}Available`] !== undefined) {
+        payloadData[`${f.prefix}Available`] = currentData[`${f.prefix}Available`];
+      }
+      if (currentData[`${f.prefix}Working`] !== undefined) {
+        payloadData[`${f.prefix}Working`] = currentData[`${f.prefix}Working`];
+      }
+      return;
+    }
+
+    if (!f.name) return;
+
+    if (currentData[f.name] !== undefined) {
+      const val = currentData[f.name];
+      // Extract URL for image uploads if necessary
+      if (f.type === 'image-upload') {
+        payloadData[f.name] = val?.url || "";
+      } else {
+        payloadData[f.name] = val;
+      }
+    }
+  };
+
+  schema.forEach(processField);
+
+  if (Object.keys(payloadData).length > 0) {
+    const patchPayload = {
+      [payloadKey]: payloadData
+    };
+    await reportApiService.patchAuditSection(reportId, patchPayload);
+  }
 };

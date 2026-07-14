@@ -23,7 +23,8 @@ import {
   POWER_SECTION_8_SCHEMA,
   POWER_SECTION_9_SCHEMA,
   POWER_SECTION_10_SCHEMA,
-  POWER_PERSONNEL_INFO_SCHEMA
+  POWER_PERSONNEL_INFO_SCHEMA,
+  POWER_SIGNATURES_SCHEMA
 } from './schemas/powerAuditSchemas';
 import { generatePowerQuestionsSchema } from '../NetworkAudit/schemas/schemaGenerator';
 import { 
@@ -39,7 +40,8 @@ import {
   validateSchema,
   isSchemaEmpty,
   calculateSchemaProgress,
-  calculateGlobalProgress
+  calculateGlobalProgress,
+  savePowerSection
 } from './services/powerAuditService';
 import { updateFullAuditRecord } from '../../services/venueService';
 
@@ -56,7 +58,8 @@ const SUBSECTION_SCHEMAS = {
   'Section7': POWER_SECTION_7_SCHEMA,
   'Section8': POWER_SECTION_8_SCHEMA,
   'Section9': POWER_SECTION_9_SCHEMA,
-  'Section10': POWER_SECTION_10_SCHEMA
+  'Section10': POWER_SECTION_10_SCHEMA,
+  'Signatures': POWER_SIGNATURES_SCHEMA
 };
 
 const STEPS = [
@@ -72,7 +75,8 @@ const STEPS = [
   { id: 'Section7' },
   { id: 'Section8' },
   { id: 'Section9' },
-  { id: 'Section10' }
+  { id: 'Section10' },
+  { id: 'Signatures' }
 ];
 
 const SECTION_TO_PAYLOAD_KEY = {
@@ -88,7 +92,8 @@ const SECTION_TO_PAYLOAD_KEY = {
   'Section7': 'section7',
   'Section8': 'section8',
   'Section9': 'section9',
-  'Section10': 'section10'
+  'Section10': 'section10',
+  'Signatures': 'signatures'
 };
 
 // Initialize dynamically from schemas
@@ -110,27 +115,28 @@ export default function PowerAuditWizard() {
     'VenueInfo': POWER_VENUE_INFO_SCHEMA,
     'PersonnelInfo': POWER_PERSONNEL_INFO_SCHEMA,
     'Section1': [
-      ...generatePowerQuestionsSchema(odooData.supplyTransferLines),
-      ...generatePowerQuestionsSchema(odooData.transferEarthPitLines, 'sec1')
+      ...generatePowerQuestionsSchema(odooData.supplyTransferLines || odooData.supply_transfer_lines, 'supply_transfer_lines'),
+      ...generatePowerQuestionsSchema(odooData.transferEarthPitLines || odooData.transfer_earth_pit_lines, 'transfer_earth_pit_lines')
     ],
-    'Section2': generatePowerQuestionsSchema(odooData.mainSupplyLtPanelLines, 'sec2'),
+    'Section2': generatePowerQuestionsSchema(odooData.mainSupplyLtPanelLines || odooData.main_supply_lt_panel_lines, 'main_supply_lt_panel_lines'),
     'Section3': [
-      ...generatePowerQuestionsSchema(odooData.diselGeneratorLines),
-      ...generatePowerQuestionsSchema(odooData.dgCheckInStopLines, 'sec3')
+      ...generatePowerQuestionsSchema(odooData.diselGeneratorLines || odooData.disel_generator_lines, 'disel_generator_lines'),
+      ...generatePowerQuestionsSchema(odooData.dgCheckInStopLines || odooData.dg_check_in_stop_lines, 'dg_check_in_stop_lines')
     ],
-    'Section4': generatePowerQuestionsSchema(odooData.dgRunningCheckLines, 'sec4'),
+    'Section4': generatePowerQuestionsSchema(odooData.dgRunningCheckLines || odooData.dg_running_check_lines, 'dg_running_check_lines'),
     'Section5': [
-       ...generatePowerQuestionsSchema(odooData.upsLines),
-       ...generatePowerQuestionsSchema(odooData.upsEquipmentLines, 'sec5')
+       ...generatePowerQuestionsSchema(odooData.upsLines || odooData.ups_lines, 'ups_lines'),
+       ...generatePowerQuestionsSchema(odooData.upsEquipmentLines || odooData.ups_equipment_lines, 'ups_equipment_lines')
     ],
     'Section6': [
-       ...generatePowerQuestionsSchema(odooData.upsBatteriesLines),
-       ...generatePowerQuestionsSchema(odooData.upsBatteriesSystemLines, 'sec6')
+       ...generatePowerQuestionsSchema(odooData.upsBatteriesLines || odooData.ups_batteries_lines, 'ups_batteries_lines'),
+       ...generatePowerQuestionsSchema(odooData.upsBatteriesSystemLines || odooData.ups_batteries_system_lines, 'ups_batteries_system_lines')
     ],
-    'Section7': generatePowerQuestionsSchema(odooData.eqFuncLines, 'sec7'),
-    'Section8': generatePowerQuestionsSchema(odooData.maintenanceRecordLines, 'sec8'),
-    'Section9': generatePowerQuestionsSchema(odooData.toolsSparesLines, 'sec9'),
-    'Section10': POWER_SECTION_10_SCHEMA
+    'Section7': generatePowerQuestionsSchema(odooData.electricalEarthingLines || odooData.electrical_earthing_lines, 'electrical_earthing_lines'),
+    'Section8': generatePowerQuestionsSchema(odooData.maintenanceRecordLines || odooData.maintenance_record_lines, 'maintenance_record_lines'),
+    'Section9': generatePowerQuestionsSchema(odooData.toolsSparesLines || odooData.tools_spares_lines, 'tools_spares_lines'),
+    'Section10': POWER_SECTION_10_SCHEMA,
+    'Signatures': POWER_SIGNATURES_SCHEMA
   } : null;
   
   const activeSchemas = dynamicSchemas || SUBSECTION_SCHEMAS;
@@ -152,8 +158,8 @@ export default function PowerAuditWizard() {
     calculateGlobalProgress,
     initialVenue,
     auditName: 'Venue Power Audit Report',
-    nextAuditMonths: 3,
-    apiSyncFunction: updateFullAuditRecord,
+    nextAuditMonths: 6,
+    saveSectionData: savePowerSection,
     sectionToPayloadKey: SECTION_TO_PAYLOAD_KEY,
     onComplete: () => setShowSuccessOverlay(true),
     onExitForm: () => setViewMode('index')
@@ -210,7 +216,8 @@ export default function PowerAuditWizard() {
           { id: 'Section7', title: '10. Equipment functionality checks', itemsCount: getItemsCount('Section7'), status: statusSec7, icon: BuildingIcon },
           { id: 'Section8', title: '11. Maintenance Records checks', itemsCount: getItemsCount('Section8'), status: statusSec8, icon: BuildingIcon },
           { id: 'Section9', title: '12. Electrician, Tools & Spares', itemsCount: getItemsCount('Section9'), status: statusSec9, icon: BuildingIcon },
-          { id: 'Section10', title: '13. Nameplate & Documentation', itemsCount: getItemsCount('Section10'), status: statusSec10, icon: BuildingIcon }
+          { id: 'Section10', title: '13. Nameplate & Documentation', itemsCount: getItemsCount('Section10'), status: statusSec10, icon: BuildingIcon },
+          { id: 'Signatures', title: '14. Signatures', itemsCount: getItemsCount('Signatures'), status: getSectionStatus('Signatures', getValues()), icon: DocumentIcon }
         ]
       }
     ];
@@ -262,7 +269,8 @@ export default function PowerAuditWizard() {
       { id: 'Section7', label: '10. Equipment functionality checks', status: statusSec7 },
       { id: 'Section8', label: '11. Maintenance Records checks', status: statusSec8 },
       { id: 'Section9', label: '12. Electrician, Tools & Spares', status: statusSec9 },
-      { id: 'Section10', label: '13. Nameplate & Documentation', status: statusSec10 }
+      { id: 'Section10', label: '13. Nameplate & Documentation', status: statusSec10 },
+      { id: 'Signatures', label: '14. Signatures', status: getSectionStatus('Signatures', getValues()) }
     ];
 
     const currentSubObj = subsections.find(s => s.id === currentSubsection);

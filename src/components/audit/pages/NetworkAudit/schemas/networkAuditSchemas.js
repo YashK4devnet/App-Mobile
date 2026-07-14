@@ -259,3 +259,13 @@ export const NETWORK_OBSERVATIONS_SCHEMA = [
     required: true
   }
 ];
+
+export const NETWORK_SIGNATURES_SCHEMA = [
+  { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature' },
+  { name: 'auditorSignatureDate', label: 'Date', type: 'date' },
+  { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature' },
+  { name: 'venueManagerSignatureDate', label: 'Date', type: 'date' },
+  { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature' },
+  { name: 'electricianSignatureDate', label: 'Date', type: 'date' },
+  { name: 'centerSeal', label: 'Center Seal', type: 'image-upload' }
+];

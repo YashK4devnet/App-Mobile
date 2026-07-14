@@ -35,5 +35,52 @@ export const reportApiService = {
       
       throw new Error(`Unable to fetch report ${reportId} and no offline cache found.`);
     }
+  },
+
+  /**
+   * Patches a specific lineField of a report with the provided array of lines.
+   * @param {string|number} reportId - The ID of the report.
+   * @param {string} lineField - The name of the field to update (e.g. "network_architecture_lines")
+   * @param {Array} lines - The array of updated/new lines.
+   */
+  async patchAuditLines(reportId, lineField, lines) {
+    try {
+      const payload = {
+        lineField,
+        lines
+      };
+      const response = await auditHttpClient(`/audits/${reportId}/lines`, {
+        method: 'PATCH',
+        headers: {
+          'Odoo-DB': DB_NAME,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      return response;
+    } catch (error) {
+      console.error(`Failed to patch lineField ${lineField} for report ${reportId}`, error);
+      throw error;
+    }
+  },
+
+  /**
+   * Patches a general section of a report (for non-line fields like Venue Audit).
+   */
+  async patchAuditSection(reportId, payload) {
+    try {
+      const response = await auditHttpClient(`/audits/${reportId}`, {
+        method: 'PATCH',
+        headers: {
+          'Odoo-DB': DB_NAME,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      return response;
+    } catch (error) {
+      console.error(`Failed to patch section for report ${reportId}`, error);
+      throw error;
+    }
   }
 };

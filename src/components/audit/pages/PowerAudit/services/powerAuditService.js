@@ -1,3 +1,5 @@
+import { reportApiService } from '../../../services/reportApiService';
+
 /**
  * Dynamically generates the initial state object by traversing the provided schemas.
  * Reduces the need for manual state initialization.
@@ -8,7 +10,14 @@ export const generateInitialState = (schemas, odooData = null) => {
   // Helper to find a specific line by id across all arrays in odooData
   const getOdooLine = (idStr) => {
     if (!odooData || !idStr.startsWith('odoo_')) return null;
-    const id = parseInt(idStr.replace('odoo_', ''), 10);
+    
+    let id;
+    const match = idStr.match(/^odoo_.+___(\d+)$/);
+    if (match) {
+      id = parseInt(match[1], 10);
+    } else {
+      id = parseInt(idStr.replace('odoo_', ''), 10);
+    }
     
     for (const key of Object.keys(odooData)) {
       if (Array.isArray(odooData[key])) {
@@ -218,4 +227,135 @@ export const calculateGlobalProgress = (schemas, data) => {
   });
 
   return Math.round((globalFilled / (globalTotal || 1)) * 100);
+};
+
+/**
+ * Parses the current section data and saves it to the backend via the PATCH lines API.
+ */
+export const savePowerSection = async (reportId, schema, currentData, payloadKey) => {
+  if (!reportId || !schema) return;
+
+  const payloadsByLineField = {};
+
+  const processField = (f) => {
+    if (f.type === 'heading' || f.type === 'row' || f.type === 'group') {
+      if (f.fields) f.fields.forEach(processField);
+      return;
+    }
+    if (!f.name) return;
+
+    let val = currentData[f.name];
+    
+    // In case react-hook-form flattened the values (e.g., 'odoo_some_lines___1609.findings'),
+    // we reconstruct the object if val is undefined.
+    if (val === undefined) {
+      val = {};
+      let found = false;
+      Object.keys(currentData).forEach(key => {
+        if (key.startsWith(f.name + '.')) {
+          const subKey = key.split('.')[1];
+          val[subKey] = currentData[key];
+          found = true;
+        }
+      });
+      if (!found) return;
+    }
+
+    // Process existing lines: odoo_{lineField}___{id}
+    const lineMatch = f.name.match(/^odoo_(.+)___(\d+)$/);
+    if (lineMatch) {
+      const lineField = lineMatch[1];
+      const id = parseInt(lineMatch[2], 10);
+      
+      if (!payloadsByLineField[lineField]) {
+        payloadsByLineField[lineField] = [];
+      }
+      
+      const linePayload = { id };
+      if (f.fields) {
+        f.fields.forEach(sub => {
+          if (sub.type === 'image-upload') {
+            let imgData = val[sub.name]?.url || "";
+            if (imgData.includes(',')) {
+              imgData = imgData.split(',')[1];
+            }
+            linePayload[sub.name] = imgData;
+          } else {
+            linePayload[sub.name] = val[sub.name] || "";
+          }
+        });
+      }
+      
+      payloadsByLineField[lineField].push(linePayload);
+      return;
+    }
+
+    // Process custom questions: customQuestions___{lineField}
+    const customMatch = f.name.match(/^customQuestions___(.+)$/);
+    if (customMatch) {
+      const lineField = customMatch[1];
+      const customArray = val || [];
+      
+      if (!payloadsByLineField[lineField]) {
+        payloadsByLineField[lineField] = [];
+      }
+      
+      if (Array.isArray(customArray)) {
+        customArray.forEach(item => {
+          if (item.questionTitle || item.name) {
+            const linePayload = {};
+            if (f.fields) {
+              f.fields.forEach(sub => {
+                const subValName = sub.name === 'questionTitle' ? 'name' : sub.name;
+                if (sub.type === 'image-upload') {
+                  let imgData = item[sub.name]?.url || "";
+                  if (imgData.includes(',')) {
+                    imgData = imgData.split(',')[1];
+                  }
+                  linePayload[subValName] = imgData;
+                } else {
+                  linePayload[subValName] = item[sub.name] || "";
+                }
+              });
+            }
+            payloadsByLineField[lineField].push(linePayload);
+          }
+        });
+      }
+      return;
+    }
+  };
+
+  schema.forEach(processField);
+
+  if (!schema || schema.length === 0) {
+    console.warn("[DIAGNOSTICS] Schema is empty. Exiting.");
+    return;
+  }
+
+  if (payloadKey === 'Signatures') {
+    const signatures = {};
+    schema.forEach(f => {
+      let val = currentData[f.name];
+      if (f.type === 'signature' || f.type === 'image-upload') {
+        let imgData = val?.url || "";
+        if (imgData.includes(',')) imgData = imgData.split(',')[1];
+        signatures[f.name] = imgData;
+      } else {
+        signatures[f.name] = val || "";
+      }
+    });
+    return reportApiService.patchAuditSection(reportId, { signatures });
+  }
+
+  const promises = [];
+
+  // Send PATCH request for each lineField collected
+  Object.entries(payloadsByLineField).forEach(([lineField, lines]) => {
+    if (lines.length > 0) {
+      promises.push(reportApiService.patchAuditLines(reportId, lineField, lines));
+    }
+  });
+
+  await Promise.all(promises);
 };

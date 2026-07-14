@@ -1,26 +1,30 @@
-export const generateNetworkQuestionsSchema = (apiLines, sectionKey) => {
+const camelToSnake = (str) => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
+export const generateNetworkQuestionsSchema = (apiLines, lineField) => {
   if (!apiLines || !Array.isArray(apiLines)) {
     apiLines = [];
   }
   
+  const snakeField = lineField ? camelToSnake(lineField) : 'unknown';
+
   // Map Odoo API lines to form schema
   const questions = apiLines.map(line => {
     const remarksHint = line.evidence || '';
     
     return {
-      name: `odoo_${line.id}`,
+      name: `odoo_${snakeField}___${line.id}`,
       label: line.name,
       type: 'object',
       subType: 'network-question',
       fields: [
         { 
-          name: 'remarks', 
+          name: 'remark', 
           label: `Remarks${remarksHint ? ` (${remarksHint})` : ''}`, 
           type: 'textarea', 
           placeholder: 'Enter remarks here...' 
         },
         { 
-          name: 'observation', 
+          name: 'findings', 
           label: 'Observation', 
           type: 'select', 
           options: ['S', 'NS', 'U', 'NA'] 
@@ -35,17 +39,17 @@ export const generateNetworkQuestionsSchema = (apiLines, sectionKey) => {
   });
 
   // Append the custom questions array block to allow adding new custom questions
-  if (sectionKey) {
+  if (lineField) {
     questions.push({
-      name: `customQuestions_${sectionKey}`,
+      name: `customQuestions___${snakeField}`,
       label: 'Additional Custom Questions',
       type: 'array',
       subType: 'custom-questions',
       itemLabel: 'Custom Question',
       fields: [
         { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
-        { name: 'remarks', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
-        { name: 'observation', label: 'Observation', type: 'select', options: ['S', 'NS', 'U', 'NA'] },
+        { name: 'remark', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
+        { name: 'findings', label: 'Observation', type: 'select', options: ['S', 'NS', 'U', 'NA'] },
         { name: 'image', label: 'Evidence Image', type: 'image-upload' }
       ]
     });
@@ -54,16 +58,18 @@ export const generateNetworkQuestionsSchema = (apiLines, sectionKey) => {
   return questions;
 };
 
-export const generatePowerQuestionsSchema = (apiLines, sectionKey) => {
+export const generatePowerQuestionsSchema = (apiLines, lineField) => {
   if (!apiLines || !Array.isArray(apiLines)) {
     apiLines = [];
   }
   
+  const snakeField = lineField ? camelToSnake(lineField) : 'unknown';
+
   const questions = apiLines.map(line => {
     const findingsHint = line.evidence || '';
     
     return {
-      name: `odoo_${line.id}`,
+      name: `odoo_${snakeField}___${line.id}`,
       label: line.name,
       type: 'object',
       subType: 'power-question',
@@ -89,9 +95,9 @@ export const generatePowerQuestionsSchema = (apiLines, sectionKey) => {
     };
   });
 
-  if (sectionKey) {
+  if (lineField) {
     questions.push({
-      name: `customQuestions_${sectionKey}`,
+      name: `customQuestions___${snakeField}`,
       label: 'Additional Custom Questions',
       type: 'array',
       subType: 'custom-questions',
@@ -108,16 +114,18 @@ export const generatePowerQuestionsSchema = (apiLines, sectionKey) => {
   return questions;
 };
 
-export const generatePowerPhotoQuestionsSchema = (apiLines, sectionKey) => {
+export const generatePowerPhotoQuestionsSchema = (apiLines, lineField) => {
   if (!apiLines || !Array.isArray(apiLines)) {
     apiLines = [];
   }
   
+  const snakeField = lineField ? camelToSnake(lineField) : 'unknown';
+
   const questions = apiLines.map(line => {
     const findingsHint = line.evidence || '';
     
     return {
-      name: `odoo_${line.id}`,
+      name: `odoo_${snakeField}___${line.id}`,
       label: line.name,
       type: 'object',
       subType: 'power-photo-question',
@@ -137,9 +145,9 @@ export const generatePowerPhotoQuestionsSchema = (apiLines, sectionKey) => {
     };
   });
 
-  if (sectionKey) {
+  if (lineField) {
     questions.push({
-      name: `customQuestions_${sectionKey}`,
+      name: `customQuestions___${snakeField}`,
       label: 'Additional Custom Questions',
       type: 'array',
       subType: 'custom-questions',

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { storageService } from '../services/storageService';
 
@@ -13,7 +13,7 @@ export function useAuditWizard({
   initialVenue,
   auditName,
   nextAuditMonths = 3,
-  apiSyncFunction,
+  saveSectionData,
   sectionToPayloadKey,
   onComplete,
   onExitForm
@@ -39,11 +39,12 @@ export function useAuditWizard({
   };
 
   const location = useLocation();
+  const params = useParams();
   const [currentSubsection, setCurrentSubsection] = useState(steps[0].id);
 
   const venueId = initialVenue?.id || 'new';
   const typeId = auditName === 'Venue Audit Report' ? 'venue-audit' : auditName === 'Venue Power Audit Report' ? 'power-audit' : 'network-audit';
-  const reportId = location.state?.odooData?.id;
+  const reportId = location.state?.odooData?.id || params.reportId;
   const storageKey = reportId 
     ? `audit_draft_report_${reportId}_${typeId}` 
     : `audit_draft_venue_${venueId}_${typeId}`;
@@ -87,8 +88,17 @@ export function useAuditWizard({
   const navigate = useNavigate();
 
   useEffect(() => {
+    // If we just received fresh data from the API (via navigation state), 
+    // we bypass the cache and start fresh to avoid stale drafts.
+    if (location.state?.odooData) {
+      storageService.saveDraft(storageKey, initialFormValues).catch(e => console.error(e));
+      reset(initialFormValues);
+      setIsInitializing(false);
+      return;
+    }
+
     storageService.getDraft(storageKey).then(draftData => {
-      // Only reset with draftData if it actually exists, otherwise keep initialFormValues (which contains mapped odooData)
+      // Only reset with draftData if it actually exists, otherwise keep initialFormValues
       if (draftData && Object.keys(draftData).length > 0) {
         reset(draftData);
       } else {
@@ -125,6 +135,16 @@ export function useAuditWizard({
   };
 
   const handleSectionSelect = (sectionId) => {
+    // Save current section before switching
+    const currentData = getValues();
+    if (reportId && saveSectionData) {
+      const payloadKey = sectionToPayloadKey ? sectionToPayloadKey[currentSubsection] : null;
+      const sectionSchema = schemas[currentSubsection];
+      if (sectionSchema) {
+        saveSectionData(reportId, sectionSchema, currentData, payloadKey)
+          .catch(err => console.error("Background sync failed on section change:", err));
+      }
+    }
     setCurrentSubsection(sectionId);
   };
 
@@ -134,23 +154,13 @@ export function useAuditWizard({
 
     const currentData = getValues();
 
-    if (currentData.reportNumber && apiSyncFunction && sectionToPayloadKey) {
-      const patchPayload = {};
-      Object.entries(sectionToPayloadKey).forEach(([sectionId, payloadKey]) => {
-        if (!patchPayload[payloadKey]) patchPayload[payloadKey] = {};
-        
-        const sectionSchema = schemas[sectionId];
-        if (sectionSchema) {
-          extractKeysFromSchema(sectionSchema).forEach(key => {
-            if (currentData[key] !== undefined) {
-              patchPayload[payloadKey][key] = currentData[key];
-            }
-          });
-        }
-      });
-      
-      apiSyncFunction(currentData.reportNumber, patchPayload)
-        .catch(err => console.error("Background sync failed:", err));
+    if (reportId && saveSectionData) {
+      const payloadKey = sectionToPayloadKey ? sectionToPayloadKey[currentSubsection] : null;
+      const sectionSchema = schemas[currentSubsection];
+      if (sectionSchema) {
+        saveSectionData(reportId, sectionSchema, currentData, payloadKey)
+          .catch(err => console.error("Background sync failed on save & next:", err));
+      }
     }
 
     const nextStep = steps[currentIndex + 1];
