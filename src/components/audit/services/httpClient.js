@@ -42,6 +42,14 @@ export const auditHttpClient = async (endpoint, options = {}) => {
   const baseUrl = getBaseUrl();
   const url = `${baseUrl}${endpoint}`;
   const method = options.method || 'GET';
+  const odooDb = (typeof process !== 'undefined' && process.env && process.env.AUDIT_API_DB) || 'audit_rest_api';
+
+  const defaultHeaders = {
+    'Content-Type': 'application/json',
+  };
+  if (odooDb) {
+    defaultHeaders['X-Odoo-Database'] = odooDb;
+  }
 
   if (Capacitor.isNativePlatform()) {
     console.log(`[auditHttpClient] Native ${method} to ${url}`);
@@ -57,7 +65,7 @@ export const auditHttpClient = async (endpoint, options = {}) => {
       url,
       method,
       headers: {
-        'Content-Type': 'application/json',
+        ...defaultHeaders,
         ...(options.headers || {})
       },
       data
@@ -77,7 +85,7 @@ export const auditHttpClient = async (endpoint, options = {}) => {
     const response = await fetch(url, {
       method,
       headers: {
-        'Content-Type': 'application/json',
+        ...defaultHeaders,
         ...(options.headers || {})
       },
       body: options.body

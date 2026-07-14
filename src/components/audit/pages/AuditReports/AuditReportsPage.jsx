@@ -10,6 +10,7 @@ import Header from '../../components/Header'; // Reusing your global header
 import PullToRefresh from '../../components/PullToRefresh';
 import { useDebounce } from '../../hooks/useDebounce';
 import { Virtuoso } from 'react-virtuoso';
+import { reportApiService } from '../../services/reportApiService';
 
 const FILTERS = ["All", "Assigned", "Completed", "Waiting for Approval", "Approved", "Rejected"];
 
@@ -17,7 +18,7 @@ export default function AuditReportsPage({ hideHeader = false }) {
   const navigate = useNavigate();
   const { venueId } = useParams();
   
-  const { venues, isLoading: isVenuesLoading, error: venuesError, refreshVenues } = useAssignedVenues();
+  const { venues, isLoading: isVenuesLoading, error: venuesError, connectionError: venuesConnectionError, refreshVenues } = useAssignedVenues();
   const selectedVenue = venues.find(v => v.id === venueId);
   const venueName = selectedVenue ? selectedVenue.name : null;
   
@@ -26,6 +27,9 @@ export default function AuditReportsPage({ hideHeader = false }) {
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  
+  const [fetchingReportId, setFetchingReportId] = useState(null);
+  const [fetchError, setFetchError] = useState(null);
 
   const containerRef = useRef(null);
   const [scrollParent, setScrollParent] = useState(null);
@@ -78,16 +82,69 @@ export default function AuditReportsPage({ hideHeader = false }) {
   };
 
   const handleRefresh = async () => {
-    if (venueName) {
+    if (venueId) {
       await refreshReports();
     } else {
       await refreshVenues();
     }
   };
 
+  const handleReportClick = async (report) => {
+    try {
+      setFetchingReportId(report.id);
+      setFetchError(null);
+      
+      const reportData = await reportApiService.fetchReport(report.id);
+      
+      let path = '';
+      if (reportData.reportType === 'network_audit') path = `/audit/network-audit/${report.id}`;
+      else if (reportData.reportType === 'power_audit') path = `/audit/power-audit/${report.id}`;
+      else if (reportData.reportType === 'venue_audit') path = `/audit/venue-audit/${report.id}`;
+      else {
+        // Fallback mapping just in case the API type differs from our expected standard
+        if (report.reportType === 'network') path = `/audit/network-audit/${report.id}`;
+        else if (report.reportType === 'power') path = `/audit/power-audit/${report.id}`;
+        else if (report.reportType === 'venue') path = `/audit/venue-audit/${report.id}`;
+        else path = `/audit/${report.reportType || 'network'}-audit/${report.id}`; 
+      }
+      
+      navigate(path, { state: { odooData: reportData } });
+      
+    } catch (err) {
+      console.error(err);
+      setFetchError(`Failed to load report ${report.id}. Are you offline with no cache?`);
+    } finally {
+      setFetchingReportId(null);
+    }
+  };
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
       <div className="flex flex-col gap-4 min-h-screen" ref={containerRef}>
+      {venuesConnectionError && !fetchError && (
+        <div className="flex items-center gap-2.5 px-4 py-3 bg-rose-500/10 border border-rose-500/25 text-rose-200 text-[13px] rounded-2xl shadow-lg backdrop-blur-md animate-fadeIn">
+          <svg className="w-4 h-4 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div className="flex-1">
+            <span className="font-semibold">Offline Mode.</span> Showing cached venues and reports. Pull down to retry connection.
+          </div>
+        </div>
+      )}
+      
+      {fetchError && (
+        <div className="flex items-center gap-2.5 px-4 py-3 bg-rose-500/10 border border-rose-500/25 text-rose-200 text-[13px] rounded-2xl shadow-lg backdrop-blur-md animate-fadeIn">
+          <svg className="w-4 h-4 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div className="flex-1">
+            {fetchError}
+          </div>
+          <button onClick={() => setFetchError(null)} className="p-1 hover:bg-white/10 rounded-full transition-colors">
+            <svg className="w-4 h-4 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+      )}
       {!hideHeader && (
         <Header 
           title={venueName ? `Reports - ${venueName}` : "Select a Venue"} 
@@ -102,7 +159,7 @@ export default function AuditReportsPage({ hideHeader = false }) {
           <input
             type="text"
             className="w-full bg-white/5 backdrop-blur-md border border-white/10 text-white text-[15px] rounded-2xl pl-12 pr-4 py-3.5 focus:outline-none focus:border-[#4ecdc4]/50 focus:ring-1 focus:ring-[#4ecdc4]/50 transition-all placeholder-white/30"
-            placeholder={venueName ? "Search by venue or report ID..." : "Search venues by name or location..."}
+            placeholder={venueId ? "Search by venue or report ID..." : "Search venues by name or location..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -113,7 +170,7 @@ export default function AuditReportsPage({ hideHeader = false }) {
           </div>
         </div>
 
-        {venueName && (
+        {venueId && (
           <FilterPills 
             filters={FILTERS} 
             activeFilter={activeFilter} 
@@ -124,7 +181,7 @@ export default function AuditReportsPage({ hideHeader = false }) {
 
       {/* Content Area */}
       <div className="pb-6">
-        {!venueName ? (
+        {!venueId ? (
           // Venues View
           isVenuesLoading ? (
             <div className="space-y-4">
@@ -210,17 +267,27 @@ export default function AuditReportsPage({ hideHeader = false }) {
             </motion.div>
           ) : (
             <div className="flex flex-col gap-4">
-              <h2 className="text-[17px] font-semibold text-white/90 px-1 pt-1">Reports for {venueName}</h2>
+              <h2 className="text-[17px] font-semibold text-white/90 px-1 pt-1">
+                {venueName ? `Reports for ${venueName}` : 'Reports'}
+              </h2>
               {scrollParent ? (
                 <Virtuoso
                   customScrollParent={scrollParent}
                   data={filteredReports}
                   itemContent={(index, report) => (
-                    <div className="pb-4">
+                    <div className="pb-4 relative">
                       <ReportCard 
                         report={report} 
-                        onClick={() => console.log('Navigate to report', report.id)}
+                        onClick={() => handleReportClick(report)}
                       />
+                      {fetchingReportId === report.id && (
+                        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] rounded-[24px] flex items-center justify-center z-10 mx-5 mb-4 border border-white/5">
+                           <div className="flex flex-col items-center gap-2">
+                             <div className="w-6 h-6 border-2 border-[#4ecdc4]/30 border-t-[#4ecdc4] rounded-full animate-spin"></div>
+                             <span className="text-[12px] font-medium text-[#4ecdc4]">Loading Data...</span>
+                           </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 />

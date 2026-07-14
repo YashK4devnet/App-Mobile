@@ -10,12 +10,20 @@ export default function PullToRefresh({ onRefresh, children }) {
   const MAX_PULL = 150;
   const THRESHOLD = 80;
 
+  const isScrolled = (element) => {
+    let current = element;
+    while (current && current !== document.body && current !== document.documentElement) {
+      if (current.scrollTop > 0) {
+        return true;
+      }
+      current = current.parentElement;
+    }
+    return window.scrollY > 0;
+  };
+
   const handleTouchStart = (e) => {
-    // Determine if we are at the top of the window or the scroll container
-    const scrollTop = containerRef.current ? containerRef.current.scrollTop : window.scrollY;
-    
-    // Only allow pull-to-refresh if we're exactly at the top
-    if (scrollTop <= 0 && !isRefreshing) {
+    // Only allow pull-to-refresh if we're exactly at the top of all scrollable containers
+    if (!isScrolled(e.target) && !isRefreshing) {
       setStartY(e.touches[0].clientY);
     } else {
       setStartY(0);
@@ -25,8 +33,7 @@ export default function PullToRefresh({ onRefresh, children }) {
   const handleTouchMove = (e) => {
     if (startY === 0 || isRefreshing) return;
 
-    const scrollTop = containerRef.current ? containerRef.current.scrollTop : window.scrollY;
-    if (scrollTop > 0) {
+    if (isScrolled(e.target)) {
       // If user scrolled down natively, cancel pull-to-refresh
       setStartY(0);
       setPullDistance(0);

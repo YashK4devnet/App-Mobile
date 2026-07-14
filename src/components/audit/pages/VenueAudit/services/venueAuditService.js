@@ -2,8 +2,61 @@
  * Dynamically generates the initial state object by traversing the provided schemas.
  * Reduces the need for manual state initialization.
  */
-export const generateInitialState = (schemas) => {
+export const generateInitialState = (schemas, odooData = null) => {
   const state = {};
+
+  const flatOdooData = {};
+  if (odooData) {
+    flatOdooData.region = odooData.region;
+    flatOdooData.ownerName = odooData.venueOwnerName;
+    flatOdooData.ownerContact = odooData.venueOwnerContact;
+    flatOdooData.adminName = odooData.venueAdministratorName;
+    
+    // Common Info mapping
+    flatOdooData.reportName = odooData.reportName || odooData.systemAuditName;
+    flatOdooData.systemAuditName = odooData.systemAuditName;
+    flatOdooData.reportNumber = odooData.reference || odooData.id?.toString();
+    flatOdooData.auditDate = odooData.auditDate ? String(odooData.auditDate).split(' ')[0] : '';
+    flatOdooData.auditorName = odooData.auditorName || (odooData.auditors && odooData.auditors[0] ? odooData.auditors[0].auditor : '');
+    flatOdooData.auditManager = odooData.auditManager || '';
+    flatOdooData.state = odooData.venue?.state;
+    flatOdooData.city = odooData.venue?.city;
+    flatOdooData.venueName = odooData.venue?.name;
+    flatOdooData.address = [odooData.venue?.city, odooData.venue?.state].filter(Boolean).join(', ') || odooData.venue?.completeAddress;
+    
+    
+    if (odooData.accessibility) {
+       flatOdooData.distCityCentre = odooData.accessibility.distanceFromCity;
+       flatOdooData.distAirport = odooData.accessibility.distanceFromAir;
+       flatOdooData.distRailway = odooData.accessibility.distanceFromRail;
+       flatOdooData.distBusStop = odooData.accessibility.distanceFromBus;
+       flatOdooData.approachRoadQuality = odooData.accessibility.roadQuality;
+    }
+    
+    if (odooData.administrative) {
+       flatOdooData.washroomAvailable = odooData.administrative.washroomFacilityAvailable;
+       flatOdooData.drinkingWaterAvailable = odooData.administrative.safeDrinkingWaterAvailable;
+       flatOdooData.parkingAvailable = odooData.administrative.parkingSpaceAvailable;
+       flatOdooData.totalManpower = odooData.administrative.venueManpowerCount;
+       flatOdooData.manpowerType = odooData.administrative.staffType;
+    }
+    
+    if (odooData.systemDetails) {
+       flatOdooData.totalSystemsAvailable = odooData.systemDetails.totalSystemsAvailable;
+       flatOdooData.antivirusAvailable = odooData.systemDetails.antivirusAvailable;
+    }
+    
+    if (odooData.labDetails) {
+       flatOdooData.totalLabsAvailable = odooData.labDetails.totalLabsAvailable;
+       flatOdooData.totalLabsAllocated = odooData.labDetails.totalLabsAllocatedExam;
+    }
+    
+    if (odooData.conclusion) {
+       flatOdooData.auditDuration = odooData.conclusion.auditDuration;
+       flatOdooData.overallVenueRating = odooData.conclusion.overallVenueRating;
+       flatOdooData.recommendedForExam = odooData.conclusion.recommendedExamConduct;
+    }
+  }
 
   const processField = (f) => {
     if (f.type === 'heading') return;
@@ -21,9 +74,13 @@ export const generateInitialState = (schemas) => {
     if (!f.name) return;
 
     if (f.type === 'dynamic-list' || f.type === 'nested-list') {
-      state[f.name] = [];
+      state[f.name] = flatOdooData[f.name] || [];
     } else {
-      state[f.name] = f.value || '';
+      let mappedValue = flatOdooData[f.name];
+      if (mappedValue === undefined || mappedValue === null) {
+        mappedValue = f.value || '';
+      }
+      state[f.name] = mappedValue;
     }
   };
 

@@ -11,6 +11,7 @@ import BottomNav from './components/BottomNav';
 import AuditDashboardPage from './pages/AuditDashboard/AuditDashboardPage';
 import AuditReportsPage from './pages/AuditReports/AuditReportsPage';
 import AuditSettingsPage from './pages/AuditSettings/AuditSettingsPage';
+import { AuditProvider } from './stores/AuditContext';
 
 const getHeaderTitle = (pathname) => {
   if (pathname.startsWith('/audit/reports/')) {
@@ -141,64 +142,87 @@ export default function AuditRoutes() {
 
   return (
     <ModuleContext.Provider value={{ basePath }}>
-      <MobileLayout
-        header={
-          !isAuditActive && (
-            <Header
-              title={getHeaderTitle(location.pathname)}
-              onMenuClick={() => console.log('Menu drawer toggled')}
-              onNotificationClick={() => console.log('Notifications overlay toggled')}
-              hasNotifications={true}
-            />
-          )
-        }
-        bottomNav={
-          !isAuditActive && <BottomNav />
-        }
-      >
-        <div className="relative h-full w-full overflow-hidden">
-          <AnimatePresence mode="popLayout">
-            <Routes location={location} key={isAuditActive ? 'audit-wizard' : currentIndex}>
-            {/* Main Tabs */}
-            <Route index element={<PageTransition direction={direction}><AuditDashboardPage /></PageTransition>} />
-            <Route path="home" element={<PageTransition direction={direction}><AuditDashboardPage /></PageTransition>} />
-            <Route path="reports" element={<PageTransition direction={direction}><AuditReportsPage hideHeader={true} /></PageTransition>} />
-            <Route path="reports/:venueId" element={<PageTransition direction={direction}><AuditReportsPage hideHeader={true} /></PageTransition>} />
-            <Route path="settings" element={<PageTransition direction={direction}><AuditSettingsPage /></PageTransition>} />
+      <AuditProvider>
+        <MobileLayout
+          header={
+            !isAuditActive && (
+              <Header
+                title={getHeaderTitle(location.pathname)}
+                onMenuClick={() => console.log('Menu drawer toggled')}
+                onNotificationClick={() => console.log('Notifications overlay toggled')}
+                hasNotifications={true}
+              />
+            )
+          }
+          bottomNav={
+            !isAuditActive && <BottomNav />
+          }
+        >
+          <div className="relative h-full w-full overflow-hidden">
+            <AnimatePresence mode="popLayout">
+              <Routes location={location} key={isAuditActive ? 'audit-wizard' : currentIndex}>
+              {/* Main Tabs */}
+              <Route index element={<PageTransition direction={direction}><AuditDashboardPage /></PageTransition>} />
+              <Route path="home" element={<PageTransition direction={direction}><AuditDashboardPage /></PageTransition>} />
+              <Route path="reports" element={<PageTransition direction={direction}><AuditReportsPage hideHeader={true} /></PageTransition>} />
+              <Route path="reports/:venueId" element={<PageTransition direction={direction}><AuditReportsPage hideHeader={true} /></PageTransition>} />
+              <Route path="settings" element={<PageTransition direction={direction}><AuditSettingsPage /></PageTransition>} />
 
-            {/* Audit Wizards */}
-            <Route path="audit-setup/*" element={
-              <WizardTransition>
-                <Suspense fallback={<LoadingFallback />}>
-                  <AuditSetupFlow />
-                </Suspense>
-              </WizardTransition>
-            } />
-            <Route path="venue-audit/*" element={
-              <WizardTransition>
-                <Suspense fallback={<LoadingFallback />}>
-                  <VenueAuditWizard />
-                </Suspense>
-              </WizardTransition>
-            } />
-            <Route path="power-audit/*" element={
-              <WizardTransition>
-                <Suspense fallback={<LoadingFallback />}>
-                  <PowerAuditWizard />
-                </Suspense>
-              </WizardTransition>
-            } />
-            <Route path="network-audit/*" element={
-              <WizardTransition>
-                <Suspense fallback={<LoadingFallback />}>
-                  <NetworkAuditWizard />
-                </Suspense>
-              </WizardTransition>
-            } />
-          </Routes>
-        </AnimatePresence>
-      </div>
-    </MobileLayout>
+              {/* Audit Wizards */}
+              <Route path="audit-setup/*" element={
+                <WizardTransition>
+                  <Suspense fallback={<LoadingFallback />}>
+                    <AuditSetupFlow />
+                  </Suspense>
+                </WizardTransition>
+              } />
+              <Route path="venue-audit/:reportId/*" element={
+                <WizardTransition>
+                  <Suspense fallback={<LoadingFallback />}>
+                    <VenueAuditWizard />
+                  </Suspense>
+                </WizardTransition>
+              } />
+              <Route path="venue-audit/*" element={
+                <WizardTransition>
+                  <Suspense fallback={<LoadingFallback />}>
+                    <VenueAuditWizard />
+                  </Suspense>
+                </WizardTransition>
+              } />
+              <Route path="power-audit/:reportId/*" element={
+                <WizardTransition>
+                  <Suspense fallback={<LoadingFallback />}>
+                    <PowerAuditWizard />
+                  </Suspense>
+                </WizardTransition>
+              } />
+              <Route path="power-audit/*" element={
+                <WizardTransition>
+                  <Suspense fallback={<LoadingFallback />}>
+                    <PowerAuditWizard />
+                  </Suspense>
+                </WizardTransition>
+              } />
+              <Route path="network-audit/:reportId/*" element={
+                <WizardTransition>
+                  <Suspense fallback={<LoadingFallback />}>
+                    <NetworkAuditWizard />
+                  </Suspense>
+                </WizardTransition>
+              } />
+              <Route path="network-audit/*" element={
+                <WizardTransition>
+                  <Suspense fallback={<LoadingFallback />}>
+                    <NetworkAuditWizard />
+                  </Suspense>
+                </WizardTransition>
+              } />
+            </Routes>
+          </AnimatePresence>
+        </div>
+      </MobileLayout>
+      </AuditProvider>
     </ModuleContext.Provider>
   );
 }

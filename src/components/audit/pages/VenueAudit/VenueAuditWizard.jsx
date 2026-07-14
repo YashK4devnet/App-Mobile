@@ -87,6 +87,7 @@ export default function VenueAuditWizard() {
   const navigate = useNavigate();
   const location = useLocation();
   const initialVenue = location.state?.venue || null;
+  const odooData = location.state?.odooData || null;
 
   const [viewMode, setViewMode] = useState('index');
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
@@ -103,7 +104,7 @@ export default function VenueAuditWizard() {
   } = useAuditWizard({
     schemas: SUBSECTION_SCHEMAS,
     steps: STEPS,
-    initialStateGenerator: generateInitialState,
+    initialStateGenerator: (schemas) => generateInitialState(schemas, odooData),
     validateSchema,
     isSchemaEmpty,
     calculateGlobalProgress,

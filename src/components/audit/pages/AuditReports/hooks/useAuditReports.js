@@ -1,68 +1,53 @@
-import { useState, useEffect, useCallback } from 'react';
-import { CapacitorHttp, Capacitor } from '@capacitor/core';
+import { useContext, useMemo } from 'react';
+import { AuditContext } from '../../../stores/AuditContext';
 
 export function useAuditReports(venueId) {
-  const [reports, setReports] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const context = useContext(AuditContext);
 
-  const fetchReports = useCallback(async () => {
-    if (!venueId) {
-      setReports([]);
-      return;
-    }
+  if (!context) {
+    throw new Error('useAuditReports must be used within an AuditProvider');
+  }
 
-    setIsLoading(true);
-    setError(null);
-    try {
-      const baseUrl = Capacitor.isNativePlatform() ? import.meta.env.VITE_API_URL : '/api';
-      const url = `${baseUrl}/users/2/reports`;
-      console.log('Fetching reports from URL:', url);
-      
-      const response = await CapacitorHttp.get({
-        url: url,
-        headers: {
-          'Content-Type': 'application/json'
+  const { reports, isLoading, error, refreshData } = context;
+
+  // Filter reports by the requested venueId and map fields as expected by UI
+  const filteredReports = useMemo(() => {
+    if (!venueId) return [];
+
+    let mappedReports = reports.map(r => {
+      // Map API fields to UI expected fields
+      let vId = '';
+      let vName = '';
+      if (r.venue) {
+        if (Array.isArray(r.venue)) {
+          vId = r.venue[0]?.toString() || '';
+          vName = r.venue[1] || '';
+        } else if (typeof r.venue === 'object') {
+          vId = r.venue.id?.toString() || '';
+          vName = r.venue.name || '';
+        } else {
+          vId = r.venue.toString();
         }
-      });
-      console.log('CapacitorHttp reports response:', JSON.stringify(response));
-
-      let data = response.data;
-      if (typeof data === 'string') {
-        try { data = JSON.parse(data); } catch(e) {}
       }
 
-      if (data && data.success) {
-        let mappedReports = data.reports.map(r => ({
-          id: r.report_id.toString(),
-          name: r.report_name,
-          status: 'Completed',
-          venueName: r.venue_name,
-          venue_id: r.venue_id.toString(),
-          date: r.audit_date,
-          type: r.report_type
-        }));
+      return {
+        id: r.id ? r.id.toString() : r.reference,
+        name: r.reportName || r.systemAuditName,
+        status: r.state || 'Completed',
+        venueName: vName,
+        venue_id: vId,
+        date: r.auditDate,
+        type: r.reportType || 'Audit'
+      };
+    });
 
-        mappedReports = mappedReports.filter(r => r.venue_id === venueId.toString());
-        setReports(mappedReports);
-      } else {
-        throw new Error('Failed to fetch reports from server');
-      }
-    } catch (err) {
-      console.error('Failed to fetch audit reports:', err);
-      setError(err.message || 'An error occurred while fetching reports');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [venueId]);
+    return mappedReports.filter(r => r.venue_id === venueId.toString());
+  }, [reports, venueId]);
 
-  useEffect(() => {
-    fetchReports();
-  }, [fetchReports]);
-
-  const refreshReports = () => {
-    return fetchReports();
+  return { 
+    reports: filteredReports, 
+    isLoading, 
+    error, 
+    refreshReports: refreshData 
   };
-
-  return { reports, isLoading, error, refreshReports };
 }

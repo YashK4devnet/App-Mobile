@@ -1,6 +1,7 @@
 const DB_NAME = 'AuditAppDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_NAME = 'drafts';
+const REPORTS_STORE = 'odoo_reports';
 
 // Utility to open the database
 const openDB = () => {
@@ -11,6 +12,9 @@ const openDB = () => {
       const db = event.target.result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         db.createObjectStore(STORE_NAME);
+      }
+      if (!db.objectStoreNames.contains(REPORTS_STORE)) {
+        db.createObjectStore(REPORTS_STORE);
       }
     };
 
@@ -83,6 +87,30 @@ export const storageService = {
       const request = store.delete(key);
 
       request.onsuccess = () => resolve();
+      request.onerror = (e) => reject(e.target.error);
+    });
+  },
+
+  async saveReport(key, data) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(REPORTS_STORE, 'readwrite');
+      const store = transaction.objectStore(REPORTS_STORE);
+      const request = store.put(data, key);
+
+      request.onsuccess = () => resolve();
+      request.onerror = (e) => reject(e.target.error);
+    });
+  },
+
+  async getReport(key) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(REPORTS_STORE, 'readonly');
+      const store = transaction.objectStore(REPORTS_STORE);
+      const request = store.get(key);
+
+      request.onsuccess = (e) => resolve(e.target.result);
       request.onerror = (e) => reject(e.target.error);
     });
   }

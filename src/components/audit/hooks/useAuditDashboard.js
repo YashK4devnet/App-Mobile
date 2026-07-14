@@ -1,42 +1,23 @@
-import { useState, useEffect } from 'react';
-import { fetchAssignedAudits } from '../services/auditApi';
+import { useContext } from 'react';
+import { AuditContext } from '../stores/AuditContext';
 
 export const useAuditDashboard = () => {
-  const [loading, setLoading] = useState(true);
-  const [reports, setReports] = useState([]);
-  const [error, setError] = useState(null);
+  const context = useContext(AuditContext);
+  
+  if (!context) {
+    throw new Error('useAuditDashboard must be used within an AuditProvider');
+  }
 
-  const loadData = async (isRefreshing = false) => {
-    try {
-      if (!isRefreshing) setLoading(true);
-      const data = await fetchAssignedAudits();
-      setReports(data);
-    } catch (err) {
-      setError(err);
-    } finally {
-      if (!isRefreshing) setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const refreshDashboard = () => {
-    return loadData(true);
-  };
-
-  const totalAssigned = reports.length;
-  const inProgressReports = reports.filter(r => r.status === 'in_progress');
-  const completedReports = reports.filter(r => r.status === 'completed');
+  const { reports, dashboardStats, isLoading, error, connectionError, refreshData } = context;
 
   return {
-    loading,
+    loading: isLoading,
     error,
+    connectionError,
     reports,
-    totalAssigned,
-    inProgressReports,
-    completedReports,
-    refreshDashboard,
+    totalAssigned: dashboardStats.totalAssigned,
+    inProgressReports: dashboardStats.inProgressReports,
+    completedReports: dashboardStats.completedReports,
+    refreshDashboard: refreshData,
   };
 };

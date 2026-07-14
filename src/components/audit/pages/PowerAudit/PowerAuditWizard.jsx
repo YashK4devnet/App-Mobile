@@ -25,6 +25,7 @@ import {
   POWER_SECTION_10_SCHEMA,
   POWER_PERSONNEL_INFO_SCHEMA
 } from './schemas/powerAuditSchemas';
+import { generatePowerQuestionsSchema } from '../NetworkAudit/schemas/schemaGenerator';
 import { 
   CheckIcon, 
   ChevronDownIcon, 
@@ -101,6 +102,38 @@ export default function PowerAuditWizard() {
   const [viewMode, setViewMode] = useState('index');
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
+  
+  const odooData = location.state?.odooData || null;
+
+  const dynamicSchemas = odooData ? {
+    'ReportInfo': POWER_REPORT_INFO_SCHEMA,
+    'VenueInfo': POWER_VENUE_INFO_SCHEMA,
+    'PersonnelInfo': POWER_PERSONNEL_INFO_SCHEMA,
+    'Section1': [
+      ...generatePowerQuestionsSchema(odooData.supplyTransferLines),
+      ...generatePowerQuestionsSchema(odooData.transferEarthPitLines, 'sec1')
+    ],
+    'Section2': generatePowerQuestionsSchema(odooData.mainSupplyLtPanelLines, 'sec2'),
+    'Section3': [
+      ...generatePowerQuestionsSchema(odooData.diselGeneratorLines),
+      ...generatePowerQuestionsSchema(odooData.dgCheckInStopLines, 'sec3')
+    ],
+    'Section4': generatePowerQuestionsSchema(odooData.dgRunningCheckLines, 'sec4'),
+    'Section5': [
+       ...generatePowerQuestionsSchema(odooData.upsLines),
+       ...generatePowerQuestionsSchema(odooData.upsEquipmentLines, 'sec5')
+    ],
+    'Section6': [
+       ...generatePowerQuestionsSchema(odooData.upsBatteriesLines),
+       ...generatePowerQuestionsSchema(odooData.upsBatteriesSystemLines, 'sec6')
+    ],
+    'Section7': generatePowerQuestionsSchema(odooData.eqFuncLines, 'sec7'),
+    'Section8': generatePowerQuestionsSchema(odooData.maintenanceRecordLines, 'sec8'),
+    'Section9': generatePowerQuestionsSchema(odooData.toolsSparesLines, 'sec9'),
+    'Section10': POWER_SECTION_10_SCHEMA
+  } : null;
+  
+  const activeSchemas = dynamicSchemas || SUBSECTION_SCHEMAS;
 
   const {
     currentSubsection, setCurrentSubsection,
@@ -111,9 +144,9 @@ export default function PowerAuditWizard() {
     handleSectionSelect,
     handleNextClick, handlePrevClick
   } = useAuditWizard({
-    schemas: SUBSECTION_SCHEMAS,
+    schemas: activeSchemas,
     steps: STEPS,
-    initialStateGenerator: generateInitialState,
+    initialStateGenerator: (schemas) => generateInitialState(schemas, odooData),
     validateSchema,
     isSchemaEmpty,
     calculateGlobalProgress,
@@ -127,7 +160,7 @@ export default function PowerAuditWizard() {
   });
 
   const currentData = getValues();
-  const progressPercent = calculateGlobalProgress(SUBSECTION_SCHEMAS, currentData);
+  const progressPercent = calculateGlobalProgress(activeSchemas, currentData);
 
   const statusReportInfo = getSectionStatus('ReportInfo', currentData);
   const statusVenue = getSectionStatus('VenueInfo', currentData);
@@ -157,7 +190,7 @@ export default function PowerAuditWizard() {
   // Rendering Helpers
   const renderIndexView = () => {
     const getItemsCount = (sectionId) => {
-      const { total } = calculateSchemaProgress(SUBSECTION_SCHEMAS[sectionId], getValues());
+      const { total } = calculateSchemaProgress(activeSchemas[sectionId], getValues());
       return `${total} items`;
     };
 
@@ -206,7 +239,7 @@ export default function PowerAuditWizard() {
 
   const renderFormView = () => {
     const isFirst = currentSubsection === 'ReportInfo';
-    const subProgress = calculateSchemaProgress(SUBSECTION_SCHEMAS[currentSubsection], getValues());
+    const subProgress = calculateSchemaProgress(activeSchemas[currentSubsection], getValues());
     
     // Header pill
     const currentIndex = STEPS.findIndex(s => s.id === currentSubsection) + 1;
@@ -248,7 +281,7 @@ export default function PowerAuditWizard() {
         
         {/* Subsection Progress Indicator (Sticky) */}
         <LiveProgressBar 
-          schema={SUBSECTION_SCHEMAS[currentSubsection]}
+          schema={activeSchemas[currentSubsection]}
           control={control}
           calculateProgressFn={calculateSchemaProgress}
         />
@@ -271,7 +304,7 @@ export default function PowerAuditWizard() {
           {/* Form Content */}
           <div className="transition-all duration-300 ease-in-out pt-3 bg-transparent px-5 pt-2 pb-6">
             <FormRenderer
-              schema={SUBSECTION_SCHEMAS[currentSubsection]}
+              schema={activeSchemas[currentSubsection]}
               control={control}
               errors={errors}
               useAccordions={true}

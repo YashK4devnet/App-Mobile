@@ -10,6 +10,7 @@ export default function AuditDashboardPage() {
   const {
     loading,
     error,
+    connectionError,
     reports,
     totalAssigned,
     inProgressReports,
@@ -48,7 +49,18 @@ export default function AuditDashboardPage() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3 select-none">
+        <div className="w-12 h-12 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400 border border-rose-500/20 mb-2">
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
         <p className="text-sm text-red-400 font-medium">Failed to load dashboard data.</p>
+        <button 
+          onClick={refreshDashboard} 
+          className="mt-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white/80 text-xs font-semibold hover:bg-white/10 active:scale-95 transition-all"
+        >
+          Retry Connection
+        </button>
       </div>
     );
   }
@@ -56,6 +68,16 @@ export default function AuditDashboardPage() {
   return (
     <PullToRefresh onRefresh={refreshDashboard}>
       <div className="transition-opacity duration-300 ease-out opacity-100 flex flex-col h-full overflow-y-auto pb-6 scrollbar-none px-4 pt-4">
+        {connectionError && (
+          <div className="mb-4 flex items-center gap-2.5 px-4 py-3 bg-rose-500/10 border border-rose-500/25 text-rose-200 text-[13px] rounded-2xl shadow-lg backdrop-blur-md animate-fadeIn">
+            <svg className="w-4 h-4 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div className="flex-1">
+              <span className="font-semibold">Offline Mode.</span> Showing cached reports. Pull down to retry connection.
+            </div>
+          </div>
+        )}
         <DashboardHeader totalAssigned={totalAssigned} />
         
         <QuickStats 

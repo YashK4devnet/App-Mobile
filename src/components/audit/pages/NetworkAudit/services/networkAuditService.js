@@ -1,8 +1,22 @@
 /**
  * Dynamically generates the initial state object by traversing the provided schemas.
  */
-export const generateInitialState = (schemas) => {
+export const generateInitialState = (schemas, odooData = null) => {
   const state = {};
+
+  // Helper to find a specific line by id across all arrays in odooData
+  const getOdooLine = (idStr) => {
+    if (!odooData || !idStr.startsWith('odoo_')) return null;
+    const id = parseInt(idStr.replace('odoo_', ''), 10);
+    
+    for (const key of Object.keys(odooData)) {
+      if (Array.isArray(odooData[key])) {
+        const line = odooData[key].find(item => item.id === id);
+        if (line) return line;
+      }
+    }
+    return null;
+  };
   
   const processField = (f) => {
     if (f.type === 'heading' || f.type === 'row' || f.type === 'group') {
@@ -14,7 +28,14 @@ export const generateInitialState = (schemas) => {
     const fieldType = f.subType || f.type;
     
     if (fieldType === 'network-question') {
-      state[f.name] = { observation: '', remarks: '', image: null };
+      const lineData = getOdooLine(f.name);
+      // observation is a dropdown in the UI (S/NS/U/NA), so it must map to score
+      // remarks is a textarea, so we map the free-text fields (remark/findings) to it
+      state[f.name] = { 
+        observation: lineData?.score || '', 
+        remarks: [lineData?.remark, lineData?.findings].filter(Boolean).join(' - ') || '', 
+        image: null // Assuming images are fetched separately or not included directly in lines array
+      };
     } else if (fieldType === 'image-upload') {
       state[f.name] = null;
     } else if (fieldType === 'device-photo-list' || fieldType === 'custom-questions') {
@@ -22,7 +43,20 @@ export const generateInitialState = (schemas) => {
     } else if (fieldType === 'numbered-text-list') {
       state[f.name] = [];
     } else {
-      state[f.name] = f.value || ''; 
+      let odooVal = null;
+      if (odooData) {
+        if (f.name === 'reportName') odooVal = odooData.reportName || odooData.systemAuditName;
+        else if (f.name === 'auditDate') odooVal = odooData.auditDate ? String(odooData.auditDate).split(' ')[0] : '';
+        else if (f.name === 'auditorName') odooVal = odooData.auditorName || (odooData.auditors && odooData.auditors[0] ? odooData.auditors[0].auditor : '');
+        else if (f.name === 'auditManager') odooVal = odooData.auditManager || '';
+        else if (f.name === 'systemAuditName') odooVal = odooData.systemAuditName;
+        else if (f.name === 'reportNumber') odooVal = odooData.reference || odooData.id?.toString();
+        else if (f.name === 'state') odooVal = odooData.venue?.state;
+        else if (f.name === 'city') odooVal = odooData.venue?.city;
+        else if (f.name === 'venueName') odooVal = odooData.venue?.name;
+        else if (f.name === 'address') odooVal = [odooData.venue?.city, odooData.venue?.state].filter(Boolean).join(', ');
+      }
+      state[f.name] = odooVal || f.value || ''; 
     }
   };
 

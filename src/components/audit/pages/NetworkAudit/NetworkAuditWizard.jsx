@@ -25,6 +25,7 @@ import {
   NETWORK_PHOTO_EVIDENCE_SCHEMA,
   NETWORK_OBSERVATIONS_SCHEMA
 } from './schemas/networkAuditSchemas';
+import { generateNetworkQuestionsSchema } from './schemas/schemaGenerator';
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -42,7 +43,7 @@ import {
 } from './services/networkAuditService';
 import { updateFullAuditRecord } from '../../services/venueService';
 
-const SUBSECTION_SCHEMAS = {
+const STATIC_SUBSECTION_SCHEMAS = {
   'ReportInfo': NETWORK_REPORT_INFO_SCHEMA,
   'VenueInfo': NETWORK_VENUE_INFO_SCHEMA,
   'PersonnelInfo': NETWORK_PERSONNEL_INFO_SCHEMA,
@@ -90,17 +91,38 @@ const SECTION_TO_PAYLOAD_KEY = {
   'Observations': 'observations'
 };
 
-// Initialize dynamically from schemas
-const INITIAL_NETWORK_AUDIT_STATE = generateInitialState(SUBSECTION_SCHEMAS);
+// Removed static initialization: const INITIAL_NETWORK_AUDIT_STATE = generateInitialState(SUBSECTION_SCHEMAS);
 
 export default function NetworkAuditWizard() {
   const navigate = useNavigate();
   const location = useLocation();
   const initialVenue = location.state?.venue || null;
+  const odooData = location.state?.odooData || null; // Access payload from route state if passed
 
   const [viewMode, setViewMode] = useState('index');
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
+
+  const dynamicSchemas = React.useMemo(() => {
+    if (odooData) {
+      return {
+        'ReportInfo': NETWORK_REPORT_INFO_SCHEMA,
+        'VenueInfo': NETWORK_VENUE_INFO_SCHEMA,
+        'PersonnelInfo': NETWORK_PERSONNEL_INFO_SCHEMA,
+        'NetworkArchitecture': generateNetworkQuestionsSchema(odooData.networkArchitectureLines, 'arch'),
+        'PublicNetworkHardening': generateNetworkQuestionsSchema(odooData.publicNetworkHardingLines, 'pub_hard'),
+        'NetworkInfrastructure': generateNetworkQuestionsSchema(odooData.networkInfrastructureLines, 'net_inf'),
+        'WanInfrastructure': generateNetworkQuestionsSchema(odooData.wanInfrastructureLines, 'wan_inf'),
+        'SystemConfiguration': generateNetworkQuestionsSchema(odooData.systemConfigurationLines, 'sys_conf'),
+        'NetworkConfiguration': generateNetworkQuestionsSchema(odooData.networkConfigurationLines, 'net_conf'),
+        'BackupDevices': generateNetworkQuestionsSchema(odooData.backupDeviceLines, 'backup_dev'),
+        'NetworkSecurityCompliance': generateNetworkQuestionsSchema(odooData.networkSecurityComplianceLines, 'net_sec'),
+        'PhotoEvidence': NETWORK_PHOTO_EVIDENCE_SCHEMA,
+        'Observations': NETWORK_OBSERVATIONS_SCHEMA
+      };
+    }
+    return STATIC_SUBSECTION_SCHEMAS;
+  }, [odooData]);
 
   const {
     currentSubsection, setCurrentSubsection,
@@ -111,9 +133,9 @@ export default function NetworkAuditWizard() {
     handleSectionSelect,
     handleNextClick, handlePrevClick
   } = useAuditWizard({
-    schemas: SUBSECTION_SCHEMAS,
+    schemas: dynamicSchemas,
     steps: STEPS,
-    initialStateGenerator: generateInitialState,
+    initialStateGenerator: (schemas) => generateInitialState(schemas, odooData),
     validateSchema,
     isSchemaEmpty,
     calculateGlobalProgress,
@@ -126,8 +148,12 @@ export default function NetworkAuditWizard() {
     onExitForm: () => setViewMode('index')
   });
 
-  const currentData = getValues();
-  const progressPercent = calculateGlobalProgress(SUBSECTION_SCHEMAS, currentData);
+  const currentData = getValues ? getValues() : {};
+  
+  // Safe calculation to prevent errors during schema load
+  const progressPercent = dynamicSchemas && currentData
+    ? calculateGlobalProgress(dynamicSchemas, currentData)
+    : 0;
 
   const statusReportInfo = getSectionStatus('ReportInfo', currentData);
   const statusVenue = getSectionStatus('VenueInfo', currentData);
@@ -143,12 +169,12 @@ export default function NetworkAuditWizard() {
   const statusPhotoEvidence = getSectionStatus('PhotoEvidence', currentData);
   const statusObservations = getSectionStatus('Observations', currentData);
 
-  if (isInitializing) {
+  if (isInitializing || !dynamicSchemas) {
     return (
       <div className="min-h-screen bg-transparent flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-[#4ecdc4] border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-white/50 text-sm">Loading Draft...</p>
+          <p className="text-white/50 text-sm">Loading Data...</p>
         </div>
       </div>
     );
@@ -157,7 +183,7 @@ export default function NetworkAuditWizard() {
   // Rendering Helpers
   const renderIndexView = () => {
     const getItemsCount = (sectionId) => {
-      const { total } = calculateSchemaProgress(SUBSECTION_SCHEMAS[sectionId], getValues());
+      const { total } = calculateSchemaProgress(dynamicSchemas[sectionId], currentData);
       return `${total} items`;
     };
 
@@ -211,7 +237,7 @@ export default function NetworkAuditWizard() {
 
   const renderFormView = () => {
     const isFirst = currentSubsection === 'ReportInfo';
-    const subProgress = calculateSchemaProgress(SUBSECTION_SCHEMAS[currentSubsection], getValues());
+    const subProgress = calculateSchemaProgress(dynamicSchemas[currentSubsection], currentData);
     
     // Header pill
     const currentIndex = STEPS.findIndex(s => s.id === currentSubsection) + 1;
@@ -253,7 +279,7 @@ export default function NetworkAuditWizard() {
         
         {/* Subsection Progress Indicator (Sticky) */}
         <LiveProgressBar 
-          schema={SUBSECTION_SCHEMAS[currentSubsection]}
+          schema={dynamicSchemas[currentSubsection]}
           control={control}
           calculateProgressFn={calculateSchemaProgress}
         />
@@ -276,7 +302,7 @@ export default function NetworkAuditWizard() {
           {/* Form Content */}
           <div className="transition-all duration-300 ease-in-out pt-3 bg-transparent px-5 pt-2 pb-6">
             <FormRenderer
-              schema={SUBSECTION_SCHEMAS[currentSubsection]}
+              schema={dynamicSchemas[currentSubsection]}
               control={control}
               errors={errors}
               useAccordions={true}

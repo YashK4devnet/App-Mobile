@@ -16,6 +16,7 @@ export default defineConfig({
   define: {
     "process.env.AUDIT_API_IP": JSON.stringify(process.env.AUDIT_API_IP),
     "import.meta.env.VITE_API_URL": JSON.stringify(process.env.VITE_API_URL),
+    "process.env.AUDIT_API_DB": JSON.stringify(process.env.AUDIT_API_DB),
   },
   plugins: [
     tailwindcss(),
@@ -26,11 +27,6 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      "/api/audit": {
-        target: proxyTarget,
-        changeOrigin: true,
-        secure: false,
-      },
       "/api": {
         target: proxyTarget,
         changeOrigin: true,

@@ -43,9 +43,12 @@ export function useAuditWizard({
 
   const venueId = initialVenue?.id || 'new';
   const typeId = auditName === 'Venue Audit Report' ? 'venue-audit' : auditName === 'Venue Power Audit Report' ? 'power-audit' : 'network-audit';
-  const storageKey = `audit_draft_${venueId}_${typeId}`;
+  const reportId = location.state?.odooData?.id;
+  const storageKey = reportId 
+    ? `audit_draft_report_${reportId}_${typeId}` 
+    : `audit_draft_venue_${venueId}_${typeId}`;
   
-  const [isInitializing, setIsInitializing] = useState(!!location.state?.loadDraft);
+  const [isInitializing, setIsInitializing] = useState(true);
   
   // Evaluate default values before passing to useForm, as RHF expects a Promise if a function is passed.
   const initialFormValues = (() => {
@@ -84,27 +87,22 @@ export function useAuditWizard({
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!location.state?.loadDraft) {
-      navigate(location.pathname, {
-        replace: true,
-        state: { ...location.state, loadDraft: true }
-      });
-    }
-  }, [location.pathname, location.state, navigate]);
-
-  useEffect(() => {
-    if (location.state?.loadDraft) {
-      storageService.getDraft(storageKey).then(draftData => {
-        if (draftData) {
-          reset(draftData); // Load draft into RHF
-        }
-      }).catch(err => {
-        console.error("Failed to load draft from IndexedDB", err);
-      }).finally(() => {
-        setIsInitializing(false);
-      });
-    }
-  }, [location.state?.loadDraft, storageKey, reset]);
+    storageService.getDraft(storageKey).then(draftData => {
+      // Only reset with draftData if it actually exists, otherwise keep initialFormValues (which contains mapped odooData)
+      if (draftData && Object.keys(draftData).length > 0) {
+        reset(draftData);
+      } else {
+        reset(initialFormValues);
+      }
+    }).catch(err => {
+      console.error("Failed to load draft from IndexedDB", err);
+      reset(initialFormValues);
+    }).finally(() => {
+      setIsInitializing(false);
+    });
+    // We only want to load draft once on mount or when storageKey changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storageKey, reset]);
 
   // Subscribe to changes for auto-save, using watch
   useEffect(() => {

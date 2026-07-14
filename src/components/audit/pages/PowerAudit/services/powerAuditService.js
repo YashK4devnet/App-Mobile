@@ -2,8 +2,22 @@
  * Dynamically generates the initial state object by traversing the provided schemas.
  * Reduces the need for manual state initialization.
  */
-export const generateInitialState = (schemas) => {
+export const generateInitialState = (schemas, odooData = null) => {
   const state = {};
+  
+  // Helper to find a specific line by id across all arrays in odooData
+  const getOdooLine = (idStr) => {
+    if (!odooData || !idStr.startsWith('odoo_')) return null;
+    const id = parseInt(idStr.replace('odoo_', ''), 10);
+    
+    for (const key of Object.keys(odooData)) {
+      if (Array.isArray(odooData[key])) {
+        const line = odooData[key].find(item => item.id === id);
+        if (line) return line;
+      }
+    }
+    return null;
+  };
   
   const processField = (f) => {
     if (f.type === 'heading' || f.type === 'row' || f.type === 'group') {
@@ -14,16 +28,32 @@ export const generateInitialState = (schemas) => {
     
     const fieldType = f.subType || f.type;
     
-    if (fieldType === 'power-question') {
-      state[f.name] = { score: '', findings: '', image: null };
-    } else if (fieldType === 'power-photo-question') {
-      state[f.name] = { image: null, findings: '' };
+    if (fieldType === 'power-question' || fieldType === 'power-photo-question') {
+      const lineData = getOdooLine(f.name);
+      state[f.name] = { 
+        findings: [lineData?.findings, lineData?.remark].filter(Boolean).join(' - ') || '', 
+        score: lineData?.score || '', 
+        image: null 
+      };
     } else if (fieldType === 'document-list' || fieldType === 'custom-questions') {
       state[f.name] = [];
     } else if (f.type === 'image-upload') {
       state[f.name] = null;
     } else {
-      state[f.name] = f.value || ''; 
+      let odooVal = null;
+      if (odooData) {
+        if (f.name === 'reportName') odooVal = odooData.reportName || odooData.systemAuditName;
+        else if (f.name === 'auditDate') odooVal = odooData.auditDate ? String(odooData.auditDate).split(' ')[0] : '';
+        else if (f.name === 'auditorName') odooVal = odooData.auditorName || (odooData.auditors && odooData.auditors[0] ? odooData.auditors[0].auditor : '');
+        else if (f.name === 'auditManager') odooVal = odooData.auditManager || '';
+        else if (f.name === 'systemAuditName') odooVal = odooData.systemAuditName;
+        else if (f.name === 'reportNumber') odooVal = odooData.reference || odooData.id?.toString();
+        else if (f.name === 'state') odooVal = odooData.venue?.state;
+        else if (f.name === 'city') odooVal = odooData.venue?.city;
+        else if (f.name === 'venueName') odooVal = odooData.venue?.name;
+        else if (f.name === 'address') odooVal = [odooData.venue?.city, odooData.venue?.state].filter(Boolean).join(', ') || odooData.venue?.completeAddress;
+      }
+      state[f.name] = odooVal || f.value || ''; 
     }
   };
 
