@@ -43,6 +43,13 @@ export const generateInitialState = (schemas, odooData = null) => {
         remark: [lineData?.remark, lineData?.remarks].filter(Boolean).join(' - ') || '', 
         image: null 
       };
+    } else if (fieldType === 'signature' || f.name === 'centerSeal') {
+      let hasSig = false;
+      if (odooData?.signatures) {
+        const sigKey = `has${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`;
+        hasSig = !!odooData.signatures[sigKey];
+      }
+      state[f.name] = hasSig ? { url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=' } : null;
     } else if (fieldType === 'image-upload') {
       state[f.name] = null;
     } else if (fieldType === 'device-photo-list' || fieldType === 'custom-questions') {
@@ -60,8 +67,13 @@ export const generateInitialState = (schemas, odooData = null) => {
         else if (f.name === 'reportNumber') odooVal = odooData.reference || odooData.id?.toString();
         else if (f.name === 'state') odooVal = odooData.venue?.state;
         else if (f.name === 'city') odooVal = odooData.venue?.city;
-        else if (f.name === 'venueName') odooVal = odooData.venue?.name;
-        else if (f.name === 'address') odooVal = [odooData.venue?.city, odooData.venue?.state].filter(Boolean).join(', ');
+        else if (f.name === 'city') odooVal = odooData.venue?.city;
+        else if (f.name === 'name') odooVal = odooData.venue?.name;
+        else if (f.name === 'completeAddress') odooVal = [odooData.venue?.city, odooData.venue?.state].filter(Boolean).join(', ') || odooData.venue?.completeAddress;
+        else if (f.name === 'totalNoNetwork') odooVal = odooData.totalNoNetwork;
+        else if (f.name === 'auditScope') odooVal = odooData.auditScope;
+        else if (f.name === 'activity') odooVal = odooData.activity;
+        else if (f.name === 'location') odooVal = odooData.location;
       }
       state[f.name] = odooVal || f.value || ''; 
     }
@@ -70,7 +82,7 @@ export const generateInitialState = (schemas, odooData = null) => {
   Object.values(schemas).forEach(schema => schema.forEach(processField));
   
   // Hardcoded default map selection since it's a radio group that defaults empty
-  state.isMapAccurate = '';
+  state.googleMapLocationStatus = '';
   return state;
 };
 
@@ -273,20 +285,7 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
     return;
   }
 
-  if (payloadKey === 'Signatures') {
-    const signatures = {};
-    schema.forEach(f => {
-      let val = currentData[f.name];
-      if (f.type === 'signature' || f.type === 'image-upload') {
-        let imgData = val?.url || "";
-        if (imgData.includes(',')) imgData = imgData.split(',')[1];
-        signatures[f.name] = imgData;
-      } else {
-        signatures[f.name] = val || "";
-      }
-    });
-    return reportApiService.patchAuditSection(reportId, { signatures });
-  }
+  // Removed hardcoded Signatures block
 
   const promises = [];
   const payloadsByLineField = {};
@@ -381,6 +380,39 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
   };
 
   schema.forEach(processField);
+
+  // Send standard flat fields in a separate patch if available
+  const standardFields = {};
+  const signatures = {};
+
+  schema.forEach(f => {
+    if (f.type === 'heading' || f.type === 'row' || f.type === 'group' || !f.name) return;
+    const lineMatch = f.name.match(/^odoo_(.+)___(\d+)$/);
+    const customMatch = f.name.match(/^customQuestions___(.+)$/);
+    if (!lineMatch && !customMatch && currentData[f.name] !== undefined) {
+      if (f.type === 'signature' || f.name === 'centerSeal') {
+        let imgData = currentData[f.name]?.url || "";
+        if (imgData.includes(',')) imgData = imgData.split(',')[1];
+        signatures[f.name] = imgData;
+      } else if (f.name.toLowerCase().includes('signaturedate')) {
+        signatures[f.name] = currentData[f.name] || "";
+      } else if (f.type === 'image-upload') {
+        let imgData = currentData[f.name]?.url || "";
+        if (imgData.includes(',')) imgData = imgData.split(',')[1];
+        standardFields[f.name] = imgData;
+      } else {
+        standardFields[f.name] = currentData[f.name];
+      }
+    }
+  });
+
+  if (Object.keys(standardFields).length > 0 && payloadKey && payloadKey !== 'Signatures') {
+    promises.push(reportApiService.patchAuditSection(reportId, { [payloadKey]: standardFields }));
+  }
+
+  if (Object.keys(signatures).length > 0) {
+    promises.push(reportApiService.patchAuditSection(reportId, { signatures }));
+  }
 
   console.warn("[DIAGNOSTICS] payloadsByLineField collected:", JSON.stringify(payloadsByLineField, null, 2));
 

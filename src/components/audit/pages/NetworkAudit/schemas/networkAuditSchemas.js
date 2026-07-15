@@ -5,7 +5,7 @@ const createNetworkQuestion = (name, label, remarksHint = '') => ({
   subType: 'network-question',
   fields: [
     { name: 'remarks', label: `Remarks${remarksHint ? ` (${remarksHint})` : ''}`, type: 'textarea', placeholder: 'Enter remarks here...' },
-    { name: 'observation', label: 'Observation', type: 'select', options: ['S', 'NS', 'U', 'NA'] },
+    { name: 'observation', label: 'Observation', type: 'select', options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] },
     { name: 'image', label: 'Evidence Image', type: 'image-upload' }
   ]
 });
@@ -19,7 +19,7 @@ const createCustomQuestions = (sectionName) => ({
   fields: [
     { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
     { name: 'remarks', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
-    { name: 'observation', label: 'Observation', type: 'select', options: ['S', 'NS', 'U', 'NA'] },
+    { name: 'observation', label: 'Observation', type: 'select', options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] },
     { name: 'image', label: 'Evidence Image', type: 'image-upload' }
   ]
 });
@@ -39,11 +39,11 @@ export const NETWORK_VENUE_INFO_SCHEMA = [
   { name: 'region', label: 'Region', type: 'select', options: ['North', 'South', 'East', 'West', 'Central'] },
   { name: 'state', label: 'State', type: 'text' },
   { name: 'city', label: 'City', type: 'text' },
-  { name: 'venueName', label: 'Venue Name', type: 'text' },
-  { name: 'address', label: 'Address', type: 'text' },
+  { name: 'name', label: 'Venue Name', type: 'text' },
+  { name: 'completeAddress', label: 'Address', type: 'text' },
   { name: 'pinCode', label: 'Pin Code', type: 'text' },
-  { name: 'isMapAccurate', label: 'Is Google Map location accurate?', type: 'radio', options: ['yes', 'no'] },
-  { name: 'totalNoOfNetwork', label: 'Total no of Network', type: 'number', placeholder: 'e.g. 100' }
+  { name: 'googleMapLocationStatus', label: 'Is Google Map location accurate?', type: 'radio', options: ['yes', 'no'] },
+  { name: 'totalNoNetwork', label: 'Total no of Network', type: 'number', placeholder: 'e.g. 100' }
 ];
 
 export const NETWORK_PERSONNEL_INFO_SCHEMA = [
@@ -204,18 +204,18 @@ export const NETWORK_PHOTO_EVIDENCE_SCHEMA = [
 
 export const NETWORK_OBSERVATIONS_SCHEMA = [
   {
-    name: 'obs_audit_scope',
+    name: 'auditScope',
     label: 'Audit scope',
     type: 'text',
   },
   {
-    name: 'obs_audit_activities',
+    name: 'activity',
     label: 'Activities',
     type: 'text',
     placeholder: 'Power / Network / Admin infrastructure check'
   },
   {
-    name: 'obs_locations_audit',
+    name: 'location',
     label: 'Locations of the audit',
     type: 'textarea',
     placeholder: 'Please mention the areas of Venue where the audit will be conducted (Example: LAB, Server Room)'

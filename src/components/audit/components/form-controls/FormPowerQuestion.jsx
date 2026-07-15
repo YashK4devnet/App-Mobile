@@ -17,7 +17,12 @@ export function FormPowerQuestion({
     onChange(name, { ...value, [field]: val });
   };
 
-  const scores = ['S', 'NS', 'U', 'NA'];
+  const scores = [
+    { label: 'S', value: 's' },
+    { label: 'NS', value: 'ns' },
+    { label: 'U', value: 'u' },
+    { label: 'NA', value: 'na' }
+  ];
 
   return (
     <div className="space-y-4 p-5 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl">
@@ -50,24 +55,24 @@ export function FormPowerQuestion({
         <span className="text-[11px] text-white/50 font-medium uppercase tracking-wider block mb-1">Score</span>
         <div className="flex gap-2">
           {scores.map(s => {
-            const isActive = value?.score === s;
+            const isActive = value?.score === s.value;
             let activeClass = '';
             if (isActive) {
-              if (s === 'S') activeClass = 'bg-[#4ecdc4] border-[#4ecdc4] text-[#0F0F23] shadow-sm';
-              else if (s === 'NS') activeClass = 'bg-yellow-500 border-yellow-500 text-white shadow-sm';
-              else if (s === 'U') activeClass = 'bg-[#ff6b6b] border-[#ff6b6b] text-white shadow-sm';
+              if (s.value === 's') activeClass = 'bg-[#4ecdc4] border-[#4ecdc4] text-[#0F0F23] shadow-sm';
+              else if (s.value === 'ns') activeClass = 'bg-yellow-500 border-yellow-500 text-white shadow-sm';
+              else if (s.value === 'u') activeClass = 'bg-[#ff6b6b] border-[#ff6b6b] text-white shadow-sm';
               else activeClass = 'bg-white/20 border-white/20 text-white shadow-sm';
             } else {
               activeClass = 'bg-white/5 backdrop-blur-md border-white/20 text-white hover:bg-white/10';
             }
             return (
               <button
-                key={s}
+                key={s.value}
                 type="button"
-                onClick={() => handleFieldChange('score', s)}
+                onClick={() => handleFieldChange('score', s.value)}
                 className={`flex-1 py-2.5 px-2 text-[13px] font-medium rounded-xl border transition-all active:scale-[0.98] cursor-pointer ${activeClass}`}
               >
-                {s}
+                {s.label}
               </button>
             );
           })}

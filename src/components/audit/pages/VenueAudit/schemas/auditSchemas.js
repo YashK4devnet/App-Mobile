@@ -37,139 +37,139 @@ export const LOCATION_DETAILS_SCHEMA = [
       { name: 'city', label: 'City', type: 'text' }
     ]
   },
-  { name: 'venueName', label: 'Venue Name', type: 'text' },
-  { name: 'address', label: 'Complete Venue Address', type: 'textarea', placeholder: 'Enter complete address' },
+  { name: 'name', label: 'Venue Name', type: 'text' },
+  { name: 'completeAddress', label: 'Complete Venue Address', type: 'textarea', placeholder: 'Enter complete address' },
   { name: 'pinCode', label: 'Pin Code', type: 'pincode', placeholder: 'Enter 6-digit pin code' },
-  { name: 'isMapAccurate', label: 'Google Map Location Accurate?', type: 'yes-no', noColor: 'orange' }
+  { name: 'googleMapLocationStatus', label: 'Google Map Location Accurate?', type: 'yes-no', noColor: 'orange' }
 ];
 
 export const CONTACT_DETAILS_SCHEMA = [
-  { name: 'ownerName', label: 'Venue Owner Name', type: 'text' },
-  { name: 'ownerContact', label: 'Venue Owner Contact Number', type: 'phone' },
-  { name: 'ownerEmail', label: 'Venue Owner Email ID', type: 'text' },
-  { name: 'adminName', label: 'Venue Administrator Name', type: 'text' },
-  { name: 'adminContact', label: 'Venue Administrator Contact', type: 'phone' },
-  { name: 'itAdminName', label: 'System / IT Administrator Name', type: 'text' },
-  { name: 'itAdminContact', label: 'System / IT Admin Contact', type: 'phone' },
-  { name: 'venueEmail', label: 'Venue Email ID', type: 'text' },
-  { name: 'landline', label: 'Venue Landline No', type: 'landline' },
-  { name: 'correspondenceEmail', label: 'Any Other Correspondence Email', type: 'text' },
-  { name: 'alternateContact', label: 'Alternate Contact No', type: 'phone' }
+  { name: 'venueOwnerName', label: 'Venue Owner Name', type: 'text' },
+  { name: 'venueOwnerContact', label: 'Venue Owner Contact Number', type: 'phone' },
+  { name: 'venueOwnerEmail', label: 'Venue Owner Email ID', type: 'text' },
+  { name: 'venueAdministratorName', label: 'Venue Administrator Name', type: 'text' },
+  { name: 'venueAdministratorContact', label: 'Venue Administrator Contact', type: 'phone' },
+  { name: 'systemItAdminName', label: 'System / IT Administrator Name', type: 'text' },
+  { name: 'systemItAdminContact', label: 'System / IT Admin Contact', type: 'phone' },
+  { name: 'email', label: 'Venue Email ID', type: 'text' },
+  { name: 'venueLandlineNo', label: 'Venue Landline No', type: 'landline' },
+  { name: 'otherCorrespondenceEmail', label: 'Any Other Correspondence Email', type: 'text' },
+  { name: 'alternateContactNo', label: 'Alternate Contact No', type: 'phone' }
 ];
 
 export const ACCESSIBILITY_DETAILS_SCHEMA = [
-  { name: 'distCityCentre', label: 'Distance from City Centre', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
-  { name: 'distAirport', label: 'Distance from Airport', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
-  { name: 'distRailway', label: 'Distance from Railway Station', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
+  { name: 'distanceFromCity', label: 'Distance from City Centre', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
+  { name: 'distanceFromAir', label: 'Distance from Airport', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
+  { name: 'distanceFromRail', label: 'Distance from Railway Station', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
   {
     type: 'row',
     fields: [
-      { name: 'distBusStop', label: 'Distance from Nearest Bus Stop', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
-      { name: 'busStopName', label: 'Nearest Bus Stop Name', type: 'text', placeholder: 'Enter stop name' }
+      { name: 'distanceFromBus', label: 'Distance from Nearest Bus Stop', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
+      { name: 'nearBusStop', label: 'Nearest Bus Stop Name', type: 'text', placeholder: 'Enter stop name' }
     ]
   },
   {
     type: 'row',
     fields: [
-      { name: 'distPoliceStation', label: 'Distance from Police Station', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
+      { name: 'distanceFromPolice', label: 'Distance from Police Station', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
       { name: 'policeStationName', label: 'Police Station Name', type: 'text', placeholder: 'Enter station name' }
     ]
   },
   {
     type: 'row',
     fields: [
-      { name: 'distHospital', label: 'Distance from Nearest Hospital', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
+      { name: 'distanceFromHospital', label: 'Distance from Nearest Hospital', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
       { name: 'hospitalName', label: 'Nearest Hospital Name', type: 'text', placeholder: 'Enter hospital name' }
     ]
   },
-  { name: 'distFireStation', label: 'Distance from Fire Station', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
-  { name: 'approachRoadQuality', label: 'Approach Road Quality', type: 'quality' },
+  { name: 'distanceFromFireStation', label: 'Distance from Fire Station', type: 'select', options: ['<10km', '10km-20km', '>20km'] },
+  { name: 'roadQuality', label: 'Approach Road Quality', type: 'quality' },
   { name: 'convenienceFeedback', label: 'Overall Convenience Feedback', type: 'textarea', placeholder: 'Enter feedback' }
 ];
 
 export const ADMINISTRATIVE_DETAILS_SCHEMA = [
   { type: 'heading', label: 'Basic Amenities & Security' },
-  { name: 'washroomAvailable', label: 'Washroom Facility Available?', type: 'yes-no' },
+  { name: 'washroomFacilityAvailable', label: 'Washroom Facility Available?', type: 'yes-no' },
   {
     type: 'group',
     className: 'grid grid-cols-2 gap-4 bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
-    showIf: (data) => data.washroomAvailable === 'yes',
+    showIf: (data) => data.washroomFacilityAvailable === 'yes',
     fields: [
       { name: 'washroomQuality', label: 'Quality of Washrooms', type: 'select', options: ['0-3', '4-7', '8-10'] },
       { name: 'washroomCleanliness', label: 'Cleanliness of Washrooms', type: 'select', options: ['0-3', '4-7', '8-10'] }
     ]
   },
-  { name: 'drinkingWaterAvailable', label: 'Safe Drinking Water Facilities Available?', type: 'yes-no' },
-  { name: 'parkingAvailable', label: 'Open Space Available for Parking?', type: 'yes-no' },
+  { name: 'safeDrinkingWaterAvailable', label: 'Safe Drinking Water Facilities Available?', type: 'yes-no' },
+  { name: 'parkingSpaceAvailable', label: 'Open Space Available for Parking?', type: 'yes-no' },
   {
     type: 'group',
     className: 'bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
-    showIf: (data) => data.parkingAvailable === 'yes',
+    showIf: (data) => data.parkingSpaceAvailable === 'yes',
     fields: [
-      { name: 'parkingToiletAvailable', label: 'Separate Toilet Available at Parking?', type: 'yes-no' }
+      { name: 'separateToiletAtParking', label: 'Separate Toilet Available at Parking?', type: 'yes-no' }
     ]
   },
   { name: 'securityGuardsAvailable', label: 'Male & Female Security Guards Available?', type: 'yes-no' },
-  { name: 'femaleFriskingEnclosure', label: 'Enclosure Available for Female Frisking?', type: 'yes-no' },
+  { name: 'femaleFriskingEnclosureAvailable', label: 'Enclosure Available for Female Frisking?', type: 'yes-no' },
 
   { type: 'heading', label: 'Candidate Facilities' },
-  { name: 'storeBelongingsAvailable', label: 'Facility Available to Store Candidate Belongings?', type: 'yes-no' },
+  { name: 'candidateBelongingsStorage', label: 'Facility Available to Store Candidate Belongings?', type: 'yes-no' },
   { name: 'lockersAvailable', label: 'Lockers Available to Keep Candidate Electronic Gadgets?', type: 'yes-no' },
-  { name: 'comfortableSeats', label: 'Does Computer Lab Have Comfortable Seats?', type: 'yes-no' },
-  { name: 'adequateSpaceCandidates', label: 'Adequate Space Available Between Two Adjacent Candidates?', type: 'yes-no' },
-  { name: 'approxSpaceSeats', label: 'Approximate Space Between Two Seats/Candidates', type: 'select', options: ['3FT', 'More than 3FT'] },
-  { name: 'liftFacility', label: 'Lift Facility Available If There Are Multiple Floors?', type: 'yes-no-na' },
-  { name: 'wheelchairRamp', label: 'Wheel Chair/Ramp Facility Available for PH Candidates?', type: 'yes-no' },
-  { name: 'groundFloorLab', label: 'Lab Available on Ground Floor for PH Candidates?', type: 'yes-no-na' },
-  { name: 'phToilet', label: 'Separate Toilet Available for PH Candidates?', type: 'yes-no' },
-  { name: 'sufficientLighting', label: 'Sufficient Lighting Available to Create an Exam Environment?', type: 'yes-no' },
-  { name: 'acAdequate', label: 'Is the Air Conditioning Facility Adequate?', type: 'yes-no-na' },
+  { name: 'comfortableSeatsAvailable', label: 'Does Computer Lab Have Comfortable Seats?', type: 'yes-no' },
+  { name: 'adequateSpaceBetweenCandidates', label: 'Adequate Space Available Between Two Adjacent Candidates?', type: 'yes-no' },
+  { name: 'approximateSpaceBetweenCandidates', label: 'Approximate Space Between Two Seats/Candidates', type: 'select', options: ['3FT', 'More than 3FT'] },
+  { name: 'liftFacilityAvailable', label: 'Lift Facility Available If There Are Multiple Floors?', type: 'yes-no-na' },
+  { name: 'wheelchairRampAvailable', label: 'Wheel Chair/Ramp Facility Available for PH Candidates?', type: 'yes-no' },
+  { name: 'groundFloorLabAvailable', label: 'Lab Available on Ground Floor for PH Candidates?', type: 'yes-no-na' },
+  { name: 'separateToiletForPh', label: 'Separate Toilet Available for PH Candidates?', type: 'yes-no' },
+  { name: 'sufficientLightingAvailable', label: 'Sufficient Lighting Available to Create an Exam Environment?', type: 'yes-no' },
+  { name: 'airConditioningAdequate', label: 'Is the Air Conditioning Facility Adequate?', type: 'yes-no-na' },
 
   { type: 'heading', label: 'Manpower & Verification' },
-  { name: 'totalManpower', label: 'Total Number of Venue Manpower Available', type: 'select', options: ['<10', '10-20', '>20'] },
-  { name: 'manpowerType', label: 'Type of Staff/Manpower Engaged', type: 'select', options: ['EMPLOYEE', 'CONTRACT', 'MIXED'] },
-  { name: 'policeVerification', label: 'Background/Police Verification of Staff Available?', type: 'yes-no' },
-  { name: 'staffComputerKnowledge', label: 'No. of Faculty/Staff with Computer Knowledge', type: 'select', options: ['<10', '10-20', '>20'] },
+  { name: 'venueManpowerCount', label: 'Total Number of Venue Manpower Available', type: 'select', options: ['<10', '10-20', '>20'] },
+  { name: 'staffType', label: 'Type of Staff/Manpower Engaged', type: 'select', options: ['EMPLOYEE', 'CONTRACT', 'MIXED'] },
+  { name: 'backgroundVerificationAvailable', label: 'Background/Police Verification of Staff Available?', type: 'yes-no' },
+  { name: 'computerKnowledgeStaffCount', label: 'No. of Faculty/Staff with Computer Knowledge', type: 'select', options: ['<10', '10-20', '>20'] },
 
   { type: 'heading', label: 'Technical & IT Facilities' },
-  { name: 'separateAreaScanningPrinting', label: 'Separate Area for Scanning/Printing?', type: 'yes-no' },
+  { name: 'separateScanningPrintingArea', label: 'Separate Area for Scanning/Printing?', type: 'yes-no' },
 
-  { name: 'printersCount', label: 'Number of Printers Available', type: 'number', placeholder: 'e.g. 2', required: true },
-  { name: 'printersType', label: 'Type of Printers', type: 'select', options: ['Laser', 'DeskJet'] },
-  { name: 'scannersCount', label: 'Number of Scanners Available', type: 'number', placeholder: 'e.g. 2', required: true },
-  { name: 'scannersType', label: 'Type of Scanners', type: 'select', options: ['FlatBed', 'Feeder'] },
+  { name: 'numberOfPrinters', label: 'Number of Printers Available', type: 'number', placeholder: 'e.g. 2', required: true },
+  { name: 'printerType', label: 'Type of Printers', type: 'select', options: ['Laser', 'DeskJet'] },
+  { name: 'numberOfScanners', label: 'Number of Scanners Available', type: 'number', placeholder: 'e.g. 2', required: true },
+  { name: 'scannerType', label: 'Type of Scanners', type: 'select', options: ['FlatBed', 'Feeder'] },
 
 
   { type: 'heading', label: 'Campus & Safety' },
-  { name: 'closedBoundary', label: 'Is the Entire Campus Inside a Closed Boundary?', type: 'yes-no' },
-  { name: 'firstAidKit', label: 'First Aid Kit Available?', type: 'yes-no' },
-  { name: 'fireExtinguishers', label: 'Fire Extinguishers & Safety Equipment Available?', type: 'yes-no' },
-  { name: 'emergencyExit', label: 'Emergency Exit Available at the Venue?', type: 'yes-no' },
+  { name: 'campusBoundaryStatus', label: 'Is the Entire Campus Inside a Closed Boundary?', type: 'yes-no' },
+  { name: 'firstAidKitAvailable', label: 'First Aid Kit Available?', type: 'yes-no' },
+  { name: 'fireSafetyEquipmentAvailable', label: 'Fire Extinguishers & Safety Equipment Available?', type: 'yes-no' },
+  { name: 'emergencyExitAvailable', label: 'Emergency Exit Available at the Venue?', type: 'yes-no' },
   {
     type: 'group',
     className: 'bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
-    showIf: (data) => data.emergencyExit === 'yes',
+    showIf: (data) => data.emergencyExitAvailable === 'yes',
     fields: [
-      { name: 'emergencyExitEveryFloor', label: 'Emergency Exit Access Available on Every Floor?', type: 'yes-no-na' }
+      { name: 'emergencyExitEachFloor', label: 'Emergency Exit Access Available on Every Floor?', type: 'yes-no-na' }
     ]
   },
-  { name: 'visitorLogBook', label: 'Visitor Log Book Available and Clearly Maintained?', type: 'yes-no' },
+  { name: 'visitorLogbookAvailable', label: 'Visitor Log Book Available and Clearly Maintained?', type: 'yes-no' },
 
   { type: 'heading', label: 'Feedback' },
-  { name: 'adminFeedback', label: 'Overall Administrative Feedback', type: 'textarea', placeholder: 'Enter additional remarks...' }
+  { name: 'overallAdministrativeFeedback', label: 'Overall Administrative Feedback', type: 'textarea', placeholder: 'Enter additional remarks...' }
 ];
 
 export const SYSTEM_DETAILS_SCHEMA = [
   { type: 'heading', label: 'System Overview' },
   { name: 'totalSystemsAvailable', label: 'Total Number of Systems Available', type: 'number', placeholder: 'e.g. 200' },
-  { name: 'machineMaintenance', label: 'Look & Feel and Maintenance of Machines', type: 'quality' },
+  { name: 'machineLookAndFeel', label: 'Look & Feel and Maintenance of Machines', type: 'quality' },
 
   { type: 'heading', label: 'Node Counts (Available vs Working)' },
   { prefix: 'testNodes', label: 'Test Nodes', type: 'node-counts' },
   { prefix: 'bufferNodes', label: 'Buffer Nodes', type: 'node-counts' },
-  { prefix: 'registrationNodes', label: 'Registration Desk Nodes', type: 'node-counts' },
-  { prefix: 'aadharNodes', label: 'Aadhar Desk Nodes', type: 'node-counts' },
-  { prefix: 'videoRecordingMachine', label: 'Video Recording Machine', type: 'node-counts' },
+  { prefix: 'registrationDeskNodes', label: 'Registration Desk Nodes', type: 'node-counts' },
+  { prefix: 'aadhaarDeskNodes', label: 'Aadhar Desk Nodes', type: 'node-counts' },
+  { prefix: 'videoRecordingMachines', label: 'Video Recording Machine', type: 'node-counts' },
 
   { type: 'heading', label: 'Types of Processors' },
   { name: 'i3available', label: 'Number of available INTEL Core i3 processors', type: 'number' },
@@ -215,8 +215,8 @@ export const SYSTEM_DETAILS_SCHEMA = [
   { name: 'monitorwork19', label: 'Number of working 19 inch monitors', type: 'number' },
 
   { type: 'heading', label: 'Policies & Software' },
-  { name: 'osLicenseOnAllNodes', label: 'OS License Available on All Client Nodes?', type: 'yes-no' },
-  { name: 'allowFormatSystem', label: 'Centre Will Allow to Format the System if Needed?', type: 'yes-no' },
+  { name: 'osLicenseAvailable', label: 'OS License Available on All Client Nodes?', type: 'yes-no' },
+  { name: 'systemFormatAllowed', label: 'Centre Will Allow to Format the System if Needed?', type: 'yes-no' },
   { name: 'antivirusAvailable', label: 'Antivirus Available at the Center?', type: 'yes-no' },
   {
     type: 'group',
@@ -224,13 +224,13 @@ export const SYSTEM_DETAILS_SCHEMA = [
     showIf: (data) => data.antivirusAvailable === 'yes',
     fields: [
       { name: 'antivirusName', label: 'Name of Antivirus Installed on PC', type: 'text', placeholder: 'e.g. Windows Defender' },
-      { name: 'antivirusDisablingPermitted', label: 'Disabling Antivirus Permitted?', type: 'yes-no' }
+      { name: 'disableAntivirusPermitted', label: 'Disabling Antivirus Permitted?', type: 'yes-no' }
     ]
   },
-  { name: 'remoteSoftwareStatus', label: 'Remote Software Status', type: 'text', placeholder: 'e.g. AnyDesk installed, TeamViewer disabled' },
+  { name: 'remoteSoftwareFound', label: 'Remote Software Status', type: 'text', placeholder: 'e.g. AnyDesk installed, TeamViewer disabled' },
 
   { type: 'heading', label: 'Feedback' },
-  { name: 'systemFeedback', label: 'Overall System Feedback', type: 'textarea', placeholder: 'Enter remarks...' }
+  { name: 'overallSystemFeedback', label: 'Overall System Feedback', type: 'textarea', placeholder: 'Enter remarks...' }
 ];
 
 export const LAB_DETAILS_SCHEMA = [
@@ -239,7 +239,7 @@ export const LAB_DETAILS_SCHEMA = [
     type: 'row',
     fields: [
       { name: 'totalLabsAvailable', label: 'Total Labs Available', type: 'number', placeholder: 'e.g. 10' },
-      { name: 'totalLabsAllocated', label: 'Total Labs Allocated for Exam', type: 'number', placeholder: 'e.g. 8' }
+      { name: 'totalLabsAllocatedExam', label: 'Total Labs Allocated for Exam', type: 'number', placeholder: 'e.g. 8' }
     ]
   },
 
@@ -294,10 +294,10 @@ export const LAB_DETAILS_SCHEMA = [
   { type: 'heading', label: 'Additional Facilities' },
   { name: 'dedicatedServerRoom', label: 'Is There a Dedicated Server Room?', type: 'yes-no' },
   { name: 'serverRoomInsideLab', label: 'Is the Server Room Inside the Lab?', type: 'yes-no' },
-  { name: 'registrationDeskAvailable', label: 'Is a Registration Desk Available?', type: 'yes-no' },
+  { name: 'registrationDeskProper', label: 'Is a Registration Desk Available?', type: 'yes-no' },
 
   { type: 'heading', label: 'Feedback' },
-  { name: 'labFeedback', label: 'Overall Lab Feedback', type: 'textarea', placeholder: 'Enter remarks...' }
+  { name: 'overallLabFeedback', label: 'Overall Lab Feedback', type: 'textarea', placeholder: 'Enter remarks...' }
 ];
 
 export const CCTV_DETAILS_SCHEMA = [
@@ -364,7 +364,7 @@ export const CONCLUSION_SCHEMA = [
   { name: 'auditorName', label: 'Auditor Name', type: 'text', placeholder: 'e.g. R CHARAN KUMAR' },
   { type: 'heading', label: 'Final Assessment' },
   { name: 'overallVenueRating', label: 'Overall Venue Rating', type: 'rating-10' },
-  { name: 'recommendedForExam', label: 'Is Venue Recommended for Exam?', type: 'yes-no' },
+  { name: 'recommendedExamConduct', label: 'Is Venue Recommended for Exam?', type: 'yes-no' },
   { 
     name: 'otherPersonnelDetails', 
     label: 'Other Personnel Details', 

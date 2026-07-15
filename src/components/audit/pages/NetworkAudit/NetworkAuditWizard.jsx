@@ -113,7 +113,7 @@ export default function NetworkAuditWizard() {
         'VenueInfo': NETWORK_VENUE_INFO_SCHEMA,
         'PersonnelInfo': NETWORK_PERSONNEL_INFO_SCHEMA,
         'NetworkArchitecture': generateNetworkQuestionsSchema(odooData.networkArchitectureLines || odooData.network_architecture_lines, 'network_architecture_lines'),
-        'PublicNetworkHardening': generateNetworkQuestionsSchema(odooData.publicNetworkHardingLines || odooData.public_network_harding_lines, 'public_network_harding_lines'),
+        'PublicNetworkHardening': generateNetworkQuestionsSchema(odooData.publicNetworkHardingLines || odooData.public_network_harding_lines, 'public_network_harding_line'),
         'NetworkInfrastructure': generateNetworkQuestionsSchema(odooData.networkInfrastructureLines || odooData.network_infrastructure_lines, 'network_infrastructure_lines'),
         'WanInfrastructure': generateNetworkQuestionsSchema(odooData.wanInfraLines || odooData.wan_infra_lines, 'wan_infra_lines'),
         'SystemConfiguration': generateNetworkQuestionsSchema(odooData.systemConfLines || odooData.system_conf_lines, 'system_conf_lines'),

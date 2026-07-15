@@ -29,9 +29,12 @@ export function FormSelectWithCounts({
             className="w-full bg-[#1a1f2e] border border-white/20 rounded-lg px-3 py-2 text-[13px] transition-all focus:ring-1 focus:ring-[#4ecdc4] focus:border-[#4ecdc4] outline-none text-white appearance-none"
           >
             <option value="" disabled>Select an option</option>
-            {options.map((opt, idx) => (
-              <option key={idx} value={opt}>{opt}</option>
-            ))}
+            {options.map((opt, idx) => {
+              const isObj = typeof opt === 'object' && opt !== null;
+              const val = isObj ? opt.value : opt;
+              const lbl = isObj ? opt.label : opt;
+              return <option key={idx} value={val}>{lbl}</option>;
+            })}
           </select>
         </div>
         <div className="grid grid-cols-2 gap-3">

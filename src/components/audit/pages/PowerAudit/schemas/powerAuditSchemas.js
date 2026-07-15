@@ -5,7 +5,7 @@ const createPowerQuestion = (name, label, evidence = '', findingsHint = '') => (
   subType: 'power-question',
   fields: [
     { name: 'findings', label: `Findings${findingsHint ? ` (${findingsHint})` : ''}`, type: 'textarea', placeholder: 'Enter findings here...' },
-    { name: 'score', label: 'Score', type: 'select', options: ['S', 'NS', 'U', 'NA'] },
+    { name: 'score', label: 'Score', type: 'select', options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] },
     { name: 'image', label: `Evidence Image${evidence ? ` (${evidence})` : ''}`, type: 'image-upload' }
   ]
 });
@@ -30,7 +30,7 @@ const createCustomQuestions = (sectionName) => ({
   fields: [
     { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
     { name: 'findings', label: 'Findings', type: 'textarea', placeholder: 'Enter findings here...' },
-    { name: 'score', label: 'Score', type: 'select', options: ['S', 'NS', 'U', 'NA'] },
+    { name: 'score', label: 'Score', type: 'select', options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] },
     { name: 'image', label: 'Evidence Image', type: 'image-upload' }
   ]
 });
@@ -50,10 +50,10 @@ export const POWER_VENUE_INFO_SCHEMA = [
   { name: 'region', label: 'Region', type: 'select', options: ['North', 'South', 'East', 'West', 'Central'] },
   { name: 'state', label: 'State', type: 'text' },
   { name: 'city', label: 'City', type: 'text' },
-  { name: 'venueName', label: 'Venue Name', type: 'text' },
-  { name: 'address', label: 'Address', type: 'text' },
+  { name: 'name', label: 'Venue Name', type: 'text' },
+  { name: 'completeAddress', label: 'Address', type: 'text' },
   { name: 'pinCode', label: 'Pin Code', type: 'text' },
-  { name: 'isMapAccurate', label: 'Is Google Map location accurate?', type: 'radio', options: ['yes', 'no'] },
+  { name: 'googleMapLocationStatus', label: 'Is Google Map location accurate?', type: 'radio', options: ['yes', 'no'] },
   { name: 'totalNodes', label: 'Total Nodes', type: 'number', placeholder: 'e.g. 100' }
 ];
 

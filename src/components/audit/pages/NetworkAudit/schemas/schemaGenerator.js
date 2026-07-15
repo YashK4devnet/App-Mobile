@@ -27,7 +27,7 @@ export const generateNetworkQuestionsSchema = (apiLines, lineField) => {
           name: 'findings', 
           label: 'Observation', 
           type: 'select', 
-          options: ['S', 'NS', 'U', 'NA'] 
+          options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] 
         },
         { 
           name: 'image', 
@@ -49,7 +49,7 @@ export const generateNetworkQuestionsSchema = (apiLines, lineField) => {
       fields: [
         { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
         { name: 'remark', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
-        { name: 'findings', label: 'Observation', type: 'select', options: ['S', 'NS', 'U', 'NA'] },
+        { name: 'findings', label: 'Observation', type: 'select', options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] },
         { name: 'image', label: 'Evidence Image', type: 'image-upload' }
       ]
     });
@@ -84,7 +84,7 @@ export const generatePowerQuestionsSchema = (apiLines, lineField) => {
           name: 'score', 
           label: 'Score', 
           type: 'select', 
-          options: ['S', 'NS', 'U', 'NA'] 
+          options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] 
         },
         { 
           name: 'image', 
@@ -105,7 +105,7 @@ export const generatePowerQuestionsSchema = (apiLines, lineField) => {
       fields: [
         { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
         { name: 'findings', label: 'Findings', type: 'textarea', placeholder: 'Enter findings here...' },
-        { name: 'score', label: 'Score', type: 'select', options: ['S', 'NS', 'U', 'NA'] },
+        { name: 'score', label: 'Score', type: 'select', options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] },
         { name: 'image', label: 'Evidence Image', type: 'image-upload' }
       ]
     });
