@@ -1,7 +1,8 @@
 const DB_NAME = 'AuditAppDB';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE_NAME = 'drafts';
 const REPORTS_STORE = 'odoo_reports';
+const SYNC_QUEUE_STORE = 'sync_queue';
 
 // Utility to open the database
 const openDB = () => {
@@ -15,6 +16,9 @@ const openDB = () => {
       }
       if (!db.objectStoreNames.contains(REPORTS_STORE)) {
         db.createObjectStore(REPORTS_STORE);
+      }
+      if (!db.objectStoreNames.contains(SYNC_QUEUE_STORE)) {
+        db.createObjectStore(SYNC_QUEUE_STORE);
       }
     };
 
@@ -111,6 +115,43 @@ export const storageService = {
       const request = store.get(key);
 
       request.onsuccess = (e) => resolve(e.target.result);
+      request.onerror = (e) => reject(e.target.error);
+    });
+  },
+
+  async addSyncTask(task) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(SYNC_QUEUE_STORE, 'readwrite');
+      const store = transaction.objectStore(SYNC_QUEUE_STORE);
+      // task must have an 'id' property. If it exists, put will overwrite it.
+      const request = store.put(task, task.id);
+
+      request.onsuccess = () => resolve();
+      request.onerror = (e) => reject(e.target.error);
+    });
+  },
+
+  async getSyncTasks() {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(SYNC_QUEUE_STORE, 'readonly');
+      const store = transaction.objectStore(SYNC_QUEUE_STORE);
+      const request = store.getAll();
+
+      request.onsuccess = (e) => resolve(e.target.result);
+      request.onerror = (e) => reject(e.target.error);
+    });
+  },
+
+  async removeSyncTask(id) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(SYNC_QUEUE_STORE, 'readwrite');
+      const store = transaction.objectStore(SYNC_QUEUE_STORE);
+      const request = store.delete(id);
+
+      request.onsuccess = () => resolve();
       request.onerror = (e) => reject(e.target.error);
     });
   }

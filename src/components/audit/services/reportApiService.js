@@ -44,11 +44,16 @@ export const reportApiService = {
    * @param {Array} lines - The array of updated/new lines.
    */
   async patchAuditLines(reportId, lineField, lines) {
+    const payload = {
+      lineField,
+      lines
+    };
+
     try {
-      const payload = {
-        lineField,
-        lines
-      };
+      if (!navigator.onLine) {
+        throw new Error("Offline");
+      }
+      
       const response = await auditHttpClient(`/audits/${reportId}/lines`, {
         method: 'PATCH',
         headers: {
@@ -60,6 +65,24 @@ export const reportApiService = {
       return response;
     } catch (error) {
       console.error(`Failed to patch lineField ${lineField} for report ${reportId}`, error);
+      
+      // If it's a network error (TypeError due to fetch failing) or explicitly Offline
+      if (!navigator.onLine || error.message === 'Offline' || error.name === 'TypeError') {
+        const taskId = `${reportId}_lines_${lineField}`;
+        await storageService.addSyncTask({
+          id: taskId,
+          reportId,
+          type: 'lines',
+          lineField,
+          payload,
+          timestamp: Date.now()
+        });
+        
+        const offlineError = new Error("OfflineSync");
+        offlineError.isOffline = true;
+        throw offlineError;
+      }
+      
       throw error;
     }
   },
@@ -69,6 +92,10 @@ export const reportApiService = {
    */
   async patchAuditSection(reportId, payload) {
     try {
+      if (!navigator.onLine) {
+        throw new Error("Offline");
+      }
+
       const response = await auditHttpClient(`/audits/${reportId}`, {
         method: 'PATCH',
         headers: {
@@ -80,6 +107,22 @@ export const reportApiService = {
       return response;
     } catch (error) {
       console.error(`Failed to patch section for report ${reportId}`, error);
+      
+      if (!navigator.onLine || error.message === 'Offline' || error.name === 'TypeError') {
+        const taskId = `${reportId}_section`;
+        await storageService.addSyncTask({
+          id: taskId,
+          reportId,
+          type: 'section',
+          payload,
+          timestamp: Date.now()
+        });
+        
+        const offlineError = new Error("OfflineSync");
+        offlineError.isOffline = true;
+        throw offlineError;
+      }
+
       throw error;
     }
   }

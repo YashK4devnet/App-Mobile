@@ -74,6 +74,24 @@ export const generateInitialState = (schemas, odooData = null) => {
   return state;
 };
 
+const getFieldValue = (data, fieldName) => {
+  if (!data) return undefined;
+  if (data[fieldName] !== undefined) return data[fieldName];
+  
+  const reconstructed = {};
+  let found = false;
+  if (typeof data === 'object') {
+    Object.keys(data).forEach(key => {
+      if (key.startsWith(fieldName + '.')) {
+        const subKey = key.split('.')[1];
+        reconstructed[subKey] = data[key];
+        found = true;
+      }
+    });
+  }
+  return found ? reconstructed : undefined;
+};
+
 /**
  * Validates any given subsection schema dynamically.
  */
@@ -93,19 +111,19 @@ export const validateSchema = (schema, data) => {
     if (f.required) {
       if (fieldType === 'network-question') {
         const err = {};
-        if (!data[f.name]?.observation) err.observation = "Observation is required";
+        if (!getFieldValue(data, f.name)?.observation) err.observation = "Observation is required";
         
-        const imgVal = data[f.name]?.image;
+        const imgVal = getFieldValue(data, f.name)?.image;
         const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
         if (!hasImg) err.image = "Evidence image is required";
         
         if (Object.keys(err).length > 0) errors[f.name] = err;
       } else if (fieldType === 'image-upload') {
-        const val = data[f.name];
+        const val = getFieldValue(data, f.name);
         const hasImg = typeof val === 'object' && val !== null ? !!val.url : !!val;
         if (!hasImg) errors[f.name] = "Image is required";
       } else if (fieldType === 'device-photo-list') {
-        const list = data[f.name] || [];
+        const list = getFieldValue(data, f.name) || [];
         if (list.length === 0) {
           errors[f.name] = "At least one photo is required";
         } else {
@@ -117,7 +135,7 @@ export const validateSchema = (schema, data) => {
           if (hasInvalid) errors[f.name] = "All entries must have a name and photo";
         }
       } else if (fieldType === 'numbered-text-list') {
-        const list = data[f.name] || [];
+        const list = getFieldValue(data, f.name) || [];
         if (list.length === 0) {
           errors[f.name] = "At least one entry is required";
         } else {
@@ -128,7 +146,7 @@ export const validateSchema = (schema, data) => {
           if (hasEmpty) errors[f.name] = "Entries cannot be empty";
         }
       } else {
-        if (!data[f.name]) errors[f.name] = `${f.label || 'Field'} is required`;
+        if (!getFieldValue(data, f.name)) errors[f.name] = `${f.label || 'Field'} is required`;
       }
     }
   };
@@ -156,18 +174,18 @@ export const isSchemaEmpty = (schema, data) => {
 
     let hasVal = false;
     if (fieldType === 'network-question') {
-      const qVal = data[f.name];
+      const qVal = getFieldValue(data, f.name);
       const imgVal = qVal?.image;
       const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
       hasVal = !!(qVal?.observation || qVal?.remarks || hasImg);
     } else if (fieldType === 'device-photo-list' || fieldType === 'custom-questions') {
-      const list = data[f.name] || [];
+      const list = getFieldValue(data, f.name) || [];
       hasVal = list.length > 0;
     } else if (fieldType === 'numbered-text-list') {
-      const list = data[f.name] || [];
+      const list = getFieldValue(data, f.name) || [];
       hasVal = list.length > 0;
     } else {
-      const val = data[f.name];
+      const val = getFieldValue(data, f.name);
       hasVal = typeof val === 'object' && val !== null ? !!val.url : (val && val !== f.value);
     }
     
@@ -197,12 +215,12 @@ export const calculateSchemaProgress = (schema, data) => {
     
     total++;
     if (fieldType === 'network-question') {
-      const qVal = data[f.name];
+      const qVal = getFieldValue(data, f.name);
       const imgVal = qVal?.image;
       const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
       if (qVal?.observation && hasImg) filled++;
     } else if (fieldType === 'device-photo-list' || fieldType === 'custom-questions') {
-      const list = data[f.name] || [];
+      const list = getFieldValue(data, f.name) || [];
       const validCount = list.filter(item => {
         const imgVal = item.deviceImage || item.image; // handle both device image and custom question image
         const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
@@ -210,14 +228,14 @@ export const calculateSchemaProgress = (schema, data) => {
       }).length;
       if (validCount > 0) filled++;
     } else if (fieldType === 'numbered-text-list') {
-      const list = data[f.name] || [];
+      const list = getFieldValue(data, f.name) || [];
       const validCount = list.filter(item => {
         const val = typeof item === 'object' && item !== null ? item.observation : item;
         return val && typeof val.trim === 'function' && val.trim();
       }).length;
       if (validCount > 0) filled++;
     } else {
-      const val = data[f.name];
+      const val = getFieldValue(data, f.name);
       const hasVal = typeof val === 'object' && val !== null ? !!val.url : !!val;
       if (hasVal) filled++;
     }

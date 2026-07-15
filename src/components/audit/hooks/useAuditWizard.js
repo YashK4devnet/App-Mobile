@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { storageService } from '../services/storageService';
+import toast from 'react-hot-toast';
 
 export function useAuditWizard({
   schemas,
@@ -142,7 +143,20 @@ export function useAuditWizard({
       const sectionSchema = schemas[currentSubsection];
       if (sectionSchema) {
         saveSectionData(reportId, sectionSchema, currentData, payloadKey)
-          .catch(err => console.error("Background sync failed on section change:", err));
+          .catch(err => {
+            if (err.isOffline) {
+              toast('Offline mode: Section saved locally. Will sync automatically.', {
+                icon: '📶',
+                style: {
+                  borderRadius: '10px',
+                  background: '#333',
+                  color: '#fff',
+                },
+              });
+            } else {
+              console.error("Background sync failed on section change:", err);
+            }
+          });
       }
     }
     setCurrentSubsection(sectionId);
@@ -159,7 +173,20 @@ export function useAuditWizard({
       const sectionSchema = schemas[currentSubsection];
       if (sectionSchema) {
         saveSectionData(reportId, sectionSchema, currentData, payloadKey)
-          .catch(err => console.error("Background sync failed on save & next:", err));
+          .catch(err => {
+            if (err.isOffline) {
+              toast('Offline mode: Section saved locally. Will sync automatically.', {
+                icon: '📶',
+                style: {
+                  borderRadius: '10px',
+                  background: '#333',
+                  color: '#fff',
+                },
+              });
+            } else {
+              console.error("Background sync failed on save & next:", err);
+            }
+          });
       }
     }
 

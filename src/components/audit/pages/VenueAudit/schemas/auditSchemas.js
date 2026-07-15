@@ -1,14 +1,14 @@
 // Centralized Schemas for Venue Audit Form Generation
 
 export const VENUE_REPORT_INFO_SCHEMA = [
-  { name: 'reportName', label: 'Report Name', type: 'text', required: true, placeholder: 'e.g. Q2 Assessment' },
-  { name: 'auditDate', label: 'Audit Date', type: 'date', required: true },
-  { name: 'auditManager', label: 'Audit Manager', type: 'text', required: true, placeholder: 'e.g. Jane Smith' },
-  { name: 'previousAuditDate', label: 'Previous Audit Date', type: 'date', required: true },
+  { name: 'reportName', label: 'Report Name', type: 'text', required: true, placeholder: 'e.g. Q2 Assessment', readOnly: true },
+  { name: 'auditDate', label: 'Audit Date', type: 'date', required: true, readOnly: true },
+  { name: 'auditManager', label: 'Audit Manager', type: 'text', required: true, placeholder: 'e.g. Jane Smith', readOnly: true },
+  { name: 'previousAuditDate', label: 'Previous Audit Date', type: 'date', required: true, readOnly: true },
   { name: 'reportNumber', label: 'Report Number', type: 'text', readOnly: true },
-  { name: 'systemAuditName', label: 'System Audit Name', type: 'text', readOnly: true, value: 'Venue Audit Report' },
-  { name: 'version', label: 'Version', type: 'number', required: true, placeholder: 'e.g. 1' },
-  { name: 'nextAuditDate', label: 'Next Audit Date', type: 'date' }
+  { name: 'systemAuditName', label: 'System Audit Name', type: 'text', readOnly: true, value: 'Venue Readiness Audit Report' },
+  { name: 'version', label: 'Version', type: 'number', required: true, placeholder: 'e.g. 1', readOnly: true },
+  { name: 'nextAuditDate', label: 'Next Audit Date', type: 'date', readOnly: true }
 ];
 
 export const VENUE_PERSONNEL_INFO_SCHEMA = [

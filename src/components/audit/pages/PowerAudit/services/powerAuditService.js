@@ -73,6 +73,24 @@ export const generateInitialState = (schemas, odooData = null) => {
   return state;
 };
 
+const getFieldValue = (data, fieldName) => {
+  if (!data) return undefined;
+  if (data[fieldName] !== undefined) return data[fieldName];
+  
+  const reconstructed = {};
+  let found = false;
+  if (typeof data === 'object') {
+    Object.keys(data).forEach(key => {
+      if (key.startsWith(fieldName + '.')) {
+        const subKey = key.split('.')[1];
+        reconstructed[subKey] = data[key];
+        found = true;
+      }
+    });
+  }
+  return found ? reconstructed : undefined;
+};
+
 /**
  * Validates any given subsection schema dynamically.
  */
@@ -92,32 +110,32 @@ export const validateSchema = (schema, data) => {
     if (f.required) {
       if (fieldType === 'power-question') {
         const err = {};
-        if (!data[f.name]?.score) err.score = "Score is required";
+        if (!getFieldValue(data, f.name)?.score) err.score = "Score is required";
         
-        const imgVal = data[f.name]?.image;
+        const imgVal = getFieldValue(data, f.name)?.image;
         const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
         if (!hasImg) err.image = "Evidence image is required";
         
         if (Object.keys(err).length > 0) errors[f.name] = err;
       } else if (fieldType === 'power-photo-question') {
         const err = {};
-        const imgVal = data[f.name]?.image;
+        const imgVal = getFieldValue(data, f.name)?.image;
         const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
         if (!hasImg) err.image = "Evidence image is required";
         
         if (Object.keys(err).length > 0) errors[f.name] = err;
       } else if (fieldType === 'image-upload') {
-        const val = data[f.name];
+        const val = getFieldValue(data, f.name);
         const hasImg = typeof val === 'object' && val !== null ? !!val.url : !!val;
         if (!hasImg) errors[f.name] = "Image is required";
       } else {
-        if (!data[f.name]) errors[f.name] = `${f.label || 'Field'} is required`;
+        if (!getFieldValue(data, f.name)) errors[f.name] = `${f.label || 'Field'} is required`;
       }
     }
 
     // Dynamic list validation: if rows are added, validate they are completely filled
     if (fieldType === 'document-list') {
-      const rows = data[f.name] || [];
+      const rows = getFieldValue(data, f.name) || [];
       const incomplete = rows.some(row => {
         const hasImg = typeof row.documentImage === 'object' && row.documentImage !== null 
           ? !!row.documentImage.url 
@@ -152,17 +170,17 @@ export const isSchemaEmpty = (schema, data) => {
     const fieldType = f.subType || f.type;
 
     if (fieldType === 'power-question') {
-      const val = data[f.name];
+      const val = getFieldValue(data, f.name);
       const hasImg = typeof val?.image === 'object' && val?.image !== null ? !!val.image.url : !!val?.image;
       if (val?.score || val?.findings || hasImg) empty = false;
     } else if (fieldType === 'power-photo-question') {
-      const val = data[f.name];
+      const val = getFieldValue(data, f.name);
       const hasImg = typeof val?.image === 'object' && val?.image !== null ? !!val.image.url : !!val?.image;
       if (hasImg || val?.findings) empty = false;
     } else if (fieldType === 'document-list' || fieldType === 'custom-questions') {
-      if (data[f.name] && data[f.name].length > 0) empty = false;
+      if (getFieldValue(data, f.name) && getFieldValue(data, f.name).length > 0) empty = false;
     } else {
-      const val = data[f.name];
+      const val = getFieldValue(data, f.name);
       const hasVal = typeof val === 'object' && val !== null ? !!val.url : (val && val !== f.value);
       if (hasVal) empty = false; 
     }
@@ -191,19 +209,19 @@ export const calculateSchemaProgress = (schema, data) => {
     
     total++;
     if (fieldType === 'power-question') {
-      const val = data[f.name];
+      const val = getFieldValue(data, f.name);
       const hasImg = typeof val?.image === 'object' && val?.image !== null ? !!val.image.url : !!val?.image;
       if (val?.score && hasImg) filled++;
     } else if (fieldType === 'power-photo-question') {
-      const val = data[f.name];
+      const val = getFieldValue(data, f.name);
       const hasImg = typeof val?.image === 'object' && val?.image !== null ? !!val.image.url : !!val?.image;
       if (hasImg) filled++;
     } else if (fieldType === 'document-list' || fieldType === 'custom-questions') {
-      const list = data[f.name] || [];
+      const list = getFieldValue(data, f.name) || [];
       // count any entries at all
       if (list.length > 0) filled++;
     } else {
-      const val = data[f.name];
+      const val = getFieldValue(data, f.name);
       const hasVal = typeof val === 'object' && val !== null ? !!val.url : !!val;
       if (hasVal) filled++;
     }

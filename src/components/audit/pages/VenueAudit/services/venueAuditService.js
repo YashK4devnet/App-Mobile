@@ -100,6 +100,24 @@ export const generateInitialState = (schemas, odooData = null) => {
   return state;
 };
 
+const getFieldValue = (data, fieldName) => {
+  if (!data) return undefined;
+  if (data[fieldName] !== undefined) return data[fieldName];
+  
+  const reconstructed = {};
+  let found = false;
+  if (typeof data === 'object') {
+    Object.keys(data).forEach(key => {
+      if (key.startsWith(fieldName + '.')) {
+        const subKey = key.split('.')[1];
+        reconstructed[subKey] = data[key];
+        found = true;
+      }
+    });
+  }
+  return found ? reconstructed : undefined;
+};
+
 /**
  * Validates any given subsection schema dynamically.
  */
@@ -122,15 +140,15 @@ export const validateSchema = (schema, data) => {
       } else if (!f.name) {
         return;
       } else if (f.type === 'dynamic-list' || f.type === 'nested-list') {
-        if (!data[f.name] || data[f.name].length === 0) {
+        if (!getFieldValue(data, f.name) || getFieldValue(data, f.name).length === 0) {
           errors[f.name] = "At least one item is required";
         }
       } else if (f.type === 'image-upload') {
-        const val = data[f.name];
+        const val = getFieldValue(data, f.name);
         const hasImg = typeof val === 'object' && val !== null ? !!val.url : !!val;
         if (!hasImg) errors[f.name] = "Image is required";
       } else {
-        if (!data[f.name] && data[f.name] !== 0) {
+        if (!getFieldValue(data, f.name) && getFieldValue(data, f.name) !== 0) {
           errors[f.name] = `${f.label || 'Field'} is required`;
         }
       }
@@ -162,9 +180,9 @@ export const isSchemaEmpty = (schema, data) => {
     } else if (!f.name) {
       return;
     } else if (f.type === 'dynamic-list' || f.type === 'nested-list') {
-      if (data[f.name] && data[f.name].length > 0) empty = false;
+      if (getFieldValue(data, f.name) && getFieldValue(data, f.name).length > 0) empty = false;
     } else {
-      const val = data[f.name];
+      const val = getFieldValue(data, f.name);
       const hasVal = typeof val === 'object' && val !== null ? !!val.url : (val && val !== f.value);
       if (hasVal) empty = false;
     }
@@ -199,9 +217,9 @@ export const calculateSchemaProgress = (schema, data) => {
     } else {
       total++;
       if (f.type === 'dynamic-list' || f.type === 'nested-list') {
-        if (data[f.name] && data[f.name].length > 0) filled++;
+        if (getFieldValue(data, f.name) && getFieldValue(data, f.name).length > 0) filled++;
       } else {
-        const val = data[f.name];
+        const val = getFieldValue(data, f.name);
         const hasVal = typeof val === 'object' && val !== null ? !!val.url : (val || val === 0);
         if (hasVal) filled++;
       }

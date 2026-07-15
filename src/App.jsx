@@ -9,6 +9,7 @@ import Expenses from "./components/Expenses/Expenses";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ManualAttendance from "./components/ManualAttendance/ManualAttendance";
 import AuditRoutes from './components/audit/AuditRoutes';
+import SyncManager from './components/audit/components/SyncManager';
 import Navbar from "./components/Navbar/Navbar";
 
 import Incident from "./components/Incidents/Incident";
@@ -195,6 +196,7 @@ function App() {
   return (
     <Router>
       <Toaster />
+      <SyncManager />
       <AppRoutes />
     </Router>
   );
