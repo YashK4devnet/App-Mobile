@@ -2,10 +2,11 @@ import React, { useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { storageService } from '../services/storageService';
 import { reportApiService } from '../services/reportApiService';
+import { isAppOnline } from '../utils/connection';
 
 export default function SyncManager() {
   const processSyncQueue = useCallback(async () => {
-    if (!navigator.onLine) return;
+    if (!isAppOnline()) return;
 
     try {
       const tasks = await storageService.getSyncTasks();

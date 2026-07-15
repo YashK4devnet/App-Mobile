@@ -1,5 +1,6 @@
 import { storageService } from './storageService';
 import { auditHttpClient } from './httpClient';
+import { isAppOnline } from '../utils/connection';
 
 const DB_NAME = import.meta.env.VITE_AUDIT_API_DB || 'audit_rest_api';
 
@@ -50,7 +51,7 @@ export const reportApiService = {
     };
 
     try {
-      if (!navigator.onLine) {
+      if (!isAppOnline()) {
         throw new Error("Offline");
       }
       
@@ -67,7 +68,7 @@ export const reportApiService = {
       console.error(`Failed to patch lineField ${lineField} for report ${reportId}`, error);
       
       // If it's a network error (TypeError due to fetch failing) or explicitly Offline
-      if (!navigator.onLine || error.message === 'Offline' || error.name === 'TypeError') {
+      if (!isAppOnline() || error.message === 'Offline' || error.name === 'TypeError') {
         const taskId = `${reportId}_lines_${lineField}`;
         await storageService.addSyncTask({
           id: taskId,
@@ -92,7 +93,7 @@ export const reportApiService = {
    */
   async patchAuditSection(reportId, payload) {
     try {
-      if (!navigator.onLine) {
+      if (!isAppOnline()) {
         throw new Error("Offline");
       }
 
@@ -108,7 +109,7 @@ export const reportApiService = {
     } catch (error) {
       console.error(`Failed to patch section for report ${reportId}`, error);
       
-      if (!navigator.onLine || error.message === 'Offline' || error.name === 'TypeError') {
+      if (!isAppOnline() || error.message === 'Offline' || error.name === 'TypeError') {
         const taskId = `${reportId}_section`;
         await storageService.addSyncTask({
           id: taskId,

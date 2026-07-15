@@ -154,5 +154,29 @@ export const storageService = {
       request.onsuccess = () => resolve();
       request.onerror = (e) => reject(e.target.error);
     });
+  },
+
+  async clearAllData() {
+    const db = await openDB();
+    return Promise.all([
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const req = tx.objectStore(STORE_NAME).clear();
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+      }),
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(REPORTS_STORE, 'readwrite');
+        const req = tx.objectStore(REPORTS_STORE).clear();
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+      }),
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(SYNC_QUEUE_STORE, 'readwrite');
+        const req = tx.objectStore(SYNC_QUEUE_STORE).clear();
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+      })
+    ]);
   }
 };

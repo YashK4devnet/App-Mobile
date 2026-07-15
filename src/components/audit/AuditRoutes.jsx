@@ -26,7 +26,7 @@ const getHeaderTitle = (pathname) => {
 const VenueAuditWizard = lazy(() => import('./pages/VenueAudit/VenueAuditWizard'));
 const PowerAuditWizard = lazy(() => import('./pages/PowerAudit/PowerAuditWizard'));
 const NetworkAuditWizard = lazy(() => import('./pages/NetworkAudit/NetworkAuditWizard'));
-const AuditSetupFlow = lazy(() => import('./pages/AuditDashboard/components/AuditSetupFlow'));
+// const AuditSetupFlow = lazy(() => import('./pages/AuditDashboard/components/AuditSetupFlow'));
 
 const ModuleContext = createContext({ basePath: '/audit' });
 
@@ -169,13 +169,13 @@ export default function AuditRoutes() {
               <Route path="settings" element={<PageTransition direction={direction}><AuditSettingsPage /></PageTransition>} />
 
               {/* Audit Wizards */}
-              <Route path="audit-setup/*" element={
+              {/* <Route path="audit-setup/*" element={
                 <WizardTransition>
                   <Suspense fallback={<LoadingFallback />}>
                     <AuditSetupFlow />
                   </Suspense>
                 </WizardTransition>
-              } />
+              } /> */}
               <Route path="venue-audit/:reportId/*" element={
                 <WizardTransition>
                   <Suspense fallback={<LoadingFallback />}>

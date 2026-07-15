@@ -33,6 +33,11 @@ export default defineConfig({
         secure: false, // ignore self-signed SSL issues
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      "/odoo_connect": {
+        target: proxyTarget.replace(/\/api$/, ""),
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 });

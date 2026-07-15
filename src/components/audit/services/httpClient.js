@@ -1,4 +1,5 @@
 import { Capacitor, CapacitorHttp } from '@capacitor/core';
+import { isAppOnline } from '../utils/connection';
 
 // Determine the correct base URL safely without crashing if process/import is undefined
 const getBaseUrl = () => {
@@ -34,21 +35,96 @@ const getBaseUrl = () => {
 
 };
 
+let cachedApiKey = typeof localStorage !== 'undefined' ? localStorage.getItem('audit_api_key') : null;
+let loginPromise = null;
+
+const performSilentLogin = async (baseUrl, odooDb) => {
+  if (!isAppOnline()) {
+    throw new TypeError('Failed to fetch (simulated offline)');
+  }
+  // If the baseUrl is '/api' (web development), route to '/odoo_connect' so the proxy handles it.
+  // Otherwise, strip the trailing '/api' from the baseUrl to point directly to the server's root.
+  const url = baseUrl === '/api'
+    ? '/odoo_connect'
+    : `${baseUrl.replace(/\/api$/, '')}/odoo_connect`;
+  const defaultHeaders = {
+    'login': 'admin',
+    'password': 'admin',
+    'db': odooDb,
+    'Content-Type': 'application/json'
+  };
+
+  if (Capacitor.isNativePlatform()) {
+    const response = await CapacitorHttp.request({
+      url,
+      method: 'GET',
+      headers: defaultHeaders
+    });
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(`Silent Login Error (Capacitor): ${response.status}`);
+    }
+    let responseData = response.data;
+    if (typeof responseData === 'string') {
+      try { responseData = JSON.parse(responseData); } catch (e) { }
+    }
+    return responseData;
+  } else {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: defaultHeaders
+    });
+    if (!response.ok) {
+      throw new Error(`Silent Login Error (Web): ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  }
+};
+
 /**
  * A centralized API client strictly for the Audit Component.
  * Automatically switches between Capacitor Native HTTP (bypasses CORS) and Web Fetch.
  */
 export const auditHttpClient = async (endpoint, options = {}) => {
+  if (!isAppOnline()) {
+    throw new TypeError('Failed to fetch (simulated offline)');
+  }
   const baseUrl = getBaseUrl();
+  const odooDb = (typeof process !== 'undefined' && process.env && process.env.AUDIT_API_DB) || 'audit_rest_api';
+
+  if (!cachedApiKey && endpoint !== '/odoo_connect') {
+    if (!loginPromise) {
+      loginPromise = performSilentLogin(baseUrl, odooDb).then(data => {
+        if (data && data.status === 'success' && data['api-key']) {
+          cachedApiKey = data['api-key'];
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('audit_api_key', cachedApiKey);
+          }
+        }
+        return data;
+      }).finally(() => {
+        loginPromise = null;
+      });
+    }
+    try {
+      await loginPromise;
+    } catch (err) {
+      console.error('Silent login failed:', err);
+      // Proceeding without api-key just in case it works or fails downstream
+    }
+  }
+
   const url = `${baseUrl}${endpoint}`;
   const method = options.method || 'GET';
-  const odooDb = (typeof process !== 'undefined' && process.env && process.env.AUDIT_API_DB) || 'audit_rest_api';
 
   const defaultHeaders = {
     'Content-Type': 'application/json',
+    'login': 'admin'
   };
   if (odooDb) {
     defaultHeaders['X-Odoo-Database'] = odooDb;
+  }
+  if (cachedApiKey) {
+    defaultHeaders['api-key'] = cachedApiKey;
   }
 
   if (Capacitor.isNativePlatform()) {

@@ -7,7 +7,6 @@ import AuditIndex from '../../components/AuditIndex';
 import ProgressBar from '../../components/ProgressBar';
 import LiveProgressBar from '../../components/LiveProgressBar';
 import FormRenderer from '../../components/FormRenderer';
-import VenueSelectPage from '../../components/VenueSelectPage';
 import AuditSuccessOverlay from '../../components/AuditSuccessOverlay';
 import SubsectionAccordion from '../../components/SubsectionAccordion';
 import {
@@ -40,7 +39,6 @@ import {
   calculateGlobalProgress,
   saveVenueSection
 } from './services/venueAuditService';
-import { updateFullAuditRecord } from '../../services/venueService';
 
 const SUBSECTION_SCHEMAS = {
   'ReportInfo': VENUE_REPORT_INFO_SCHEMA,
