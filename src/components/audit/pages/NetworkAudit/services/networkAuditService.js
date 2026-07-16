@@ -319,13 +319,11 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
       if (!payloadsByLineField[lineField]) payloadsByLineField[lineField] = [];
       const docsArray = val || [];
       if (Array.isArray(docsArray)) {
-        let seq = 1;
         docsArray.forEach(item => {
           if (item.deviceName) {
             let imgData = item.deviceImage?.url || "";
             if (imgData.includes(',')) imgData = imgData.split(',')[1];
             payloadsByLineField[lineField].push({
-              seq_no: seq++,
               doc_name: item.deviceName,
               doc_image: imgData
             });
