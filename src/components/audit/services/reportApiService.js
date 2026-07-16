@@ -67,8 +67,19 @@ export const reportApiService = {
     } catch (error) {
       console.error(`Failed to patch lineField ${lineField} for report ${reportId}`, error);
       
-      // If it's a network error (TypeError due to fetch failing) or explicitly Offline
-      if (!isAppOnline() || error.message === 'Offline' || error.name === 'TypeError') {
+      const isNetworkError = !isAppOnline() || 
+        error.name === 'TypeError' || 
+        (error.message && (
+          error.message === 'Offline' || 
+          error.message.includes('Failed to fetch') ||
+          error.message.includes('502') || 
+          error.message.includes('503') || 
+          error.message.includes('504') ||
+          error.message.includes('500')
+        ));
+      
+      // If it's a network error or server is down/unreachable
+      if (isNetworkError) {
         const taskId = `${reportId}_lines_${lineField}`;
         await storageService.addSyncTask({
           id: taskId,
@@ -109,7 +120,18 @@ export const reportApiService = {
     } catch (error) {
       console.error(`Failed to patch section for report ${reportId}`, error);
       
-      if (!isAppOnline() || error.message === 'Offline' || error.name === 'TypeError') {
+      const isNetworkError = !isAppOnline() || 
+        error.name === 'TypeError' || 
+        (error.message && (
+          error.message === 'Offline' || 
+          error.message.includes('Failed to fetch') ||
+          error.message.includes('502') || 
+          error.message.includes('503') || 
+          error.message.includes('504') ||
+          error.message.includes('500')
+        ));
+      
+      if (isNetworkError) {
         const taskId = `${reportId}_section`;
         await storageService.addSyncTask({
           id: taskId,

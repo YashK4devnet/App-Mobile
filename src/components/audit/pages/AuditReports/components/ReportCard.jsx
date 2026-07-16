@@ -9,6 +9,7 @@ const getStatusColor = (status) => {
     case 'Approved': return 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20';
     case 'Waiting for Approval': return 'text-amber-400 bg-amber-400/10 border-amber-400/20';
     case 'Assigned': return 'text-blue-400 bg-blue-400/10 border-blue-400/20';
+    case 'In Progress': return 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20';
     case 'Rejected': return 'text-rose-400 bg-rose-400/10 border-rose-400/20';
     case 'Completed': return 'text-purple-400 bg-purple-400/10 border-purple-400/20';
     default: return 'text-white/70 bg-white/5 border-white/10';

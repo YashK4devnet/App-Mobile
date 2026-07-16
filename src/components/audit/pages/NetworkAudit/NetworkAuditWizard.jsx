@@ -56,8 +56,8 @@ const STATIC_SUBSECTION_SCHEMAS = {
   'BackupDevices': BACKUP_DEVICES_SCHEMA,
   'NetworkSecurityCompliance': NETWORK_SECURITY_COMPLIANCE_SCHEMA,
   'PhotoEvidence': NETWORK_PHOTO_EVIDENCE_SCHEMA,
-  'Observations': NETWORK_OBSERVATIONS_SCHEMA,
-  'Signatures': NETWORK_SIGNATURES_SCHEMA
+  'PhotoEvidence': NETWORK_PHOTO_EVIDENCE_SCHEMA,
+  'Observations': NETWORK_OBSERVATIONS_SCHEMA
 };
 
 const STEPS = [
@@ -72,9 +72,9 @@ const STEPS = [
   { id: 'NetworkConfiguration' },
   { id: 'BackupDevices' },
   { id: 'NetworkSecurityCompliance' },
+  { id: 'NetworkSecurityCompliance' },
   { id: 'PhotoEvidence' },
-  { id: 'Observations' },
-  { id: 'Signatures' }
+  { id: 'Observations' }
 ];
 
 const SECTION_TO_PAYLOAD_KEY = {
@@ -89,9 +89,9 @@ const SECTION_TO_PAYLOAD_KEY = {
   'NetworkConfiguration': 'networkConfiguration',
   'BackupDevices': 'backupDevices',
   'NetworkSecurityCompliance': 'networkSecurityCompliance',
+  'NetworkSecurityCompliance': 'networkSecurityCompliance',
   'PhotoEvidence': 'photoEvidence',
-  'Observations': 'observations',
-  'Signatures': 'signatures'
+  'Observations': 'observations'
 };
 
 // Removed static initialization: const INITIAL_NETWORK_AUDIT_STATE = generateInitialState(SUBSECTION_SCHEMAS);
@@ -121,8 +121,8 @@ export default function NetworkAuditWizard() {
         'BackupDevices': generateNetworkQuestionsSchema(odooData.backupDeviceLines || odooData.backup_device_lines, 'backup_device_lines'),
         'NetworkSecurityCompliance': generateNetworkQuestionsSchema(odooData.securityComplianceLines || odooData.security_compliance_lines, 'security_compliance_lines'),
         'PhotoEvidence': NETWORK_PHOTO_EVIDENCE_SCHEMA,
-        'Observations': NETWORK_OBSERVATIONS_SCHEMA,
-        'Signatures': NETWORK_SIGNATURES_SCHEMA
+        'PhotoEvidence': NETWORK_PHOTO_EVIDENCE_SCHEMA,
+        'Observations': NETWORK_OBSERVATIONS_SCHEMA
       };
     }
     return STATIC_SUBSECTION_SCHEMAS;
@@ -133,6 +133,7 @@ export default function NetworkAuditWizard() {
     control, getValues, watch, setValue,
     errors,
     isInitializing,
+    isReadOnly,
     getSectionStatus,
     handleSectionSelect,
     handleNextClick, handlePrevClick
@@ -213,8 +214,7 @@ export default function NetworkAuditWizard() {
           { id: 'BackupDevices', title: '10. Backup Devices', itemsCount: getItemsCount('BackupDevices'), status: statusBackupDevices, icon: DocumentIcon },
           { id: 'NetworkSecurityCompliance', title: '11. Network Security Compliance', itemsCount: getItemsCount('NetworkSecurityCompliance'), status: statusNetworkSecurityCompliance, icon: DocumentIcon },
           { id: 'PhotoEvidence', title: '12. Photo Evidence of Devices', itemsCount: getItemsCount('PhotoEvidence'), status: statusPhotoEvidence, icon: DocumentIcon },
-          { id: 'Observations', title: '13. Observations', itemsCount: getItemsCount('Observations'), status: statusObservations, icon: DocumentIcon },
-          { id: 'Signatures', title: '14. Signatures', itemsCount: getItemsCount('Signatures'), status: statusSignatures, icon: DocumentIcon }
+          { id: 'Observations', title: '13. Observations & Signatures', itemsCount: getItemsCount('Observations'), status: statusObservations, icon: DocumentIcon }
         ]
       }
     ];
@@ -266,8 +266,7 @@ export default function NetworkAuditWizard() {
       { id: 'BackupDevices', label: '10. Backup Devices', status: statusBackupDevices },
       { id: 'NetworkSecurityCompliance', label: '11. Network Security Compliance', status: statusNetworkSecurityCompliance },
       { id: 'PhotoEvidence', label: '12. Photo Evidence of Devices', status: statusPhotoEvidence },
-      { id: 'Observations', label: '13. Observations', status: statusObservations },
-      { id: 'Signatures', label: '14. Signatures', status: statusSignatures }
+      { id: 'Observations', label: '13. Observations & Signatures', status: statusObservations }
     ];
 
     const currentSubObj = subsections.find(s => s.id === currentSubsection);
@@ -284,6 +283,16 @@ export default function NetworkAuditWizard() {
           headerRight={stepPill}
         />
         
+        {isReadOnly && (
+          <div className="mx-5 mt-4 px-4 py-3 bg-rose-500/10 border border-rose-500/25 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
+            <ExclamationCircleIcon className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-rose-200 text-[13px] font-semibold leading-tight">Read-Only Mode</p>
+              <p className="text-rose-200/70 text-[12px] mt-0.5">This report has been finalized and cannot be edited.</p>
+            </div>
+          </div>
+        )}
+
         {/* Subsection Progress Indicator (Sticky) */}
         <LiveProgressBar 
           schema={dynamicSchemas[currentSubsection]}
@@ -314,6 +323,7 @@ export default function NetworkAuditWizard() {
               errors={errors}
               useAccordions={true}
               watch={watch}
+              globalDisabled={isReadOnly}
             />
           </div>
         </div>
@@ -327,12 +337,21 @@ export default function NetworkAuditWizard() {
             >
               {isFirst ? 'Exit' : 'Previous'}
             </button>
-            <button
-              onClick={handleNextClick}
-              className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
-            >
-              {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit Audit' : 'Save & Next'}
-            </button>
+            {!isReadOnly ? (
+              <button
+                onClick={handleNextClick}
+                className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
+              >
+                {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit Audit' : 'Save & Next'}
+              </button>
+            ) : (
+              <button
+                onClick={handleNextClick}
+                className="flex-1 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+              >
+                {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Exit' : 'Next'}
+              </button>
+            )}
           </div>
         </div>
       </div>

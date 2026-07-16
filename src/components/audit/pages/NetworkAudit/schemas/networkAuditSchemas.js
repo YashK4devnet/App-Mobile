@@ -57,10 +57,7 @@ export const NETWORK_PERSONNEL_INFO_SCHEMA = [
   { type: 'heading', label: 'Auditor Details', className: 'text-[#F98A15] border-[#F98A15]/30 mt-6' },
   { name: 'auditorName', label: 'Name (Auditor)', type: 'text', required: true },
   { name: 'auditorRole', label: 'Role', type: 'text', disabled: true, value: 'Auditor' },
-  { name: 'auditorContact', label: 'Contact Number & Email ID', type: 'text', required: true },
-
-  { name: 'auditorSignature', label: "Auditor's Signature", type: 'signature', required: true },
-  { name: 'centerSeal', label: 'Center Seal', type: 'image-upload', required: true }
+  { name: 'auditorContact', label: 'Contact Number & Email ID', type: 'text', required: true }
 ];
 
 export const NETWORK_ARCHITECTURE_SCHEMA = [
@@ -191,34 +188,35 @@ export const NETWORK_PHOTO_EVIDENCE_SCHEMA = [
   {
     name: 'devicePhotos',
     label: 'Photo Evidence of Devices',
-    type: 'array',
-    subType: 'device-photo-list',
+    type: 'device-photo-list',
     itemLabel: 'Device Photo',
     fields: [
       { name: 'deviceName', label: 'Device Name', type: 'text', placeholder: 'Enter device name' },
       { name: 'deviceImage', label: 'Device Photo', type: 'image-upload' }
     ]
-  },
-  createCustomQuestions('photo_evidence')
+  }
 ];
 
 export const NETWORK_OBSERVATIONS_SCHEMA = [
   {
-    name: 'auditScope',
+    name: 'audit_scope',
     label: 'Audit scope',
     type: 'text',
+    readOnly: true,
   },
   {
     name: 'activity',
     label: 'Activities',
     type: 'text',
-    placeholder: 'Power / Network / Admin infrastructure check'
+    placeholder: 'Power / Network / Admin infrastructure check',
+    readOnly: true,
   },
   {
     name: 'location',
     label: 'Locations of the audit',
     type: 'textarea',
-    placeholder: 'Please mention the areas of Venue where the audit will be conducted (Example: LAB, Server Room)'
+    placeholder: 'Please mention the areas of Venue where the audit will be conducted (Example: LAB, Server Room)',
+    readOnly: true,
   },
   {
     type: 'heading',
@@ -240,24 +238,13 @@ export const NETWORK_OBSERVATIONS_SCHEMA = [
     label: 'Signatures & Verification',
     className: 'text-white/50 border-white/10 mt-6'
   },
-  {
-    name: 'obs_cs_representative_sig',
-    label: 'CS / Venue Management Representative Signature & Date',
-    type: 'signature',
-    required: true
-  },
-  {
-    name: 'obs_network_auditor_sig',
-    label: 'Network Auditor Signature & Date',
-    type: 'signature',
-    required: true
-  },
-  {
-    name: 'obs_venue_seal',
-    label: 'Venue Seal',
-    type: 'image-upload',
-    required: true
-  }
+  { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature', required: true },
+  { name: 'auditorSignatureDate', label: 'Date', type: 'date', required: true },
+  { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature', required: true },
+  { name: 'venueManagerSignatureDate', label: 'Date', type: 'date', required: true },
+  { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature', required: true },
+  { name: 'electricianSignatureDate', label: 'Date', type: 'date', required: true },
+  { name: 'centerSeal', label: 'Center Seal', type: 'image-upload', required: true }
 ];
 
 export const NETWORK_SIGNATURES_SCHEMA = [

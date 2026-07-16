@@ -18,6 +18,9 @@ export const useAuditDashboard = () => {
     totalAssigned: dashboardStats.totalAssigned,
     inProgressReports: dashboardStats.inProgressReports,
     completedReports: dashboardStats.completedReports,
+    waitingForApprovalReports: dashboardStats.waitingForApprovalReports,
+    approvedReports: dashboardStats.approvedReports,
+    rejectedReports: dashboardStats.rejectedReports,
     refreshDashboard: refreshData,
   };
 };

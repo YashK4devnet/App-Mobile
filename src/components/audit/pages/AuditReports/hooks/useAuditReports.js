@@ -1,6 +1,23 @@
 import { useContext, useMemo } from 'react';
 import { AuditContext } from '../../../stores/AuditContext';
 
+const mapStateToDisplay = (state) => {
+  switch (state) {
+    case 'draft': return 'Draft';
+    case 'assign_user': return 'Assigned';
+    case 'in_progress': return 'In Progress';
+    case 'waiting_for_approval': return 'Waiting for Approval';
+    case 'approved': return 'Approved';
+    case 'reject': return 'Rejected';
+    default:
+      // Fallback for custom or legacy states
+      if (state) {
+        return state.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+      }
+      return 'Completed';
+  }
+};
+
 export function useAuditReports(venueId) {
   const context = useContext(AuditContext);
 
@@ -32,12 +49,18 @@ export function useAuditReports(venueId) {
 
       return {
         id: r.id ? r.id.toString() : r.reference,
-        name: r.reportName || r.systemAuditName,
-        status: r.state || 'Completed',
+        name: r.reportName || r.systemAuditName || r.name,
+        reportName: r.reportName || r.systemAuditName || r.name,
+        status: mapStateToDisplay(r.state),
         venueName: vName,
         venue_id: vId,
-        date: r.auditDate,
-        type: r.reportType || 'Audit'
+        date: r.auditDate || r.date,
+        type: r.reportType || 'Audit',
+        auditType: r.reportType ? r.reportType.replace('_', ' ') : 'Audit',
+        reportType: r.reportType,
+        auditorName: r.auditorName || (r.auditors && r.auditors[0] ? r.auditors[0].auditor : 'N/A'),
+        progress: r.completionPercentage || r.progress || 0,
+        issuesFound: r.issuesFound || 0,
       };
     });
 

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import toast from 'react-hot-toast';
 import { isAppOnline, toggleOfflineSimulation } from '../../utils/connection';
 import { storageService } from '../../services/storageService';
+import { AuditContext } from '../../stores/AuditContext';
 
 export default function AuditSettingsPage() {
   const [isSimulatedOffline, setIsSimulatedOffline] = useState(() => {
@@ -17,6 +18,15 @@ export default function AuditSettingsPage() {
 
   const [pendingTasksCount, setPendingTasksCount] = useState(0);
   const [isClearing, setIsClearing] = useState(false);
+
+  const auditContext = useContext(AuditContext);
+
+  useEffect(() => {
+    if (auditContext?.refreshData) {
+      auditContext.refreshData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Sync real-time browser network status
   useEffect(() => {

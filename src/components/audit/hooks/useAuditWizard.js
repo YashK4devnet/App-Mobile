@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { storageService } from '../services/storageService';
+import { reportApiService } from '../services/reportApiService';
 import toast from 'react-hot-toast';
 
 export function useAuditWizard({
@@ -50,6 +51,8 @@ export function useAuditWizard({
     ? `audit_draft_report_${reportId}_${typeId}` 
     : `audit_draft_venue_${venueId}_${typeId}`;
   
+  const reportState = location.state?.odooData?.state || 'draft';
+  const isReadOnly = reportState === 'waiting_for_approval' || reportState === 'approved' || reportState === 'reject';
   const [isInitializing, setIsInitializing] = useState(true);
   
   // Evaluate default values before passing to useForm, as RHF expects a Promise if a function is passed.
@@ -94,6 +97,14 @@ export function useAuditWizard({
     if (location.state?.odooData) {
       storageService.saveDraft(storageKey, initialFormValues).catch(e => console.error(e));
       reset(initialFormValues);
+      
+      // Auto-start audit if it's assigned
+      if (location.state.odooData.state === 'assign_user' && reportId) {
+         reportApiService.patchAuditSection(reportId, { state: 'in_progress' })
+           .catch(err => console.error("Failed to update status to in_progress", err));
+         location.state.odooData.state = 'in_progress'; // update locally
+      }
+      
       setIsInitializing(false);
       return;
     }
@@ -138,7 +149,7 @@ export function useAuditWizard({
   const handleSectionSelect = (sectionId) => {
     // Save current section before switching
     const currentData = getValues();
-    if (reportId && saveSectionData) {
+    if (reportId && saveSectionData && !isReadOnly) {
       const payloadKey = sectionToPayloadKey ? sectionToPayloadKey[currentSubsection] : null;
       const sectionSchema = schemas[currentSubsection];
       if (sectionSchema) {
@@ -168,7 +179,7 @@ export function useAuditWizard({
 
     const currentData = getValues();
 
-    if (reportId && saveSectionData) {
+    if (reportId && saveSectionData && !isReadOnly) {
       const payloadKey = sectionToPayloadKey ? sectionToPayloadKey[currentSubsection] : null;
       const sectionSchema = schemas[currentSubsection];
       if (sectionSchema) {
@@ -196,8 +207,22 @@ export function useAuditWizard({
       const container = document.getElementById('audit-form-container');
       if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      storageService.deleteDraft(storageKey).catch(err => console.error(err));
-      if (onComplete) onComplete();
+      const submitFinal = async () => {
+        try {
+          if (reportId) {
+            await reportApiService.patchAuditSection(reportId, { state: 'waiting_for_approval' });
+            if (location.state?.odooData) {
+              location.state.odooData.state = 'waiting_for_approval';
+            }
+          }
+        } catch (e) {
+          console.error("Failed to update status to waiting_for_approval", e);
+        } finally {
+          storageService.deleteDraft(storageKey).catch(err => console.error(err));
+          if (onComplete) onComplete();
+        }
+      };
+      submitFinal();
     }
   };
 
@@ -218,6 +243,7 @@ export function useAuditWizard({
     control, getValues, watch, setValue,
     errors: formErrors,
     isInitializing,
+    isReadOnly,
     getSectionStatus,
     calculateGlobalProgress,
     handleSectionSelect,

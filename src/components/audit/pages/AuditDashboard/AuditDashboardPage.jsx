@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuditDashboard } from '../../hooks/useAuditDashboard';
 import DashboardHeader from './components/DashboardHeader';
 import QuickStats from './components/QuickStats';
@@ -15,8 +15,16 @@ export default function AuditDashboardPage() {
     totalAssigned,
     inProgressReports,
     completedReports,
+    waitingForApprovalReports,
+    approvedReports,
+    rejectedReports,
     refreshDashboard,
   } = useAuditDashboard();
+
+  useEffect(() => {
+    refreshDashboard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (loading) {
     return (
@@ -28,10 +36,17 @@ export default function AuditDashboardPage() {
         </div>
 
         {/* Quick Stats Skeleton */}
-        <div className="grid grid-cols-3 gap-3 mb-8">
-          <div className="h-24 bg-white/5 rounded-2xl border border-white/5"></div>
-          <div className="h-24 bg-white/5 rounded-2xl border border-white/5"></div>
-          <div className="h-24 bg-white/5 rounded-2xl border border-white/5"></div>
+        <div className="flex flex-col gap-3 mb-8">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="h-24 bg-white/5 rounded-2xl border border-white/5"></div>
+            <div className="h-24 bg-white/5 rounded-2xl border border-white/5"></div>
+            <div className="h-24 bg-white/5 rounded-2xl border border-white/5"></div>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="h-24 bg-white/5 rounded-2xl border border-white/5"></div>
+            <div className="h-24 bg-white/5 rounded-2xl border border-white/5"></div>
+            <div className="h-24 bg-white/5 rounded-2xl border border-white/5"></div>
+          </div>
         </div>
 
         {/* In Progress List Skeleton */}
@@ -84,6 +99,9 @@ export default function AuditDashboardPage() {
           totalAssigned={totalAssigned}
           inProgressCount={inProgressReports.length}
           completedCount={completedReports.length}
+          waitingCount={waitingForApprovalReports.length}
+          approvedCount={approvedReports.length}
+          rejectedCount={rejectedReports.length}
         />
 
         <InProgressReportsList reports={inProgressReports} />

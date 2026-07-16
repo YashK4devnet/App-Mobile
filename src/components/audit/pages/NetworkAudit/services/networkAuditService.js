@@ -71,7 +71,7 @@ export const generateInitialState = (schemas, odooData = null) => {
         else if (f.name === 'name') odooVal = odooData.venue?.name;
         else if (f.name === 'completeAddress') odooVal = [odooData.venue?.city, odooData.venue?.state].filter(Boolean).join(', ') || odooData.venue?.completeAddress;
         else if (f.name === 'totalNoNetwork') odooVal = odooData.totalNoNetwork;
-        else if (f.name === 'auditScope') odooVal = odooData.auditScope;
+        else if (f.name === 'auditScope' || f.name === 'audit_scope') odooVal = odooData.auditScope || odooData.audit_scope;
         else if (f.name === 'activity') odooVal = odooData.activity;
         else if (f.name === 'location') odooVal = odooData.location;
       }
@@ -314,6 +314,46 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
       if (!found) return;
     }
 
+    if (f.name === 'devicePhotos') {
+      const lineField = 'nameplate_document_equipment_lines';
+      if (!payloadsByLineField[lineField]) payloadsByLineField[lineField] = [];
+      const docsArray = val || [];
+      if (Array.isArray(docsArray)) {
+        let seq = 1;
+        docsArray.forEach(item => {
+          if (item.deviceName) {
+            let imgData = item.deviceImage?.url || "";
+            if (imgData.includes(',')) imgData = imgData.split(',')[1];
+            payloadsByLineField[lineField].push({
+              seq_no: seq++,
+              doc_name: item.deviceName,
+              doc_image: imgData
+            });
+          }
+        });
+      }
+      return;
+    }
+
+    if (f.name === 'obs_list') {
+      const lineField = 'observation_lines';
+      if (!payloadsByLineField[lineField]) payloadsByLineField[lineField] = [];
+      const obsArray = val || [];
+      if (Array.isArray(obsArray)) {
+        let seq = 1;
+        obsArray.forEach(item => {
+          const obsVal = typeof item === 'object' && item !== null ? item.observation : item;
+          if (obsVal) {
+            payloadsByLineField[lineField].push({
+              seq_no: seq++,
+              comment: obsVal
+            });
+          }
+        });
+      }
+      return;
+    }
+
     // Process existing lines: odoo_{lineField}___{id}
     const lineMatch = f.name.match(/^odoo_(.+)___(\d+)$/);
     if (lineMatch) {
@@ -387,10 +427,12 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
 
   schema.forEach(f => {
     if (f.type === 'heading' || f.type === 'row' || f.type === 'group' || !f.name) return;
+    if (f.name === 'obs_list' || f.name === 'devicePhotos') return;
+
     const lineMatch = f.name.match(/^odoo_(.+)___(\d+)$/);
     const customMatch = f.name.match(/^customQuestions___(.+)$/);
     if (!lineMatch && !customMatch && currentData[f.name] !== undefined) {
-      if (f.type === 'signature' || f.name === 'centerSeal') {
+      if (f.type === 'signature' || f.name === 'centerSeal' || f.name === 'obs_venue_seal') {
         let imgData = currentData[f.name]?.url || "";
         if (imgData.includes(',')) imgData = imgData.split(',')[1];
         signatures[f.name] = imgData;
@@ -406,12 +448,12 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
     }
   });
 
-  if (Object.keys(standardFields).length > 0 && payloadKey && payloadKey !== 'Signatures') {
+  if (Object.keys(standardFields).length > 0 && payloadKey && payloadKey !== 'Signatures' && payloadKey !== 'report' && payloadKey !== 'venue') {
     promises.push(reportApiService.patchAuditSection(reportId, { [payloadKey]: standardFields }));
   }
 
   if (Object.keys(signatures).length > 0) {
-    promises.push(reportApiService.patchAuditSection(reportId, { signatures }));
+    promises.push(reportApiService.patchAuditSection(reportId, signatures));
   }
 
   console.warn("[DIAGNOSTICS] payloadsByLineField collected:", JSON.stringify(payloadsByLineField, null, 2));

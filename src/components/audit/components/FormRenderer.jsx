@@ -24,7 +24,7 @@ import {
   FormSelect
 } from './form-controls';
 
-function renderField(field, control) {
+function renderField(field, control, globalDisabled = false) {
   const fieldKey = field.name || field.prefix || field.label;
 
   if (field.type === 'heading') {
@@ -76,8 +76,10 @@ function renderField(field, control) {
           name: field.name,
           value: rhfField.value,
           error: error ? error.message : undefined,
-          onChange: customOnChange,
-          required: field.required
+          onChange: globalDisabled ? () => {} : customOnChange,
+          required: field.required,
+          disabled: field.disabled || globalDisabled,
+          readOnly: field.readOnly || globalDisabled
         };
 
         switch (field.type) {
@@ -89,8 +91,8 @@ function renderField(field, control) {
               <FormTextField 
                 {...commonProps} 
                 placeholder={field.placeholder} 
-                disabled={field.disabled}
-                readOnly={field.readOnly}
+                disabled={field.disabled || globalDisabled}
+                readOnly={field.readOnly || globalDisabled}
               />
             );
           case 'date':
@@ -98,8 +100,8 @@ function renderField(field, control) {
               <FormTextField 
                 {...commonProps} 
                 type="date"
-                disabled={field.disabled}
-                readOnly={field.readOnly}
+                disabled={field.disabled || globalDisabled}
+                readOnly={field.readOnly || globalDisabled}
               />
             );
           case 'datetime-local':
@@ -107,8 +109,8 @@ function renderField(field, control) {
               <FormTextField 
                 {...commonProps} 
                 type="datetime-local"
-                disabled={field.disabled}
-                readOnly={field.readOnly}
+                disabled={field.disabled || globalDisabled}
+                readOnly={field.readOnly || globalDisabled}
               />
             );
           case 'number':
@@ -118,8 +120,8 @@ function renderField(field, control) {
                 placeholder={field.placeholder} 
                 inputMode="numeric" 
                 pattern="[0-9]*" 
-                disabled={field.disabled}
-                readOnly={field.readOnly}
+                disabled={field.disabled || globalDisabled}
+                readOnly={field.readOnly || globalDisabled}
               />
             );
           case 'textarea':
@@ -287,7 +289,7 @@ function ObjectSection({ field, control, renderItem }) {
   );
 }
 
-function ArraySection({ field, control, renderItem }) {
+function ArraySection({ field, control, renderItem, globalDisabled = false }) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: field.name
@@ -297,14 +299,16 @@ function ArraySection({ field, control, renderItem }) {
     <div className={`space-y-4 p-4 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl select-none ${field.className || ''}`}>
       <div className="flex justify-between items-center mb-1">
         <Label text={field.label} required={field.required} />
-        <button
-          type="button"
-          onClick={() => append({})}
-          className="flex items-center gap-1 text-[12px] font-medium text-[#ff6b6b] hover:text-white bg-[#ff6b6b]/10 hover:bg-[#ff6b6b]/20 active:scale-[0.98] transition-all px-3 py-1.5 rounded-lg cursor-pointer"
-        >
-          <PlusIcon className="w-3.5 h-3.5" />
-          Add {field.itemLabel || 'Item'}
-        </button>
+        {!globalDisabled && (
+          <button
+            type="button"
+            onClick={() => append({})}
+            className="flex items-center gap-1 text-[12px] font-medium text-[#ff6b6b] hover:text-white bg-[#ff6b6b]/10 hover:bg-[#ff6b6b]/20 active:scale-[0.98] transition-all px-3 py-1.5 rounded-lg cursor-pointer"
+          >
+            <PlusIcon className="w-3.5 h-3.5" />
+            Add {field.itemLabel || 'Item'}
+          </button>
+        )}
       </div>
 
       {fields.length === 0 ? (
@@ -315,13 +319,15 @@ function ArraySection({ field, control, renderItem }) {
         <div className="space-y-4">
           {fields.map((item, index) => (
             <div key={item.id} className="relative p-4 bg-white/10 border border-white/10 rounded-xl animate-fade-in shadow-sm">
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="absolute -top-3 -right-3 w-7 h-7 bg-[#ff6b6b] border border-white/10 text-white hover:bg-rose-600 hover:border-rose-200 rounded-full flex items-center justify-center shadow-sm cursor-pointer z-10 transition-colors"
-              >
-                <TrashIcon className="w-4 h-4" />
-              </button>
+              {!globalDisabled && (
+                <button
+                  type="button"
+                  onClick={() => remove(index)}
+                  className="absolute -top-3 -right-3 w-7 h-7 bg-[#ff6b6b] border border-white/10 text-white hover:bg-rose-600 hover:border-rose-200 rounded-full flex items-center justify-center shadow-sm cursor-pointer z-10 transition-colors"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                </button>
+              )}
               
               <div className="space-y-4">
                 {field.fields.map((subField, sIdx) => {
@@ -340,7 +346,7 @@ function ArraySection({ field, control, renderItem }) {
   );
 }
 
-export default function FormRenderer({ schema, control, errors = {}, useAccordions = false }) {
+export default function FormRenderer({ schema, control, errors = {}, useAccordions = false, globalDisabled = false }) {
   const groupedSchema = React.useMemo(() => {
     if (!useAccordions) return schema;
     
@@ -437,10 +443,10 @@ export default function FormRenderer({ schema, control, errors = {}, useAccordio
     }
 
     if (field.type === 'array') {
-      return <ArraySection key={`arr-${idx}`} field={field} control={control} renderItem={renderItem} />;
+      return <ArraySection key={`arr-${idx}`} field={field} control={control} renderItem={renderItem} globalDisabled={globalDisabled} />;
     }
 
-    return renderField(field, control);
+    return renderField(field, control, globalDisabled);
   };
 
   const isFlat = React.useMemo(() => {

@@ -12,7 +12,7 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { Virtuoso } from 'react-virtuoso';
 import { reportApiService } from '../../services/reportApiService';
 
-const FILTERS = ["All", "Assigned", "Completed", "Waiting for Approval", "Approved", "Rejected"];
+const FILTERS = ["All", "Assigned", "In Progress", "Completed", "Waiting for Approval", "Approved", "Rejected"];
 
 export default function AuditReportsPage({ hideHeader = false }) {
   const navigate = useNavigate();
@@ -88,6 +88,11 @@ export default function AuditReportsPage({ hideHeader = false }) {
       await refreshVenues();
     }
   };
+
+  useEffect(() => {
+    handleRefresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [venueId]);
 
   const handleReportClick = async (report) => {
     try {

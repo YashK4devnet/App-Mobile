@@ -12,6 +12,11 @@ const FILTER_STYLES = {
     border: "border-blue-500/40",
     activeText: "text-blue-400",
   },
+  "In Progress": {
+    bg: "bg-cyan-500/20",
+    border: "border-cyan-500/40",
+    activeText: "text-cyan-400",
+  },
   "Completed": {
     bg: "bg-purple-500/20",
     border: "border-purple-500/40",

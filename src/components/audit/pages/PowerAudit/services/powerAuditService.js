@@ -44,7 +44,7 @@ export const generateInitialState = (schemas, odooData = null) => {
         score: lineData?.score || '', 
         image: null 
       };
-    } else if (fieldType === 'document-list' || fieldType === 'custom-questions') {
+    } else if (fieldType === 'document-list' || fieldType === 'custom-questions' || fieldType === 'numbered-text-list') {
       state[f.name] = [];
     } else if (fieldType === 'signature' || f.name === 'centerSeal') {
       let hasSig = false;
@@ -68,6 +68,9 @@ export const generateInitialState = (schemas, odooData = null) => {
         else if (f.name === 'city') odooVal = odooData.venue?.city;
         else if (f.name === 'name') odooVal = odooData.venue?.name;
         else if (f.name === 'completeAddress') odooVal = [odooData.venue?.city, odooData.venue?.state].filter(Boolean).join(', ') || odooData.venue?.completeAddress;
+        else if (f.name === 'auditScope') odooVal = odooData.auditScope;
+        else if (f.name === 'activity') odooVal = odooData.activity;
+        else if (f.name === 'location') odooVal = odooData.location;
       }
       state[f.name] = odooVal || f.value || ''; 
     }
@@ -144,14 +147,25 @@ export const validateSchema = (schema, data) => {
     if (fieldType === 'document-list') {
       const rows = getFieldValue(data, f.name) || [];
       const incomplete = rows.some(row => {
-        const hasImg = typeof row.documentImage === 'object' && row.documentImage !== null 
-          ? !!row.documentImage.url 
-          : !!row.documentImage;
-        return !row.documentName || !hasImg;
+        const hasImg = typeof row.doc_image === 'object' && row.doc_image !== null 
+          ? !!row.doc_image.url 
+          : !!row.doc_image;
+        return !row.doc_name || !hasImg;
       });
       if (incomplete) {
         errors[f.name] = "Please provide both a name and an image for all added documents";
       }
+    } else if (fieldType === 'numbered-text-list') {
+        const list = getFieldValue(data, f.name) || [];
+        if (list.length === 0 && f.required) {
+          errors[f.name] = "At least one entry is required";
+        } else if (list.length > 0) {
+          const hasEmpty = list.some(item => {
+            const val = typeof item === 'object' && item !== null ? item.observation : item;
+            return !val || typeof val.trim !== 'function' || !val.trim();
+          });
+          if (hasEmpty) errors[f.name] = "Entries cannot be empty";
+        }
     }
   };
 
@@ -184,7 +198,7 @@ export const isSchemaEmpty = (schema, data) => {
       const val = getFieldValue(data, f.name);
       const hasImg = typeof val?.image === 'object' && val?.image !== null ? !!val.image.url : !!val?.image;
       if (hasImg || val?.findings) empty = false;
-    } else if (fieldType === 'document-list' || fieldType === 'custom-questions') {
+    } else if (fieldType === 'document-list' || fieldType === 'custom-questions' || fieldType === 'numbered-text-list') {
       if (getFieldValue(data, f.name) && getFieldValue(data, f.name).length > 0) empty = false;
     } else {
       const val = getFieldValue(data, f.name);
@@ -227,6 +241,13 @@ export const calculateSchemaProgress = (schema, data) => {
       const list = getFieldValue(data, f.name) || [];
       // count any entries at all
       if (list.length > 0) filled++;
+    } else if (fieldType === 'numbered-text-list') {
+      const list = getFieldValue(data, f.name) || [];
+      const validCount = list.filter(item => {
+        const val = typeof item === 'object' && item !== null ? item.observation : item;
+        return val && typeof val.trim === 'function' && val.trim();
+      }).length;
+      if (validCount > 0) filled++;
     } else {
       const val = getFieldValue(data, f.name);
       const hasVal = typeof val === 'object' && val !== null ? !!val.url : !!val;
@@ -349,6 +370,44 @@ export const savePowerSection = async (reportId, schema, currentData, payloadKey
       }
       return;
     }
+
+    if (f.name === 'equipmentDocuments') {
+      const lineField = 'nameplate_document_equipment_lines';
+      if (!payloadsByLineField[lineField]) payloadsByLineField[lineField] = [];
+      const docsArray = val || [];
+      if (Array.isArray(docsArray)) {
+        docsArray.forEach(item => {
+          if (item.doc_name) {
+            let imgData = item.doc_image?.url || "";
+            if (imgData.includes(',')) imgData = imgData.split(',')[1];
+            payloadsByLineField[lineField].push({
+              doc_name: item.doc_name,
+              doc_image: imgData
+            });
+          }
+        });
+      }
+      return;
+    }
+
+    if (f.name === 'obs_list') {
+      const lineField = 'observation_lines';
+      if (!payloadsByLineField[lineField]) payloadsByLineField[lineField] = [];
+      const obsArray = val || [];
+      if (Array.isArray(obsArray)) {
+        let seq = 1;
+        obsArray.forEach(item => {
+          const obsVal = typeof item === 'object' && item !== null ? item.observation : item;
+          if (obsVal) {
+            payloadsByLineField[lineField].push({
+              seq_no: seq++,
+              comment: obsVal
+            });
+          }
+        });
+      }
+      return;
+    }
   };
 
   schema.forEach(processField);
@@ -370,8 +429,9 @@ export const savePowerSection = async (reportId, schema, currentData, payloadKey
     if (f.type === 'heading' || f.type === 'row' || f.type === 'group' || !f.name) return;
     const lineMatch = f.name.match(/^odoo_(.+)___(\d+)$/);
     const customMatch = f.name.match(/^customQuestions___(.+)$/);
+    if (f.name === 'equipmentDocuments' || f.name === 'obs_list') return;
     if (!lineMatch && !customMatch && currentData[f.name] !== undefined) {
-      if (f.type === 'signature' || f.name === 'centerSeal') {
+      if (f.type === 'signature' || f.name === 'centerSeal' || f.name === 'obs_venue_seal') {
         let imgData = currentData[f.name]?.url || "";
         if (imgData.includes(',')) imgData = imgData.split(',')[1];
         signatures[f.name] = imgData;
@@ -387,12 +447,12 @@ export const savePowerSection = async (reportId, schema, currentData, payloadKey
     }
   });
 
-  if (Object.keys(standardFields).length > 0 && payloadKey && payloadKey !== 'Signatures') {
+  if (Object.keys(standardFields).length > 0 && payloadKey && payloadKey !== 'Signatures' && payloadKey !== 'report' && payloadKey !== 'venue') {
     promises.push(reportApiService.patchAuditSection(reportId, { [payloadKey]: standardFields }));
   }
 
   if (Object.keys(signatures).length > 0) {
-    promises.push(reportApiService.patchAuditSection(reportId, { signatures }));
+    promises.push(reportApiService.patchAuditSection(reportId, signatures));
   }
 
   // Send PATCH request for each lineField collected

@@ -97,6 +97,7 @@ export default function VenueAuditWizard() {
     control, getValues, watch, setValue,
     errors,
     isInitializing,
+    isReadOnly,
     getSectionStatus,
     handleSectionSelect,
     handleNextClick, handlePrevClick
@@ -245,6 +246,16 @@ export default function VenueAuditWizard() {
           headerRight={stepPill}
         />
         
+        {isReadOnly && (
+          <div className="mx-5 mt-4 px-4 py-3 bg-rose-500/10 border border-rose-500/25 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
+            <ExclamationCircleIcon className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-rose-200 text-[13px] font-semibold leading-tight">Read-Only Mode</p>
+              <p className="text-rose-200/70 text-[12px] mt-0.5">This report has been finalized and cannot be edited.</p>
+            </div>
+          </div>
+        )}
+
         {/* Subsection Progress Indicator (Sticky) */}
         <LiveProgressBar 
           schema={SUBSECTION_SCHEMAS[currentSubsection]}
@@ -274,6 +285,7 @@ export default function VenueAuditWizard() {
               control={control}
               errors={errors}
               watch={watch}
+              globalDisabled={isReadOnly}
             />
           </div>
         </div>
@@ -287,12 +299,21 @@ export default function VenueAuditWizard() {
             >
               {isFirst ? 'Exit' : 'Previous'}
             </button>
-            <button
-              onClick={handleNextClick}
-              className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
-            >
-              {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit Audit' : 'Save & Next'}
-            </button>
+            {!isReadOnly ? (
+              <button
+                onClick={handleNextClick}
+                className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
+              >
+                {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit Audit' : 'Save & Next'}
+              </button>
+            ) : (
+              <button
+                onClick={handleNextClick}
+                className="flex-1 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+              >
+                {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Exit' : 'Next'}
+              </button>
+            )}
           </div>
         </div>
       </div>

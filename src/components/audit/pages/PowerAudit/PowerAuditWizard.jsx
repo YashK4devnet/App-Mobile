@@ -22,6 +22,7 @@ import {
   POWER_SECTION_8_SCHEMA,
   POWER_SECTION_9_SCHEMA,
   POWER_SECTION_10_SCHEMA,
+  POWER_SECTION_11_SCHEMA,
   POWER_PERSONNEL_INFO_SCHEMA,
   POWER_SIGNATURES_SCHEMA
 } from './schemas/powerAuditSchemas';
@@ -57,7 +58,7 @@ const SUBSECTION_SCHEMAS = {
   'Section8': POWER_SECTION_8_SCHEMA,
   'Section9': POWER_SECTION_9_SCHEMA,
   'Section10': POWER_SECTION_10_SCHEMA,
-  'Signatures': POWER_SIGNATURES_SCHEMA
+  'Section11': POWER_SECTION_11_SCHEMA
 };
 
 const STEPS = [
@@ -74,7 +75,7 @@ const STEPS = [
   { id: 'Section8' },
   { id: 'Section9' },
   { id: 'Section10' },
-  { id: 'Signatures' }
+  { id: 'Section11' }
 ];
 
 const SECTION_TO_PAYLOAD_KEY = {
@@ -91,7 +92,7 @@ const SECTION_TO_PAYLOAD_KEY = {
   'Section8': 'section8',
   'Section9': 'section9',
   'Section10': 'section10',
-  'Signatures': 'signatures'
+  'Section11': 'observations'
 };
 
 // Initialize dynamically from schemas
@@ -142,7 +143,7 @@ export default function PowerAuditWizard() {
     'Section8': generatePowerQuestionsSchema(odooData.maintenanceRecordLines || odooData.maintenance_record_lines, 'maintenance_record_lines'),
     'Section9': generatePowerQuestionsSchema(odooData.toolsSparesLines || odooData.tools_spares_lines, 'tools_spares_lines'),
     'Section10': POWER_SECTION_10_SCHEMA,
-    'Signatures': POWER_SIGNATURES_SCHEMA
+    'Section11': POWER_SECTION_11_SCHEMA
   } : null;
   
   const activeSchemas = dynamicSchemas || SUBSECTION_SCHEMAS;
@@ -152,6 +153,7 @@ export default function PowerAuditWizard() {
     control, getValues, watch, setValue,
     errors,
     isInitializing,
+    isReadOnly,
     getSectionStatus,
     handleSectionSelect,
     handleNextClick, handlePrevClick
@@ -187,6 +189,7 @@ export default function PowerAuditWizard() {
   const statusSec8 = getSectionStatus('Section8', currentData);
   const statusSec9 = getSectionStatus('Section9', currentData);
   const statusSec10 = getSectionStatus('Section10', currentData);
+  const statusSec11 = getSectionStatus('Section11', currentData);
 
   if (isInitializing) {
     return (
@@ -222,8 +225,8 @@ export default function PowerAuditWizard() {
           { id: 'Section7', title: '10. Equipment functionality checks', itemsCount: getItemsCount('Section7'), status: statusSec7, icon: BuildingIcon },
           { id: 'Section8', title: '11. Maintenance Records checks', itemsCount: getItemsCount('Section8'), status: statusSec8, icon: BuildingIcon },
           { id: 'Section9', title: '12. Electrician, Tools & Spares', itemsCount: getItemsCount('Section9'), status: statusSec9, icon: BuildingIcon },
-          { id: 'Section10', title: '13. Nameplate & Documentation', itemsCount: getItemsCount('Section10'), status: statusSec10, icon: BuildingIcon },
-          { id: 'Signatures', title: '14. Signatures', itemsCount: getItemsCount('Signatures'), status: getSectionStatus('Signatures', getValues()), icon: DocumentIcon }
+          { id: 'Section10', title: '13. Nameplate, Docs & Signatures', itemsCount: getItemsCount('Section10'), status: statusSec10, icon: BuildingIcon },
+          { id: 'Section11', title: '14. Observations', itemsCount: getItemsCount('Section11'), status: statusSec11, icon: BuildingIcon }
         ]
       }
     ];
@@ -275,8 +278,8 @@ export default function PowerAuditWizard() {
       { id: 'Section7', label: '10. Equipment functionality checks', status: statusSec7 },
       { id: 'Section8', label: '11. Maintenance Records checks', status: statusSec8 },
       { id: 'Section9', label: '12. Electrician, Tools & Spares', status: statusSec9 },
-      { id: 'Section10', label: '13. Nameplate & Documentation', status: statusSec10 },
-      { id: 'Signatures', label: '14. Signatures', status: getSectionStatus('Signatures', getValues()) }
+      { id: 'Section10', label: '13. Nameplate, Docs & Signatures', status: statusSec10 },
+      { id: 'Section11', label: '14. Observations', status: statusSec11 }
     ];
 
     const currentSubObj = subsections.find(s => s.id === currentSubsection);
@@ -293,6 +296,16 @@ export default function PowerAuditWizard() {
           headerRight={stepPill}
         />
         
+        {isReadOnly && (
+          <div className="mx-5 mt-4 px-4 py-3 bg-rose-500/10 border border-rose-500/25 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
+            <ExclamationCircleIcon className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-rose-200 text-[13px] font-semibold leading-tight">Read-Only Mode</p>
+              <p className="text-rose-200/70 text-[12px] mt-0.5">This report has been finalized and cannot be edited.</p>
+            </div>
+          </div>
+        )}
+
         {/* Subsection Progress Indicator (Sticky) */}
         <LiveProgressBar 
           schema={activeSchemas[currentSubsection]}
@@ -323,6 +336,7 @@ export default function PowerAuditWizard() {
               errors={errors}
               useAccordions={true}
               watch={watch}
+              globalDisabled={isReadOnly}
             />
           </div>
         </div>
@@ -336,12 +350,21 @@ export default function PowerAuditWizard() {
             >
               {isFirst ? 'Exit' : 'Previous'}
             </button>
-            <button
-              onClick={handleNextClick}
-              className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
-            >
-              {currentSubsection === 'Section10' ? 'Submit Audit' : 'Save & Next'}
-            </button>
+            {!isReadOnly ? (
+              <button
+                onClick={handleNextClick}
+                className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
+              >
+                {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit Audit' : 'Save & Next'}
+              </button>
+            ) : (
+              <button
+                onClick={handleNextClick}
+                className="flex-1 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+              >
+                {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Exit' : 'Next'}
+              </button>
+            )}
           </div>
         </div>
       </div>

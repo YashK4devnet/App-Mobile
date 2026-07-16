@@ -73,8 +73,11 @@ export const AuditProvider = ({ children, userId = 2 }) => {
     return {
       totalAssigned: reports.length,
       inProgressReports: reports.filter(r => r.state === 'in_progress'),
-      completedReports: reports.filter(r => r.state === 'completed'),
+      completedReports: reports.filter(r => r.state !== 'assign_user' && r.state !== 'in_progress'),
       draftReports: reports.filter(r => r.state === 'draft'),
+      waitingForApprovalReports: reports.filter(r => r.state === 'waiting_for_approval'),
+      approvedReports: reports.filter(r => r.state === 'approved'),
+      rejectedReports: reports.filter(r => r.state === 'reject'),
     };
   }, [reports]);
 

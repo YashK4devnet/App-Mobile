@@ -1,16 +1,22 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { storageService } from '../services/storageService';
 import { reportApiService } from '../services/reportApiService';
 import { isAppOnline } from '../utils/connection';
 
 export default function SyncManager() {
+  const isSyncing = useRef(false);
+
   const processSyncQueue = useCallback(async () => {
-    if (!isAppOnline()) return;
+    if (!isAppOnline() || isSyncing.current) return;
 
     try {
+      isSyncing.current = true;
       const tasks = await storageService.getSyncTasks();
-      if (!tasks || tasks.length === 0) return;
+      if (!tasks || tasks.length === 0) {
+        isSyncing.current = false;
+        return;
+      }
 
       let successCount = 0;
       let failCount = 0;
@@ -53,6 +59,8 @@ export default function SyncManager() {
       }
     } catch (err) {
       console.error("Error processing sync queue:", err);
+    } finally {
+      isSyncing.current = false;
     }
   }, []);
 
@@ -63,8 +71,13 @@ export default function SyncManager() {
     // Process queue when connection is restored
     window.addEventListener('online', processSyncQueue);
 
+    // Periodically retry sync every 60 seconds to catch cases where 
+    // network is connected but server was temporarily down
+    const intervalId = setInterval(processSyncQueue, 60000);
+
     return () => {
       window.removeEventListener('online', processSyncQueue);
+      clearInterval(intervalId);
     };
   }, [processSyncQueue]);
 
