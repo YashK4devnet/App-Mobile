@@ -50,7 +50,7 @@ export const reportApiService = {
     };
 
     try {
-      if (!isAppOnline()) {
+      if (!navigator.onLine) {
         throw new Error("Offline");
       }
       
@@ -66,7 +66,7 @@ export const reportApiService = {
     } catch (error) {
       console.error(`Failed to patch lineField ${lineField} for report ${reportId}`, error);
       
-      const isNetworkError = !isAppOnline() || 
+      const isNetworkError = !navigator.onLine || 
         error.name === 'TypeError' || 
         (error.message && (
           error.message === 'Offline' || 
@@ -103,7 +103,7 @@ export const reportApiService = {
    */
   async patchAuditSection(reportId, payload) {
     try {
-      if (!isAppOnline()) {
+      if (!navigator.onLine) {
         throw new Error("Offline");
       }
 
@@ -119,7 +119,7 @@ export const reportApiService = {
     } catch (error) {
       console.error(`Failed to patch section for report ${reportId}`, error);
       
-      const isNetworkError = !isAppOnline() || 
+      const isNetworkError = !navigator.onLine || 
         error.name === 'TypeError' || 
         (error.message && (
           error.message === 'Offline' || 

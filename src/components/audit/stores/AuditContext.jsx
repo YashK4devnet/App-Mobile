@@ -4,11 +4,10 @@ import { auditHttpClient, setAuditApiKey } from '../services/httpClient';
 export const AuditContext = createContext();
 
 export const AuditProvider = ({ children, userId, apiKey }) => {
-  useEffect(() => {
-    if (apiKey) {
-      setAuditApiKey(apiKey);
-    }
-  }, [apiKey]);
+  // Set API key synchronously so it's available for the first fetch request
+  if (apiKey) {
+    setAuditApiKey(apiKey);
+  }
 
   // Synchronously load initial cache to avoid layout flashes
   const [reports, setReports] = useState(() => {
