@@ -365,10 +365,7 @@ export const CONCLUSION_SCHEMA = [
   { name: 'otherPersonnelDetails', label: 'Other Personnel Details', type: 'textarea', placeholder: 'Enter other personnel details...' },
   { type: 'heading', label: 'Signatures & Seals' },
   { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature', required: true },
-  { name: 'auditorSignatureDate', label: 'Date', type: 'date', required: true },
   { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature', required: true },
-  { name: 'venueManagerSignatureDate', label: 'Date', type: 'date', required: true },
   { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature', required: true },
-  { name: 'electricianSignatureDate', label: 'Date', type: 'date', required: true },
   { name: 'centerSeal', label: 'Center Seal', type: 'image-upload', required: true }
 ];

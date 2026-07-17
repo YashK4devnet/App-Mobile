@@ -1,8 +1,9 @@
 const DB_NAME = 'AuditAppDB';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 const STORE_NAME = 'drafts';
 const REPORTS_STORE = 'odoo_reports';
 const SYNC_QUEUE_STORE = 'sync_queue';
+const IMAGES_STORE = 'images';
 
 // Utility to open the database
 const openDB = () => {
@@ -19,6 +20,9 @@ const openDB = () => {
       }
       if (!db.objectStoreNames.contains(SYNC_QUEUE_STORE)) {
         db.createObjectStore(SYNC_QUEUE_STORE);
+      }
+      if (!db.objectStoreNames.contains(IMAGES_STORE)) {
+        db.createObjectStore(IMAGES_STORE);
       }
     };
 
@@ -176,7 +180,37 @@ export const storageService = {
         const req = tx.objectStore(SYNC_QUEUE_STORE).clear();
         req.onsuccess = () => resolve();
         req.onerror = (e) => reject(e.target.error);
+      }),
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(IMAGES_STORE, 'readwrite');
+        const req = tx.objectStore(IMAGES_STORE).clear();
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
       })
     ]);
+  },
+
+  async saveImage(key, base64Data) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(IMAGES_STORE, 'readwrite');
+      const store = transaction.objectStore(IMAGES_STORE);
+      const request = store.put(base64Data, key);
+
+      request.onsuccess = () => resolve();
+      request.onerror = (e) => reject(e.target.error);
+    });
+  },
+
+  async getImage(key) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(IMAGES_STORE, 'readonly');
+      const store = transaction.objectStore(IMAGES_STORE);
+      const request = store.get(key);
+
+      request.onsuccess = (e) => resolve(e.target.result);
+      request.onerror = (e) => reject(e.target.error);
+    });
   }
 };

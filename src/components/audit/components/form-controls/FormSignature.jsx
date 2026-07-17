@@ -13,7 +13,9 @@ export function FormSignature({
   value,
   error,
   onChange,
-  required = false
+  required = false,
+  readOnly = false,
+  disabled = false
 }) {
   const [activeTab, setActiveTab] = useState('draw'); // 'draw' or 'upload'
   const sigCanvas = useRef(null);
@@ -22,11 +24,14 @@ export function FormSignature({
 
   const imgUrl = typeof value === 'object' && value !== null ? value.url : value;
   const imgTimestamp = typeof value === 'object' && value !== null ? value.timestamp : '';
+  const isPending = typeof value === 'object' && value !== null && value.pendingFetch;
   const hasImage = !!imgUrl;
+
+  const isInteractive = !readOnly && !disabled;
 
   useEffect(() => {
     const handleResize = () => {
-      if (sigCanvas.current && activeTab === 'draw' && !hasImage) {
+      if (sigCanvas.current && activeTab === 'draw' && !hasImage && isInteractive) {
         const canvas = sigCanvas.current.getCanvas();
         if (canvas) {
           const ratio = Math.max(window.devicePixelRatio || 1, 1);
@@ -38,19 +43,20 @@ export function FormSignature({
       }
     };
     
-    if (activeTab === 'draw' && !hasImage) {
+    if (activeTab === 'draw' && !hasImage && isInteractive) {
       window.addEventListener('resize', handleResize);
       setTimeout(handleResize, 50);
     }
     
     return () => window.removeEventListener('resize', handleResize);
-  }, [activeTab, hasImage]);
+  }, [activeTab, hasImage, isInteractive]);
 
   const saveSignature = async (e) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
+    if (!isInteractive) return;
     if (sigCanvas.current && !sigCanvas.current.isEmpty()) {
       const dataURL = sigCanvas.current.getCanvas().toDataURL('image/png');
       try {
@@ -60,7 +66,7 @@ export function FormSignature({
         const localISOTime = (new Date(now - offset)).toISOString().slice(0, 16);
         onChange(name, { url: compressedBase64, timestamp: localISOTime });
       } catch (err) {
-        console.error("Failed to compress signature", err);
+        console.error("Failed to compress signature image", err);
       }
     }
   };
@@ -70,22 +76,23 @@ export function FormSignature({
       e.preventDefault();
       e.stopPropagation();
     }
-    if (sigCanvas.current) {
+    if (sigCanvas.current && isInteractive) {
       sigCanvas.current.clear();
     }
   };
 
   const handleFileChange = async (e) => {
+    if (!isInteractive) return;
     const file = e.target.files[0];
     if (file) {
       try {
-        const compressedBase64 = await compressImage(file, 1280, 0.7);
+        const compressedBase64 = await compressImage(file, 800, 0.8);
         const now = new Date();
         const offset = now.getTimezoneOffset() * 60000;
         const localISOTime = (new Date(now - offset)).toISOString().slice(0, 16);
         onChange(name, { url: compressedBase64, timestamp: localISOTime });
       } catch (err) {
-        console.error("Failed to compress uploaded signature", err);
+        console.error("Failed to compress image", err);
       }
     }
   };
@@ -93,21 +100,24 @@ export function FormSignature({
   const triggerCamera = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (cameraInputRef.current) cameraInputRef.current.click();
+    if (isInteractive && cameraInputRef.current) cameraInputRef.current.click();
   };
 
   const triggerGallery = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (galleryInputRef.current) galleryInputRef.current.click();
+    if (isInteractive && galleryInputRef.current) galleryInputRef.current.click();
   };
 
   const removeImage = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!isInteractive) return;
     onChange(name, null);
     if (cameraInputRef.current) cameraInputRef.current.value = '';
     if (galleryInputRef.current) galleryInputRef.current.value = '';
+    
+    // Switch back to draw tab as default
     setActiveTab('draw');
   };
 
@@ -115,7 +125,7 @@ export function FormSignature({
     <div className="space-y-1.5 text-left">
       <Label text={label} required={required} />
       
-      {/* Hidden file inputs for upload tab */}
+      {/* Camera Input */}
       <input 
         type="file" 
         accept="image/*"
@@ -123,37 +133,55 @@ export function FormSignature({
         ref={cameraInputRef}
         onChange={handleFileChange}
         className="hidden" 
+        disabled={!isInteractive}
       />
+      
+      {/* Gallery Input */}
       <input 
         type="file" 
         accept="image/*"
         ref={galleryInputRef}
         onChange={handleFileChange}
         className="hidden" 
+        disabled={!isInteractive}
       />
 
       <div 
-        className={`relative w-full overflow-hidden rounded-xl border transition-all group flex flex-col ${
-          hasImage 
-            ? 'border-transparent bg-transparent' 
+        className={`relative w-full overflow-hidden rounded-xl border-2 border-dashed transition-all group ${
+          hasImage || !isInteractive
+            ? 'border-transparent' 
             : error 
               ? 'border-red-300 bg-red-50' 
               : 'border-white/20 bg-white/5'
         }`}
       >
-        {hasImage ? (
+        {isPending ? (
+          <div className="relative aspect-video w-full bg-black/20 flex flex-col items-center justify-center border border-white/10 rounded-xl">
+             <div className="w-6 h-6 border-2 border-[#4ecdc4] border-t-transparent rounded-full animate-spin mb-2"></div>
+             <p className="text-[12px] text-white/50">Loading signature...</p>
+          </div>
+        ) : hasImage ? (
           <div className="relative border-2 border-transparent">
              <div className="relative aspect-[21/9] w-full bg-white rounded-xl overflow-hidden shadow-sm border border-slate-200">
                <img src={imgUrl} alt={label} className="w-full h-full object-contain p-2 bg-white" />
-               <button 
-                 type="button" 
-                 onClick={removeImage}
-                 className="absolute bottom-2 right-2 bg-rose-500 active:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-md transition-colors flex items-center gap-1 cursor-pointer"
-               >
-                 <TrashIcon className="w-3.5 h-3.5" />
-                 Remove
-               </button>
+               {isInteractive && (
+                 <button 
+                   type="button" 
+                   onClick={removeImage}
+                   className="absolute bottom-2 right-2 bg-rose-500 active:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-md transition-colors flex items-center gap-1 cursor-pointer"
+                 >
+                   <TrashIcon className="w-3.5 h-3.5" />
+                   Remove
+                 </button>
+               )}
              </div>
+          </div>
+        ) : !isInteractive ? (
+          <div className="flex flex-col items-center justify-center py-6 px-4 text-center bg-white/5 rounded-xl border border-white/10">
+            <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center mb-2">
+              <CameraIcon className="w-5 h-5 text-white/30" />
+            </div>
+            <p className="text-[12px] font-medium text-white/50">No signature available</p>
           </div>
         ) : (
           <div className="flex flex-col h-full w-full">
@@ -233,7 +261,7 @@ export function FormSignature({
         )}
       </div>
 
-      {hasImage && (
+      {hasImage && isInteractive && (
         <div className="mt-2.5 p-3 bg-white/5 border border-white/20 rounded-xl space-y-1">
           <label className="text-[10px] font-medium text-white/50 uppercase tracking-wider block">
             Signature Timestamp (Auto-generated, editable)
@@ -249,7 +277,7 @@ export function FormSignature({
         </div>
       )}
 
-      {error && (
+      {error && !readOnly && (
         <p className="text-[11px] text-[#ff6b6b] font-medium mt-1 flex items-center gap-1">
           <ExclamationCircleIcon className="w-3.5 h-3.5" />
           {error}

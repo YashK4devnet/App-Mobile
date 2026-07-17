@@ -38,20 +38,36 @@ export const generateInitialState = (schemas, odooData = null) => {
     
     if (fieldType === 'network-question') {
       const lineData = getOdooLine(f.name);
+      let imgObj = null;
+      if (lineData?.id) {
+        // We will fetch this lazily
+        imgObj = { pendingFetch: true, odooId: lineData.id, isFromServer: true };
+      }
+
       state[f.name] = { 
-        findings: lineData?.score || lineData?.findings || '', 
-        remark: [lineData?.remark, lineData?.remarks].filter(Boolean).join(' - ') || '', 
-        image: null 
+        observation: lineData?.score || lineData?.findings || '', 
+        remarks: [lineData?.remark, lineData?.remarks].filter(Boolean).join(' - ') || '', 
+        image: imgObj 
       };
     } else if (fieldType === 'signature' || f.name === 'centerSeal') {
       let hasSig = false;
+      let imgData = null;
       if (odooData?.signatures) {
         const sigKey = `has${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`;
         hasSig = !!odooData.signatures[sigKey];
+        if (odooData.signatures[f.name]) {
+          imgData = `data:image/jpeg;base64,${odooData.signatures[f.name]}`;
+        } else if (hasSig) {
+          imgData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+        }
       }
-      state[f.name] = hasSig ? { url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=' } : null;
+      state[f.name] = imgData ? { url: imgData } : null;
     } else if (fieldType === 'image-upload') {
-      state[f.name] = null;
+      let val = null;
+      if (odooData && odooData[f.name]) {
+         val = { url: `data:image/jpeg;base64,${odooData[f.name]}` };
+      }
+      state[f.name] = val;
     } else if (fieldType === 'device-photo-list' || fieldType === 'custom-questions') {
       state[f.name] = [];
     } else if (fieldType === 'numbered-text-list') {
@@ -365,13 +381,22 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
       if (f.fields) {
         f.fields.forEach(sub => {
           if (sub.type === 'image-upload') {
-            let imgData = val[sub.name]?.url || "";
-            if (imgData.includes(',')) {
-              imgData = imgData.split(',')[1];
+            const imgObj = val[sub.name];
+            if (imgObj && imgObj.isFromServer) {
+              // Image came from server and hasn't been modified, omit from payload to save bandwidth
+            } else {
+              let imgData = imgObj?.url || "";
+              if (imgData.includes(',')) {
+                imgData = imgData.split(',')[1];
+              }
+              // Backend expects 'evidence' for network-question images, mapping it here.
+              linePayload['evidence'] = imgData;
+              linePayload['evidenceType'] = imgData ? 'image' : '';
             }
-            linePayload[sub.name] = imgData;
           } else {
-            linePayload[sub.name] = val[sub.name] || "";
+            // Map frontend schema names to backend expected names
+            const backendFieldName = sub.name === 'observation' ? 'findings' : (sub.name === 'remarks' ? 'remark' : sub.name);
+            linePayload[backendFieldName] = val[sub.name] || "";
           }
         });
       }
@@ -433,6 +458,11 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
         let imgData = currentData[f.name]?.url || "";
         if (imgData.includes(',')) imgData = imgData.split(',')[1];
         signatures[f.name] = imgData;
+        
+        const timestamp = currentData[f.name]?.timestamp;
+        if (timestamp) {
+           signatures[`${f.name}Date`] = timestamp;
+        }
       } else if (f.name.toLowerCase().includes('signaturedate')) {
         signatures[f.name] = currentData[f.name] || "";
       } else if (f.type === 'image-upload') {
@@ -446,7 +476,11 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
   });
 
   if (Object.keys(standardFields).length > 0 && payloadKey && payloadKey !== 'Signatures' && payloadKey !== 'report' && payloadKey !== 'venue') {
-    promises.push(reportApiService.patchAuditSection(reportId, { [payloadKey]: standardFields }));
+    if (payloadKey === 'observations') {
+      promises.push(reportApiService.patchAuditSection(reportId, standardFields));
+    } else {
+      promises.push(reportApiService.patchAuditSection(reportId, { [payloadKey]: standardFields }));
+    }
   }
 
   if (Object.keys(signatures).length > 0) {

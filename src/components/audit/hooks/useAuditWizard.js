@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { storageService } from '../services/storageService';
@@ -138,6 +138,58 @@ export function useAuditWizard({
     }
   }, [watch, storageKey, isInitializing]);
 
+  const fetchingImages = useRef(new Set());
+
+  // Lazy load images when subsection changes
+  useEffect(() => {
+    if (isInitializing || !reportId) return;
+
+    const currentSchema = schemas[currentSubsection];
+    if (!currentSchema) return;
+
+    const fetchPromises = [];
+
+    const processFieldForImages = (f) => {
+      if (f.type === 'heading' || f.type === 'row' || f.type === 'group') {
+        if (f.fields) f.fields.forEach(processFieldForImages);
+        return;
+      }
+      if (!f.name) return;
+
+      const fieldData = getValues(f.name);
+      
+      // Check if it's a field with an image object
+      if (fieldData && typeof fieldData === 'object' && fieldData.image) {
+        const imgObj = fieldData.image;
+        if (imgObj.pendingFetch && imgObj.odooId && imgObj.isFromServer && !fetchingImages.current.has(imgObj.odooId)) {
+          // Mark as fetching
+          fetchingImages.current.add(imgObj.odooId);
+          
+          const promise = reportApiService.fetchLineImage(imgObj.odooId).then(base64 => {
+            if (base64) {
+              setValue(`${f.name}.image`, {
+                url: `data:image/jpeg;base64,${base64}`,
+                isFromServer: true
+              }, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+            } else {
+              setValue(`${f.name}.image`, null, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+            }
+          }).catch(err => {
+            console.error(`Error processing fetched image for ${imgObj.odooId}:`, err);
+            setValue(`${f.name}.image`, null, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+          }).finally(() => {
+            fetchingImages.current.delete(imgObj.odooId);
+          });
+          fetchPromises.push(promise);
+        }
+      }
+    };
+
+    if (Array.isArray(currentSchema)) {
+      currentSchema.forEach(processFieldForImages);
+    }
+  }, [currentSubsection, isInitializing, reportId, schemas, getValues, setValue]);
+
   const getSectionStatus = (sectionId, currentData) => {
     const schema = schemas[sectionId];
     if (!schema) return 'empty';
@@ -147,7 +199,11 @@ export function useAuditWizard({
   };
 
   const handleSectionSelect = (sectionId) => {
-    // Save current section before switching
+    handleSaveCurrent();
+    setCurrentSubsection(sectionId);
+  };
+
+  const handleSaveCurrent = () => {
     const currentData = getValues();
     if (reportId && saveSectionData && !isReadOnly) {
       const payloadKey = sectionToPayloadKey ? sectionToPayloadKey[currentSubsection] : null;
@@ -168,7 +224,7 @@ export function useAuditWizard({
                 },
               });
             } else {
-              console.error("Background sync failed on section change:", err);
+              console.error("Background sync failed on section save:", err);
               toast.error('Failed to sync section to server. Please try again.', {
                 style: {
                   borderRadius: '10px',
@@ -180,7 +236,6 @@ export function useAuditWizard({
           });
       }
     }
-    setCurrentSubsection(sectionId);
   };
 
   const handleNextClick = () => {
@@ -189,37 +244,7 @@ export function useAuditWizard({
 
     const currentData = getValues();
 
-    if (reportId && saveSectionData && !isReadOnly) {
-      const payloadKey = sectionToPayloadKey ? sectionToPayloadKey[currentSubsection] : null;
-      const sectionSchema = schemas[currentSubsection];
-      if (sectionSchema) {
-        saveSectionData(reportId, sectionSchema, currentData, payloadKey)
-          .then(() => {
-            toast.success('Section saved', { duration: 2000, position: 'bottom-center' });
-          })
-          .catch(err => {
-            if (err.isOffline) {
-              toast('Offline mode: Section saved locally. Will sync automatically.', {
-                icon: '📶',
-                style: {
-                  borderRadius: '10px',
-                  background: '#333',
-                  color: '#fff',
-                },
-              });
-            } else {
-              console.error("Background sync failed on save & next:", err);
-              toast.error('Failed to sync section to server. Please try again.', {
-                style: {
-                  borderRadius: '10px',
-                  background: '#ef4444',
-                  color: '#fff',
-                }
-              });
-            }
-          });
-      }
-    }
+    handleSaveCurrent();
 
     const nextStep = steps[currentIndex + 1];
     if (nextStep) {
@@ -227,6 +252,10 @@ export function useAuditWizard({
       const container = document.getElementById('audit-form-container');
       if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
+      if (isReadOnly) {
+        if (onExitForm) onExitForm();
+        return;
+      }
       const submitFinal = async () => {
         try {
           if (reportId) {
@@ -275,6 +304,7 @@ export function useAuditWizard({
     getSectionStatus,
     calculateGlobalProgress,
     handleSectionSelect,
+    handleSaveCurrent,
     handleNextClick, handlePrevClick
   };
 }

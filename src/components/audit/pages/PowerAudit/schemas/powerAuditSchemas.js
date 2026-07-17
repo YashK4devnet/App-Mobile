@@ -217,11 +217,8 @@ export const POWER_SECTION_10_SCHEMA = [
   },
   { type: 'heading', label: 'Signatures & Verification', className: 'text-[#F98A15] border-[#F98A15]/30 mt-8' },
   { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature', required: true },
-  { name: 'auditorSignatureDate', label: 'Date', type: 'date', required: true },
   { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature', required: true },
-  { name: 'venueManagerSignatureDate', label: 'Date', type: 'date', required: true },
   { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature', required: true },
-  { name: 'electricianSignatureDate', label: 'Date', type: 'date', required: true },
   { name: 'centerSeal', label: 'Center Seal', type: 'image-upload', required: true }
 ];
 
@@ -245,10 +242,7 @@ export const POWER_SECTION_11_SCHEMA = [
 
 export const POWER_SIGNATURES_SCHEMA = [
   { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature' },
-  { name: 'auditorSignatureDate', label: 'Date', type: 'date' },
   { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature' },
-  { name: 'venueManagerSignatureDate', label: 'Date', type: 'date' },
   { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature' },
-  { name: 'electricianSignatureDate', label: 'Date', type: 'date' },
   { name: 'centerSeal', label: 'Center Seal', type: 'image-upload' }
 ];

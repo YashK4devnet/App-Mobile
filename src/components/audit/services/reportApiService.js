@@ -37,6 +37,44 @@ export const reportApiService = {
     }
   },
 
+  async fetchLineImage(questionId) {
+    if (!questionId) return null;
+    
+    try {
+      // First check cache
+      const cacheKey = `image_${questionId}`;
+      const cached = await storageService.getImage(cacheKey);
+      if (cached) return cached;
+      
+      const json = await auditHttpClient(`/audits/lines/${questionId}/image`, {
+        method: 'GET',
+        headers: {
+          'Odoo-DB': DB_NAME
+        }
+      });
+      
+      let b64 = json?.images?.image || json?.image;
+      if (b64) {
+        // Handle double-encoded base64 (Odoo sometimes returns base64 of base64)
+        // If it starts with "Lzl", it's the base64 encoding of "/9j" which is the start of a jpeg base64
+        if (b64.startsWith('Lzl')) {
+          try {
+            b64 = atob(b64);
+          } catch (e) {
+            console.warn("Failed to decode double-encoded base64", e);
+          }
+        }
+        
+        await storageService.saveImage(cacheKey, b64);
+        return b64;
+      }
+      return null;
+    } catch (error) {
+      console.warn(`Failed to fetch image for question ${questionId}`, error);
+      return null;
+    }
+  },
+
   /**
    * Patches a specific lineField of a report with the provided array of lines.
    * @param {string|number} reportId - The ID of the report.

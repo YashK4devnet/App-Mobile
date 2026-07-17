@@ -28,7 +28,7 @@ export default function SubsectionAccordion({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 bg-[#0F0F23] border-b border-white/20 shadow-2xl z-40 divide-y divide-white/10 animate-slide-down">
+        <div className="absolute top-full left-0 right-0 bg-[#0F0F23] border-b border-white/20 shadow-2xl z-40 divide-y divide-white/10 animate-slide-down max-h-[60vh] overflow-y-auto">
           {subsections.map((sub) => {
             const isActive = sub.id === currentSubsection;
             const isCompleted = sub.status === 'valid';

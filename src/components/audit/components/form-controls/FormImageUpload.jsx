@@ -9,16 +9,22 @@ export function FormImageUpload({
   value, 
   error, 
   onChange, 
-  required = false 
+  required = false,
+  readOnly = false,
+  disabled = false
 }) {
   const cameraInputRef = React.useRef(null);
   const galleryInputRef = React.useRef(null);
 
   const imgUrl = typeof value === 'object' && value !== null ? value.url : value;
   const imgTimestamp = typeof value === 'object' && value !== null ? value.timestamp : '';
+  const isPending = typeof value === 'object' && value !== null && value.pendingFetch;
   const hasImage = !!imgUrl;
 
+  const isInteractive = !readOnly && !disabled;
+
   const handleFileChange = async (e) => {
+    if (!isInteractive) return;
     const file = e.target.files[0];
     if (file) {
       try {
@@ -36,18 +42,19 @@ export function FormImageUpload({
   const triggerCamera = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (cameraInputRef.current) cameraInputRef.current.click();
+    if (isInteractive && cameraInputRef.current) cameraInputRef.current.click();
   };
 
   const triggerGallery = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (galleryInputRef.current) galleryInputRef.current.click();
+    if (isInteractive && galleryInputRef.current) galleryInputRef.current.click();
   };
 
   const removeImage = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!isInteractive) return;
     onChange(name, null);
     if (cameraInputRef.current) cameraInputRef.current.value = '';
     if (galleryInputRef.current) galleryInputRef.current.value = '';
@@ -65,6 +72,7 @@ export function FormImageUpload({
         ref={cameraInputRef}
         onChange={handleFileChange}
         className="hidden" 
+        disabled={!isInteractive}
       />
       
       {/* Gallery Input */}
@@ -74,37 +82,52 @@ export function FormImageUpload({
         ref={galleryInputRef}
         onChange={handleFileChange}
         className="hidden" 
+        disabled={!isInteractive}
       />
 
       <div 
         className={`relative w-full overflow-hidden rounded-xl border-2 border-dashed transition-all group ${
-          hasImage 
+          hasImage || !isInteractive
             ? 'border-transparent' 
             : error 
               ? 'border-red-300 bg-red-50' 
               : 'border-white/20 bg-white/5'
         }`}
       >
-        {hasImage ? (
-          <div className="relative aspect-video w-full bg-black">
-            <img src={imgUrl} alt={label} className="w-full h-full object-contain opacity-90 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-              <button 
-                type="button" 
-                onClick={triggerCamera}
-                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer"
-              >
-                Retake
-              </button>
-              <button 
-                type="button" 
-                onClick={removeImage}
-                className="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
-              >
-                <TrashIcon className="w-3.5 h-3.5" />
-                Remove
-              </button>
+        {isPending ? (
+          <div className="relative aspect-video w-full bg-black/20 flex flex-col items-center justify-center border border-white/10 rounded-xl">
+             <div className="w-6 h-6 border-2 border-[#4ecdc4] border-t-transparent rounded-full animate-spin mb-2"></div>
+             <p className="text-[12px] text-white/50">Loading image...</p>
+          </div>
+        ) : hasImage ? (
+          <div className="relative aspect-video w-full bg-black rounded-xl overflow-hidden border border-white/10">
+            <img src={imgUrl} alt={label} className="w-full h-full object-contain opacity-90 transition-opacity" />
+            {isInteractive && (
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                <button 
+                  type="button" 
+                  onClick={triggerCamera}
+                  className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                >
+                  Retake
+                </button>
+                <button 
+                  type="button" 
+                  onClick={removeImage}
+                  className="bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <TrashIcon className="w-3.5 h-3.5" />
+                  Remove
+                </button>
+              </div>
+            )}
+          </div>
+        ) : !isInteractive ? (
+          <div className="flex flex-col items-center justify-center py-6 px-4 text-center bg-white/5 rounded-xl border border-white/10">
+            <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center mb-2">
+              <CameraIcon className="w-5 h-5 text-white/30" />
             </div>
+            <p className="text-[12px] font-medium text-white/50">No image available</p>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
@@ -133,7 +156,7 @@ export function FormImageUpload({
         )}
       </div>
 
-      {hasImage && (
+      {hasImage && isInteractive && (
         <div className="mt-2.5 p-3 bg-white/5 border border-white/20 rounded-xl space-y-1">
           <label className="text-[10px] font-medium text-white/50 uppercase tracking-wider block">
             Photo Timestamp (Auto-generated, editable)
@@ -149,7 +172,7 @@ export function FormImageUpload({
         </div>
       )}
 
-      {error && (
+      {error && !readOnly && (
         <p className="text-[11px] text-[#ff6b6b] font-medium mt-1 flex items-center gap-1">
           <ExclamationCircleIcon className="w-3.5 h-3.5" />
           {error}

@@ -11,9 +11,14 @@ export function FormPowerQuestion({
   onChange,
   required = false,
   evidence,
-  findingsHint
+  findingsHint,
+  readOnly = false,
+  disabled = false
 }) {
+  const isInteractive = !readOnly && !disabled;
+
   const handleFieldChange = (field, val) => {
+    if (!isInteractive) return;
     onChange(name, { ...value, [field]: val });
   };
 
@@ -47,7 +52,8 @@ export function FormPowerQuestion({
           value={value?.findings || ''}
           onChange={(e) => handleFieldChange('findings', e.target.value)}
           placeholder="Enter findings here..."
-          className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-[13px] transition-all focus:ring-1 focus:ring-[#4ecdc4] focus:border-[#4ecdc4] outline-none text-white placeholder-white/40"
+          disabled={!isInteractive}
+          className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-[13px] transition-all focus:ring-1 focus:ring-[#4ecdc4] focus:border-[#4ecdc4] outline-none text-white placeholder-white/40 disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
@@ -65,12 +71,18 @@ export function FormPowerQuestion({
             } else {
               activeClass = 'bg-white/5 backdrop-blur-md border-white/20 text-white hover:bg-white/10';
             }
+            
+            if (!isInteractive) {
+              activeClass += ' opacity-70 cursor-not-allowed';
+            }
+            
             return (
               <button
                 key={s.value}
                 type="button"
+                disabled={!isInteractive}
                 onClick={() => handleFieldChange('score', s.value)}
-                className={`flex-1 py-2.5 px-2 text-[13px] font-medium rounded-xl border transition-all active:scale-[0.98] cursor-pointer ${activeClass}`}
+                className={`flex-1 py-2.5 px-2 text-[13px] font-medium rounded-xl border transition-all ${isInteractive ? 'active:scale-[0.98] cursor-pointer' : ''} ${activeClass}`}
               >
                 {s.label}
               </button>
@@ -86,6 +98,8 @@ export function FormPowerQuestion({
           value={value?.image || ''}
           onChange={(_, imgVal) => handleFieldChange('image', imgVal)}
           error={error?.image}
+          readOnly={readOnly}
+          disabled={disabled}
         />
       </div>
 

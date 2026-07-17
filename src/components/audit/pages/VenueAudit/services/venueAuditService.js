@@ -60,13 +60,23 @@ export const generateInitialState = (schemas, odooData = null) => {
       state[f.name] = flatOdooData[f.name] || [];
     } else if (f.type === 'signature' || f.name === 'centerSeal') {
       let hasSig = false;
+      let imgData = null;
       if (odooData?.signatures) {
         const sigKey = `has${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`;
         hasSig = !!odooData.signatures[sigKey];
+        if (odooData.signatures[f.name]) {
+          imgData = `data:image/jpeg;base64,${odooData.signatures[f.name]}`;
+        } else if (hasSig) {
+          imgData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+        }
       }
-      state[f.name] = hasSig ? { url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=' } : null;
+      state[f.name] = imgData ? { url: imgData } : null;
     } else if (f.type === 'image-upload') {
-      state[f.name] = null;
+      let val = null;
+      if (flatOdooData[f.name]) {
+         val = { url: `data:image/jpeg;base64,${flatOdooData[f.name]}` };
+      }
+      state[f.name] = val;
     } else {
       let mappedValue = flatOdooData[f.name];
       if (mappedValue === undefined || mappedValue === null) {
@@ -272,6 +282,11 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
         let imgData = val?.url || "";
         if (imgData.includes(',')) imgData = imgData.split(',')[1];
         signatures[f.name] = imgData;
+        
+        const timestamp = val?.timestamp;
+        if (timestamp) {
+           signatures[`${f.name}Date`] = timestamp;
+        }
       } else if (f.name.toLowerCase().includes('signaturedate')) {
         signatures[f.name] = val || "";
       } else if (f.type === 'image-upload') {

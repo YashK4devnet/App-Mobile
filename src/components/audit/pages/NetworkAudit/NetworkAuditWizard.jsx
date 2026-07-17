@@ -132,6 +132,7 @@ export default function NetworkAuditWizard() {
     isReadOnly,
     getSectionStatus,
     handleSectionSelect,
+    handleSaveCurrent,
     handleNextClick, handlePrevClick
   } = useAuditWizard({
     schemas: dynamicSchemas,
@@ -333,12 +334,29 @@ export default function NetworkAuditWizard() {
               {isFirst ? 'Exit' : 'Previous'}
             </button>
             {!isReadOnly ? (
-              <button
-                onClick={handleNextClick}
-                className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
-              >
-                {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit Audit' : 'Save & Next'}
-              </button>
+              currentSubsection === STEPS[STEPS.length - 1]?.id ? (
+                <>
+                  <button
+                    onClick={handleSaveCurrent}
+                    className="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={handleNextClick}
+                    className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
+                  >
+                    Submit Audit
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleNextClick}
+                  className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
+                >
+                  Save & Next
+                </button>
+              )
             ) : (
               <button
                 onClick={handleNextClick}

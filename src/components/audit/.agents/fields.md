@@ -7,7 +7,6 @@ HEADER_FIELD_MAP = {
     'toImprovePoints': 'to_improve_points',
 }
 
-# NEW: signature / seal fields
 SIGNATURE_FIELD_MAP = {
     'auditorSignature': 'auditor_signature',
     'venueManagerSignature': 'venue_manager_signature',
@@ -38,6 +37,26 @@ VENUE_AUDIT_FIELD_MAP = {
     'venueAdministratorContact': 'venue_administrator_contact', 'systemItAdminName': 'system_it_admin_name',
     'systemItAdminContact': 'system_it_admin_contact', 'venueLandlineNo': 'venue_landline_no',
     'otherCorrespondenceEmail': 'other_correspondence_email', 'alternateContactNo': 'alternate_contact_no',
+    'cctvEntryExitCovered': 'cctv_entry_exit_covered',
+    'cctvAllLabsAvailable': 'cctv_all_labs_available',
+    'cctvServerRoomCovered': 'cctv_server_room_covered',
+    'cctvRegistrationAreaAvailable': 'cctv_registration_area_available',
+    'totalCctvCameras': 'total_cctv_cameras',
+    'cctvConnectedToMonitors': 'cctv_connected_to_monitors',
+    'cctv2mpAvailable': 'cctv_2mp_available',
+    'cctv2mpWorking': 'cctv_2mp_working',
+    'cctv5mpAvailable': 'cctv_5mp_available',
+    'cctv5mpWorking': 'cctv_5mp_working',
+    'cctvHigherAvailable': 'cctv_higher_available',
+    'cctvHigherWorking': 'cctv_higher_working',
+    'cctvLiveFeedRecorded': 'cctv_live_feed_recorded',
+    'dvrNvrRecordingCapacity': 'dvr_nvr_recording_capacity',
+    'venueReadyLiveCctvFeeding': 'venue_ready_live_cctv_feeding',
+    'dvrOwnership': 'dvr_ownership',
+    'cctvPassageAreaCovered': 'cctv_passage_area_covered',
+    'dvrNvrType': 'dvr_nvr_type',
+    'dvrNvrMakeModel': 'dvr_nvr_make_model',
+    'overallCctvCoverageFeedback': 'overall_cctv_coverage_feedback',
 }
 ACCESSIBILITY_FIELD_MAP = {
     'distanceFromCity': 'distance_from_city', 'distanceFromAir': 'distance_from_air',
@@ -87,22 +106,36 @@ NODE_DETAILS_FIELD_MAP = {
     'videoRecordingMachinesWorking': 'video_recording_machines_working',
 }
 PROCESSOR_FIELD_MAP = {
-    'processorType': 'processor_type', 'processorAvailableCount': 'processor_available_count',
-    'processorWorkingCount': 'processor_working_count', 'processorSpeed': 'processor_speed',
+    'i3Available': 'processor_i3_available', 'i3Working': 'processor_i3_working',
+    'i3Speed': 'processor_i3_available_speed',
+    'i5Available': 'processor_i5_available', 'i5Working': 'processor_i5_working',
+    'i5Speed': 'processor_i5_available_speed',
+    'i7Available': 'processor_i7_available', 'i7Working': 'processor_i7_working',
+    'i7Speed': 'processor_i7_available_speed',
 }
 OS_FIELD_MAP = {
-    'osType': 'os_type', 'osAvailableCount': 'os_available_count',
-    'osWorkingCount': 'os_working_count', 'ieVersion': 'ie_version',
+    'win7Available': 'win7_available', 'win7Working': 'win7_working',
+    'win8Available': 'win8_available', 'win8Working': 'win8_working',
+    'win10Available': 'win10_available', 'win10Working': 'win10_working',
+    'win11Available': 'win11_available', 'win11Working': 'win11_working',
+    'linuxAvailable': 'linux_available', 'linuxWorking': 'linux_working',
+    'otherOsAvailable': 'other_os_available', 'otherOsWorking': 'other_os_working',
+    'ieVersion': 'ie_version',
 }
 RAM_FIELD_MAP = {
-    'ramSize': 'ram_size', 'ramAvailableCount': 'ram_available_count', 'ramWorkingCount': 'ram_working_count',
+    'ram2gbAvailable': 'ram_2gb_available', 'ram2gbWorking': 'ram_2gb_working',
+    'ram4gbAvailable': 'ram_4gb_available', 'ram4gbWorking': 'ram_4gb_working',
+    'ram8gbAvailable': 'ram_8gb_available', 'ram8gbWorking': 'ram_8gb_working',
 }
 HDD_FIELD_MAP = {
-    'hddSize': 'hdd_size', 'hddAvailableCount': 'hdd_available_count', 'hddWorkingCount': 'hdd_working_count',
+    'hdd256gbAvailable': 'hdd_256gb_available', 'hdd256gbWorking': 'hdd_256gb_working',
+    'hdd512gbAvailable': 'hdd_512gb_available', 'hdd512gbWorking': 'hdd_512gb_working',
+    'hdd1tbAvailable': 'hdd_1tb_available', 'hdd1tbWorking': 'hdd_1tb_working',
 }
 MONITOR_FIELD_MAP = {
-    'monitorType': 'monitor_type', 'monitorAvailableCount': 'monitor_available_count',
-    'monitorWorkingCount': 'monitor_working_count',
+    'monitor15Available': 'monitor_15_available', 'monitor15Working': 'monitor_15_working',
+    'monitor17Available': 'monitor_17_available', 'monitor17Working': 'monitor_17_working',
+    'monitor19Available': 'monitor_19_available', 'monitor19Working': 'monitor_19_working',
 }
 SOFTWARE_SECURITY_FIELD_MAP = {
     'osLicenseAvailable': 'os_license_available', 'systemFormatAllowed': 'system_format_allowed',
@@ -131,190 +164,5 @@ POWER_LINE_FIELDS = [
 NETWORK_LINE_FIELDS = [
     'network_architecture_lines', 'public_network_harding_line', 'network_infrastructure_lines',
     'wan_infra_lines', 'system_conf_lines', 'network_conf_lines', 'backup_device_lines',
-    'security_compliance_lines',
+    'security_compliance_lines','nameplate_document_equipment_lines',
 ]
- 
-observation_lines
-nameplate_document_equipment_lines 
-
-Venue audit patch api.
-
-{
-    "reportName": "Venue Audit Report Updated",
-    "version": "2",
-    "auditDate": "2026-07-16 14:00:00",
-    "previousAuditDate": "2026-07-01",
-    "nextAuditDate": "2026-08-16",
-    "auditManagerId": 2,
- 
-    "region": "North Zone",
-    "googleMapLocationStatus": "accurate",
- 
-    "venueOwnerName": "ABC Owner",
-    "venueOwnerContact": "9876543210",
-    "venueOwnerEmail": "owner@example.com",
- 
-    "venueAdministratorName": "Venue Admin",
-    "venueAdministratorContact": "9876500000",
- 
-    "systemItAdminName": "IT Admin",
-    "systemItAdminContact": "9988776655",
- 
-    "venueLandlineNo": "07912345678",
-    "otherCorrespondenceEmail": "venue@example.com",
-    "alternateContactNo": "9999999999",
- 
-    "venue": {
-        "name": "Acme Corporation",
-        "stateId": 12,
-        "city": "Ahmedabad",
-        "contactNo": "9876543210",
-        "email": "venue@example.com",
-        "completeAddress": "SG Highway, Ahmedabad",
-        "totalNodes": 150,
-        "pinCode": "380015"
-    },
- 
-    "accessibility": {
-        "distanceFromCity": "more_10km",
-        "distanceFromAir": "bw_10_20",
-        "distanceFromRail": "more_10km",
-        "distanceFromBus": "more_10km",
-        "nearBusStop": "ISCON",
-        "distanceFromPolice": "less_20km",
-        "policeStationName": "SG Highway Police Station",
-        "distanceFromHospital": "bw_10_20",
-        "hospitalName": "Apollo Hospital",
-        "distanceFromFireStation": "less_20km",
-        "roadQuality": "good",
-        "convenienceFeedback": "Excellent"
-    },
- 
-    "administrative": {
-        "washroomFacilityAvailable": "yes",
-        "washroomQuality": "0_3",
-        "washroomCleanliness": "0_3",
-        "safeDrinkingWaterAvailable": "yes",
-        "parkingSpaceAvailable": "yes",
-        "separateToiletAtParking": "no",
-        "securityGuardsAvailable": "yes",
-        "femaleFriskingEnclosureAvailable": "yes",
-        "candidateBelongingsStorage": "yes",
-        "lockersAvailable": "yes",
-        "comfortableSeatsAvailable": "yes",
-        "adequateSpaceBetweenCandidates": "yes",
-        "approximateSpaceBetweenCandidates": "3ft",
-        "liftFacilityAvailable": "yes",
-        "wheelchairRampAvailable": "yes",
-        "groundFloorLabAvailable": "yes",
-        "separateToiletForPh": "yes",
-        "sufficientLightingAvailable": "yes",
-        "airConditioningAdequate": "yes",
-        "venueManpowerCount": "lt_10",
-        "staffType": "employee",
-        "backgroundVerificationAvailable": "yes",
-        "computerKnowledgeStaffCount": "lt_10",
-        "separateScanningPrintingArea": "yes",
-        "numberOfPrinters": 4,
-        "printerType": "laser",
-        "numberOfScanners": 2,
-        "scannerType": "flatbed",
-        "campusBoundaryStatus": "within_boundary",
-        "firstAidKitAvailable": "yes",
-        "fireSafetyEquipmentAvailable": "yes",
-        "emergencyExitAvailable": "yes",
-        "emergencyExitEachFloor": "yes",
-        "visitorLogbookAvailable": "yes",
-        "overallAdministrativeFeedback": "Very Good"
-    },
- 
-    "systemDetails": {
-        "totalSystemsAvailable": 150,
-        "machineLookAndFeel": "good",
- 
-        "nodeDetails": {
-            "testNodesAvailable": 100,
-            "testNodesWorking": 98,
-            "bufferNodesAvailable": 10,
-            "bufferNodesWorking": 10,
-            "registrationDeskNodesAvailable": 5,
-            "registrationDeskNodesWorking": 5,
-            "aadhaarDeskNodesAvailable": 3,
-            "aadhaarDeskNodesWorking": 3,
-            "videoRecordingMachinesAvailable": 4,
-            "videoRecordingMachinesWorking": 4
-        },
- 
-        "processorDetails": {
-            "processorType": "i3",
-            "processorAvailableCount": 150,
-            "processorWorkingCount": 148,
-            "processorSpeed": "3.2 GHz"
-        },
- 
-        "osDetails": {
-            "osType": "win8",
-            "osAvailableCount": 150,
-            "osWorkingCount": 150,
-            "ieVersion": "ie8"
-        },
- 
-        "ramDetails": {
-            "ramSize": "8gb",
-            "ramAvailableCount": 150,
-            "ramWorkingCount": 150
-        },
- 
-        "hddDetails": {
-            "hddSize": "512gb",
-            "hddAvailableCount": 150,
-            "hddWorkingCount": 149
-        },
- 
-        "monitorDetails": {
-            "monitorType": "15inch",
-            "monitorAvailableCount": 150,
-            "monitorWorkingCount": 150
-        },
- 
-        "softwareAndSecurity": {
-            "osLicenseAvailable": "yes",
-            "systemFormatAllowed": "no",
-            "antivirusAvailable": "yes",
-            "antivirusName": "Quick Heal",
-            "disableAntivirusPermitted": false,
-            "remoteSoftwareFound": false
-        },
- 
-        "overallSystemFeedback": "Excellent"
-    },
- 
-    "labDetails": {
-        "totalLabsAvailable": 5,
-        "totalLabsAllocatedExam": 4,
-        "labsSameBuilding": "one_building",
-        "distanceBetweenBuildings": "lt_1km",
-        "labsSameFloor": "same_floor",
-        "labsInBasement": "yes",
-        "partitionAvailability": "available",
-        "partitionType": "fixed",
-        "seatsLabelled": "yes",
-        "seatingMatrixProvided": "yes",
-        "dedicatedServerRoom": "yes",
-        "serverRoomInsideLab": "inside",
-        "registrationDeskProper": "yes",
-        "overallLabFeedback": "Excellent"
-    },
- 
-    "conclusion": {
-        "auditDuration": "2_4hrs",
-        "overallVenueRating": "0_3",
-        "recommendedExamConduct": "recommended",
-        "otherPersonnelDetails": "All staff present"
-    },
- 
-    "strongPoints": "Good Infrastructure",
-    "toImprovePoints": "Increase Parking Capacity",
- 
-    "state": "in_progress"
-}

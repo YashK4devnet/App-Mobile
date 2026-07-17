@@ -11,9 +11,14 @@ export function FormPowerPhotoQuestion({
   onChange,
   required = false,
   evidence,
-  findingsHint
+  findingsHint,
+  readOnly = false,
+  disabled = false
 }) {
+  const isInteractive = !readOnly && !disabled;
+
   const handleFieldChange = (field, val) => {
+    if (!isInteractive) return;
     onChange(name, { ...value, [field]: val });
   };
 
@@ -40,7 +45,8 @@ export function FormPowerPhotoQuestion({
           value={value?.findings || ''}
           onChange={(e) => handleFieldChange('findings', e.target.value)}
           placeholder="Enter findings here..."
-          className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-[13px] transition-all focus:ring-1 focus:ring-[#4ecdc4] focus:border-[#4ecdc4] outline-none text-white placeholder-white/40"
+          disabled={!isInteractive}
+          className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-[13px] transition-all focus:ring-1 focus:ring-[#4ecdc4] focus:border-[#4ecdc4] outline-none text-white placeholder-white/40 disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
@@ -51,6 +57,8 @@ export function FormPowerPhotoQuestion({
           value={value?.image || ''}
           onChange={(_, imgVal) => handleFieldChange('image', imgVal)}
           error={error?.image}
+          readOnly={readOnly}
+          disabled={disabled}
         />
       </div>
 

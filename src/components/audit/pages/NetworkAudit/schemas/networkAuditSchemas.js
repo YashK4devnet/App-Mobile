@@ -5,7 +5,7 @@ const createNetworkQuestion = (name, label, remarksHint = '') => ({
   subType: 'network-question',
   fields: [
     { name: 'remarks', label: `Remarks${remarksHint ? ` (${remarksHint})` : ''}`, type: 'textarea', placeholder: 'Enter remarks here...' },
-    { name: 'observation', label: 'Observation', type: 'select', options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] },
+    { name: 'observation', label: 'Observation', type: 'select', options: [{ label: 'S', value: 's' }, { label: 'NS', value: 'ns' }, { label: 'U', value: 'u' }, { label: 'NA', value: 'na' }] },
     { name: 'image', label: 'Evidence Image', type: 'image-upload' }
   ]
 });
@@ -19,7 +19,7 @@ const createCustomQuestions = (sectionName) => ({
   fields: [
     { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
     { name: 'remarks', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
-    { name: 'observation', label: 'Observation', type: 'select', options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] },
+    { name: 'observation', label: 'Observation', type: 'select', options: [{ label: 'S', value: 's' }, { label: 'NS', value: 'ns' }, { label: 'U', value: 'u' }, { label: 'NA', value: 'na' }] },
     { name: 'image', label: 'Evidence Image', type: 'image-upload' }
   ]
 });
@@ -202,21 +202,18 @@ export const NETWORK_OBSERVATIONS_SCHEMA = [
     name: 'audit_scope',
     label: 'Audit scope',
     type: 'text',
-    readOnly: true,
   },
   {
     name: 'activity',
     label: 'Activities',
     type: 'text',
     placeholder: 'Power / Network / Admin infrastructure check',
-    readOnly: true,
   },
   {
     name: 'location',
     label: 'Locations of the audit',
     type: 'textarea',
     placeholder: 'Please mention the areas of Venue where the audit will be conducted (Example: LAB, Server Room)',
-    readOnly: true,
   },
   {
     type: 'heading',
@@ -239,20 +236,14 @@ export const NETWORK_OBSERVATIONS_SCHEMA = [
     className: 'text-white/50 border-white/10 mt-6'
   },
   { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature', required: true },
-  { name: 'auditorSignatureDate', label: 'Date', type: 'date', required: true },
   { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature', required: true },
-  { name: 'venueManagerSignatureDate', label: 'Date', type: 'date', required: true },
   { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature', required: true },
-  { name: 'electricianSignatureDate', label: 'Date', type: 'date', required: true },
   { name: 'centerSeal', label: 'Center Seal', type: 'image-upload', required: true }
 ];
 
 export const NETWORK_SIGNATURES_SCHEMA = [
   { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature' },
-  { name: 'auditorSignatureDate', label: 'Date', type: 'date' },
   { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature' },
-  { name: 'venueManagerSignatureDate', label: 'Date', type: 'date' },
   { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature' },
-  { name: 'electricianSignatureDate', label: 'Date', type: 'date' },
   { name: 'centerSeal', label: 'Center Seal', type: 'image-upload' }
 ];
