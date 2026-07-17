@@ -49,14 +49,14 @@ export const performSilentLogin = async () => {
   try {
     const db = (typeof process !== 'undefined' && process.env && process.env.AUDIT_API_DB) || 'audit_rest_api';
     const response = await auditHttpClient('/odoo_connect', {
-      method: 'POST',
-      body: JSON.stringify({
-        login: 'admin',
-        password: 'admin',
-        db
-      })
+      method: 'GET',
+      headers: {
+        'login': 'admin',
+        'password': 'admin',
+        'db': db
+      }
     });
-    const key = response?.api_key || response?.data?.api_key || response?.result?.api_key;
+    const key = response?.['api-key'] || response?.data?.['api-key'] || response?.result?.['api-key'];
     if (key) {
       setAuditApiKey(key);
       return key;
@@ -84,7 +84,10 @@ export const auditHttpClient = async (endpoint, options = {}) => {
     }
   }
 
-  const url = `${baseUrl}${endpoint}`;
+  let url = `${baseUrl}${endpoint}`;
+  if (endpoint === '/odoo_connect') {
+    url = baseUrl.replace(/\/api$/, '') + endpoint;
+  }
   const method = options.method || 'GET';
 
   const defaultHeaders = {
