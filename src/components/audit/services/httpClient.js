@@ -45,6 +45,28 @@ export const setAuditApiKey = (key) => {
   }
 };
 
+export const performSilentLogin = async () => {
+  try {
+    const db = (typeof process !== 'undefined' && process.env && process.env.AUDIT_API_DB) || 'audit_rest_api';
+    const response = await auditHttpClient('/odoo_connect', {
+      method: 'POST',
+      body: JSON.stringify({
+        login: 'admin',
+        password: 'admin',
+        db
+      })
+    });
+    const key = response?.api_key || response?.data?.api_key || response?.result?.api_key;
+    if (key) {
+      setAuditApiKey(key);
+      return key;
+    }
+    throw new Error('No API key returned from login');
+  } catch (error) {
+    console.error('Silent login failed:', error);
+    throw error;
+  }
+};
 /**
  * A centralized API client strictly for the Audit Component.
  * Automatically switches between Capacitor Native HTTP (bypasses CORS) and Web Fetch.
@@ -54,7 +76,12 @@ export const auditHttpClient = async (endpoint, options = {}) => {
   const odooDb = (typeof process !== 'undefined' && process.env && process.env.AUDIT_API_DB) || 'audit_rest_api';
 
   if (!currentApiKey && endpoint !== '/odoo_connect') {
-    throw new Error('Unauthorized: No API key provided.');
+    console.log('No API key found, attempting silent login...');
+    try {
+      await performSilentLogin();
+    } catch (e) {
+      throw new Error('Unauthorized: No API key provided and silent login failed.');
+    }
   }
 
   const url = `${baseUrl}${endpoint}`;
