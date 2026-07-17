@@ -1,6 +1,5 @@
 import { storageService } from './storageService';
 import { auditHttpClient } from './httpClient';
-import { isAppOnline } from '../utils/connection';
 
 const DB_NAME = import.meta.env.VITE_AUDIT_API_DB || 'audit_rest_api';
 

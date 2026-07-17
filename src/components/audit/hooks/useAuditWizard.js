@@ -154,6 +154,9 @@ export function useAuditWizard({
       const sectionSchema = schemas[currentSubsection];
       if (sectionSchema) {
         saveSectionData(reportId, sectionSchema, currentData, payloadKey)
+          .then(() => {
+            toast.success('Section saved', { duration: 2000, position: 'bottom-center' });
+          })
           .catch(err => {
             if (err.isOffline) {
               toast('Offline mode: Section saved locally. Will sync automatically.', {
@@ -166,6 +169,13 @@ export function useAuditWizard({
               });
             } else {
               console.error("Background sync failed on section change:", err);
+              toast.error('Failed to sync section to server. Please try again.', {
+                style: {
+                  borderRadius: '10px',
+                  background: '#ef4444',
+                  color: '#fff',
+                }
+              });
             }
           });
       }
@@ -184,6 +194,9 @@ export function useAuditWizard({
       const sectionSchema = schemas[currentSubsection];
       if (sectionSchema) {
         saveSectionData(reportId, sectionSchema, currentData, payloadKey)
+          .then(() => {
+            toast.success('Section saved', { duration: 2000, position: 'bottom-center' });
+          })
           .catch(err => {
             if (err.isOffline) {
               toast('Offline mode: Section saved locally. Will sync automatically.', {
@@ -196,6 +209,13 @@ export function useAuditWizard({
               });
             } else {
               console.error("Background sync failed on save & next:", err);
+              toast.error('Failed to sync section to server. Please try again.', {
+                style: {
+                  borderRadius: '10px',
+                  background: '#ef4444',
+                  color: '#fff',
+                }
+              });
             }
           });
       }
@@ -210,6 +230,14 @@ export function useAuditWizard({
       const submitFinal = async () => {
         try {
           if (reportId) {
+            const syncTasks = await storageService.getSyncTasks();
+            const hasPendingTasks = syncTasks.some(t => String(t.reportId) === String(reportId));
+            
+            if (hasPendingTasks) {
+              const proceed = window.confirm("You have unsynced data queued from offline mode. Submitting now will lock the report and might cause data loss. Do you want to submit anyway?");
+              if (!proceed) return;
+            }
+
             await reportApiService.patchAuditSection(reportId, { state: 'waiting_for_approval' });
             if (location.state?.odooData) {
               location.state.odooData.state = 'waiting_for_approval';

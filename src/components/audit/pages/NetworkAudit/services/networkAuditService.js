@@ -67,7 +67,6 @@ export const generateInitialState = (schemas, odooData = null) => {
         else if (f.name === 'reportNumber') odooVal = odooData.reference || odooData.id?.toString();
         else if (f.name === 'state') odooVal = odooData.venue?.state;
         else if (f.name === 'city') odooVal = odooData.venue?.city;
-        else if (f.name === 'city') odooVal = odooData.venue?.city;
         else if (f.name === 'name') odooVal = odooData.venue?.name;
         else if (f.name === 'completeAddress') odooVal = [odooData.venue?.city, odooData.venue?.state].filter(Boolean).join(', ') || odooData.venue?.completeAddress;
         else if (f.name === 'totalNoNetwork') odooVal = odooData.totalNoNetwork;

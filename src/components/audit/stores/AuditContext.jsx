@@ -1,9 +1,15 @@
 import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { auditHttpClient } from '../services/httpClient';
+import { auditHttpClient, setAuditApiKey } from '../services/httpClient';
 
 export const AuditContext = createContext();
 
-export const AuditProvider = ({ children, userId = 2 }) => {
+export const AuditProvider = ({ children, userId, apiKey }) => {
+  useEffect(() => {
+    if (apiKey) {
+      setAuditApiKey(apiKey);
+    }
+  }, [apiKey]);
+
   // Synchronously load initial cache to avoid layout flashes
   const [reports, setReports] = useState(() => {
     try {
@@ -31,7 +37,8 @@ export const AuditProvider = ({ children, userId = 2 }) => {
     setError(null);
     
     try {
-      const url = `/audits/by-user/${userId}`;
+      const effectiveUserId = userId || 2;
+      const url = `/audits/by-user/${effectiveUserId}`;
       console.log('Fetching centralized audit data from:', url);
       const data = await auditHttpClient(url);
       
@@ -48,13 +55,8 @@ export const AuditProvider = ({ children, userId = 2 }) => {
       console.error('Failed to fetch audit data:', err);
       setConnectionError(true);
       
-      // Only set UI-blocking error state if we have no reports (neither fresh nor cached) to show
-      setReports(prevReports => {
-        if (prevReports.length === 0) {
-          setError(err.message || 'An error occurred while fetching audit data');
-        }
-        return prevReports;
-      });
+      // We no longer set a blocking UI error here even if there are no reports.
+      // This allows the dashboard to render an empty state gracefully instead of failing.
     } finally {
       setIsLoading(false);
     }

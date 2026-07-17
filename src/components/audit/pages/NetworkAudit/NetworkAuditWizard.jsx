@@ -56,7 +56,6 @@ const STATIC_SUBSECTION_SCHEMAS = {
   'BackupDevices': BACKUP_DEVICES_SCHEMA,
   'NetworkSecurityCompliance': NETWORK_SECURITY_COMPLIANCE_SCHEMA,
   'PhotoEvidence': NETWORK_PHOTO_EVIDENCE_SCHEMA,
-  'PhotoEvidence': NETWORK_PHOTO_EVIDENCE_SCHEMA,
   'Observations': NETWORK_OBSERVATIONS_SCHEMA
 };
 
@@ -71,7 +70,6 @@ const STEPS = [
   { id: 'SystemConfiguration' },
   { id: 'NetworkConfiguration' },
   { id: 'BackupDevices' },
-  { id: 'NetworkSecurityCompliance' },
   { id: 'NetworkSecurityCompliance' },
   { id: 'PhotoEvidence' },
   { id: 'Observations' }
@@ -88,7 +86,6 @@ const SECTION_TO_PAYLOAD_KEY = {
   'SystemConfiguration': 'systemConfiguration',
   'NetworkConfiguration': 'networkConfiguration',
   'BackupDevices': 'backupDevices',
-  'NetworkSecurityCompliance': 'networkSecurityCompliance',
   'NetworkSecurityCompliance': 'networkSecurityCompliance',
   'PhotoEvidence': 'photoEvidence',
   'Observations': 'observations'
@@ -120,7 +117,6 @@ export default function NetworkAuditWizard() {
         'NetworkConfiguration': generateNetworkQuestionsSchema(odooData.networkConfLines || odooData.network_conf_lines, 'network_conf_lines'),
         'BackupDevices': generateNetworkQuestionsSchema(odooData.backupDeviceLines || odooData.backup_device_lines, 'backup_device_lines'),
         'NetworkSecurityCompliance': generateNetworkQuestionsSchema(odooData.securityComplianceLines || odooData.security_compliance_lines, 'security_compliance_lines'),
-        'PhotoEvidence': NETWORK_PHOTO_EVIDENCE_SCHEMA,
         'PhotoEvidence': NETWORK_PHOTO_EVIDENCE_SCHEMA,
         'Observations': NETWORK_OBSERVATIONS_SCHEMA
       };
@@ -173,7 +169,6 @@ export default function NetworkAuditWizard() {
   const statusNetworkSecurityCompliance = getSectionStatus('NetworkSecurityCompliance', currentData);
   const statusPhotoEvidence = getSectionStatus('PhotoEvidence', currentData);
   const statusObservations = getSectionStatus('Observations', currentData);
-  const statusSignatures = getSectionStatus('Signatures', currentData);
 
   if (isInitializing || !dynamicSchemas) {
     return (
