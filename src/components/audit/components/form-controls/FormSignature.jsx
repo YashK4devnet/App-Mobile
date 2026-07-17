@@ -121,6 +121,8 @@ export function FormSignature({
     setActiveTab('draw');
   };
 
+  const [isFullscreen, setIsFullscreen] = React.useState(false);
+
   return (
     <div className="space-y-1.5 text-left">
       <Label text={label} required={required} />
@@ -161,21 +163,51 @@ export function FormSignature({
              <p className="text-[12px] text-white/50">Loading signature...</p>
           </div>
         ) : hasImage ? (
-          <div className="relative border-2 border-transparent">
-             <div className="relative aspect-[21/9] w-full bg-white rounded-xl overflow-hidden shadow-sm border border-slate-200">
-               <img src={imgUrl} alt={label} className="w-full h-full object-contain p-2 bg-white" />
-               {isInteractive && (
-                 <button 
-                   type="button" 
-                   onClick={removeImage}
-                   className="absolute bottom-2 right-2 bg-rose-500 active:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-md transition-colors flex items-center gap-1 cursor-pointer"
-                 >
-                   <TrashIcon className="w-3.5 h-3.5" />
-                   Remove
-                 </button>
-               )}
-             </div>
-          </div>
+          <>
+            <div className="relative border-2 border-transparent">
+               <div 
+                 className={`relative aspect-[21/9] w-full bg-white rounded-xl overflow-hidden shadow-sm border border-slate-200 ${!isInteractive ? 'cursor-pointer' : ''}`}
+                 onClick={() => { if (!isInteractive) setIsFullscreen(true); }}
+               >
+                 <img src={imgUrl} alt={label} className="w-full h-full object-contain p-2 bg-white" />
+                 {isInteractive && (
+                   <button 
+                     type="button" 
+                     onClick={removeImage}
+                     className="absolute bottom-2 right-2 bg-rose-500 active:bg-rose-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-md transition-colors flex items-center gap-1 cursor-pointer"
+                   >
+                     <TrashIcon className="w-3.5 h-3.5" />
+                     Remove
+                   </button>
+                 )}
+               </div>
+            </div>
+
+            {/* Fullscreen Image Modal */}
+            {isFullscreen && (
+              <div 
+                className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 cursor-pointer"
+                onClick={() => setIsFullscreen(false)}
+              >
+                <div className="absolute top-safe right-4 mt-4">
+                  <button 
+                    type="button"
+                    className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-full backdrop-blur-md transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <img 
+                  src={imgUrl} 
+                  alt={label} 
+                  className="max-w-full max-h-full object-contain bg-white select-none" 
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            )}
+          </>
         ) : !isInteractive ? (
           <div className="flex flex-col items-center justify-center py-6 px-4 text-center bg-white/5 rounded-xl border border-white/10">
             <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center mb-2">

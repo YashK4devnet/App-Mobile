@@ -169,47 +169,50 @@ export const SYSTEM_DETAILS_SCHEMA = [
   { prefix: 'videoRecordingMachines', label: 'Video Recording Machine', type: 'node-counts' },
 
   { type: 'heading', label: 'Types of Processors' },
-  { name: 'i3available', label: 'Number of available INTEL Core i3 processors', type: 'number' },
-  { name: 'i3working', label: 'Number of working INTEL Core i3 processors', type: 'number' },
-  { name: 'i3speed', label: 'speed of the INTEL Core i3 processors', type: 'number' },
-  { name: 'i5available', label: 'Number of available INTEL Core i5 processors', type: 'number' },
-  { name: 'i5working', label: 'Number of working INTEL Core i5 processors', type: 'number' },
-  { name: 'i5speed', label: 'speed of the INTEL Core i5 processors', type: 'number' },
-  { name: 'i7available', label: 'Number of available INTEL Core i7 processors', type: 'number' },
-  { name: 'i7working', label: 'Number of working INTEL Core i7 processors', type: 'number' },
-  { name: 'i7speed', label: 'speed of the INTEL Core i7 processors', type: 'number' },
+  { name: 'i3Available', label: 'Number of available INTEL Core i3 processors', type: 'number' },
+  { name: 'i3Working', label: 'Number of working INTEL Core i3 processors', type: 'number' },
+  { name: 'i3Speed', label: 'Speed of the INTEL Core i3 processors', type: 'text' },
+  { name: 'i5Available', label: 'Number of available INTEL Core i5 processors', type: 'number' },
+  { name: 'i5Working', label: 'Number of working INTEL Core i5 processors', type: 'number' },
+  { name: 'i5Speed', label: 'Speed of the INTEL Core i5 processors', type: 'text' },
+  { name: 'i7Available', label: 'Number of available INTEL Core i7 processors', type: 'number' },
+  { name: 'i7Working', label: 'Number of working INTEL Core i7 processors', type: 'number' },
+  { name: 'i7Speed', label: 'Speed of the INTEL Core i7 processors', type: 'text' },
   { type: 'heading', label: 'Types of OS' },
-  { name: 'win7available', label: 'Number of available win7 pcs', type: 'number' },
-  { name: 'win7working', label: 'Number of working win7 pcs', type: 'number' },
-  { name: 'win8available', label: 'Number of available win8 pcs', type: 'number' },
-  { name: 'win8working', label: 'Number of working win8 pcs', type: 'number' },
-  { name: 'win10available', label: 'Number of available win10 pcs', type: 'number' },
-  { name: 'win10working', label: 'Number of working win10 pcs', type: 'number' },
-  { name: 'win11available', label: 'Number of available win11 pcs', type: 'number' },
-  { name: 'win11working', label: 'Number of working win11 pcs', type: 'number' },
-  { name: 'linuxavailable', label: 'Number of available linux pcs', type: 'number' },
-  { name: 'linuxworking', label: 'Number of working linux pcs', type: 'number' },
-  { name: 'otheravailable', label: 'Number of available other os pcs', type: 'number' },
-  { name: 'otherworking', label: 'Number of working other os pcs', type: 'number' },
+  { name: 'win7Available', label: 'Number of available win7 pcs', type: 'number' },
+  { name: 'win7Working', label: 'Number of working win7 pcs', type: 'number' },
+  { name: 'win8Available', label: 'Number of available win8 pcs', type: 'number' },
+  { name: 'win8Working', label: 'Number of working win8 pcs', type: 'number' },
+  { name: 'win10Available', label: 'Number of available win10 pcs', type: 'number' },
+  { name: 'win10Working', label: 'Number of working win10 pcs', type: 'number' },
+  { name: 'win11Available', label: 'Number of available win11 pcs', type: 'number' },
+  { name: 'win11Working', label: 'Number of working win11 pcs', type: 'number' },
+  { name: 'linuxAvailable', label: 'Number of available linux pcs', type: 'number' },
+  { name: 'linuxWorking', label: 'Number of working linux pcs', type: 'number' },
+  { name: 'otherOsAvailable', label: 'Number of available other os pcs', type: 'number' },
+  { name: 'otherOsWorking', label: 'Number of working other os pcs', type: 'number' },
   { name: 'ieVersion', label: 'Internet explorer version available', type: 'select', options: ['IE8', 'IE9', 'IE10'] },
-  { name: 'twoGBramAvail', label: 'Number of available 2GB ram', type: 'number' },
-  { name: 'twoGBramWork', label: 'Number of working 2GB ram', type: 'number' },
-  { name: 'fourGBramAvail', label: 'Number of available 4GB ram', type: 'number' },
-  { name: 'fourGBramWork', label: 'Number of working 4GB ram', type: 'number' },
-  { name: 'eightGBramAvail', label: 'Number of available 8GB ram', type: 'number' },
-  { name: 'eightGBramWork', label: 'Number of working 8GB ram', type: 'number' },
-  { name: 'hddAvail256', label: 'Number of available 256GB HDD', type: 'number' },
-  { name: 'hddwork256', label: 'Number of working 256GB HDD', type: 'number' },
-  { name: 'hddAvail512', label: 'Number of available 512GB HDD', type: 'number' },
-  { name: 'hddwork512', label: 'Number of working 512GB HDD', type: 'number' },
-  { name: 'hddAvail1', label: 'Number of available 1TB HDD', type: 'number' },
-  { name: 'hddwork1', label: 'Number of working 1TB HDD', type: 'number' },
-  { name: 'monitorAvail15', label: 'Number of available 15 inch monitors', type: 'number' },
-  { name: 'monitorwork15', label: 'Number of working 15 inch monitors', type: 'number' },
-  { name: 'monitorAvail17', label: 'Number of available 17 inch monitors', type: 'number' },
-  { name: 'monitorwork17', label: 'Number of working 17 inch monitors', type: 'number' },
-  { name: 'monitorAvail19', label: 'Number of available 19 inch monitors', type: 'number' },
-  { name: 'monitorwork19', label: 'Number of working 19 inch monitors', type: 'number' },
+  { type: 'heading', label: 'Types of RAM' },
+  { name: 'ram2gbAvailable', label: 'Number of available 2GB ram', type: 'number' },
+  { name: 'ram2gbWorking', label: 'Number of working 2GB ram', type: 'number' },
+  { name: 'ram4gbAvailable', label: 'Number of available 4GB ram', type: 'number' },
+  { name: 'ram4gbWorking', label: 'Number of working 4GB ram', type: 'number' },
+  { name: 'ram8gbAvailable', label: 'Number of available 8GB ram', type: 'number' },
+  { name: 'ram8gbWorking', label: 'Number of working 8GB ram', type: 'number' },
+  { type: 'heading', label: 'Types of HDD' },
+  { name: 'hdd256gbAvailable', label: 'Number of available 256GB HDD', type: 'number' },
+  { name: 'hdd256gbWorking', label: 'Number of working 256GB HDD', type: 'number' },
+  { name: 'hdd512gbAvailable', label: 'Number of available 512GB HDD', type: 'number' },
+  { name: 'hdd512gbWorking', label: 'Number of working 512GB HDD', type: 'number' },
+  { name: 'hdd1tbAvailable', label: 'Number of available 1TB HDD', type: 'number' },
+  { name: 'hdd1tbWorking', label: 'Number of working 1TB HDD', type: 'number' },
+  { type: 'heading', label: 'Types of Monitor' },
+  { name: 'monitor15Available', label: 'Number of available 15 inch monitors', type: 'number' },
+  { name: 'monitor15Working', label: 'Number of working 15 inch monitors', type: 'number' },
+  { name: 'monitor17Available', label: 'Number of available 17 inch monitors', type: 'number' },
+  { name: 'monitor17Working', label: 'Number of working 17 inch monitors', type: 'number' },
+  { name: 'monitor19Available', label: 'Number of available 19 inch monitors', type: 'number' },
+  { name: 'monitor19Working', label: 'Number of working 19 inch monitors', type: 'number' },
 
   { type: 'heading', label: 'Policies & Software' },
   { name: 'osLicenseAvailable', label: 'OS License Available on All Client Nodes?', type: 'yes-no' },
@@ -228,6 +231,60 @@ export const SYSTEM_DETAILS_SCHEMA = [
 
   { type: 'heading', label: 'Feedback' },
   { name: 'overallSystemFeedback', label: 'Overall System Feedback', type: 'textarea', placeholder: 'Enter remarks...' }
+];
+
+export const CCTV_DETAILS_SCHEMA = [
+  { type: 'heading', label: 'CCTV Coverage Overview' },
+  { name: 'cctvEntryExitCovered', label: 'CCTV Camera Covering Complete Entry And Exit?', type: 'yes-no' },
+  { name: 'cctvAllLabsAvailable', label: 'CCTVs Available In All Labs Without Any Blind Spots?', type: 'yes-no' },
+  { name: 'cctvServerRoomCovered', label: 'Server Room Covered Under CCTV Camera?', type: 'yes-no' },
+  { name: 'cctvRegistrationAreaAvailable', label: 'CCTV Cameras Available In Registration Area?', type: 'yes-no' },
+  { name: 'cctvPassageAreaCovered', label: 'CCTV Covering The Passage Area?', type: 'yes-no' },
+  
+  { type: 'heading', label: 'Camera Details' },
+  { name: 'totalCctvCameras', label: 'Total Number of CCTV Cameras', type: 'number' },
+  { name: 'cctvConnectedToMonitors', label: 'All CCTV Cameras Connected To Monitors?', type: 'yes-no' },
+  
+  {
+    type: 'row',
+    fields: [
+      { name: 'cctv2mpAvailable', label: 'Available 2MP Cameras', type: 'number' },
+      { name: 'cctv2mpWorking', label: 'Working 2MP Cameras', type: 'number' }
+    ]
+  },
+  {
+    type: 'row',
+    fields: [
+      { name: 'cctv5mpAvailable', label: 'Available 5MP Cameras', type: 'number' },
+      { name: 'cctv5mpWorking', label: 'Working 5MP Cameras', type: 'number' }
+    ]
+  },
+  {
+    type: 'row',
+    fields: [
+      { name: 'cctvHigherAvailable', label: 'Available Higher MP Cameras', type: 'number' },
+      { name: 'cctvHigherWorking', label: 'Working Higher MP Cameras', type: 'number' }
+    ]
+  },
+
+  { type: 'heading', label: 'DVR/NVR & Recording' },
+  { name: 'cctvLiveFeedRecorded', label: 'CCTV Live Feed Being Recorded?', type: 'yes-no' },
+  { name: 'venueReadyLiveCctvFeeding', label: 'Venue Ready To Give Live CCTV Feeding?', type: 'yes-no' },
+  { name: 'dvrNvrRecordingCapacity', label: 'DVR/NVR Recording Capacity (Days)', type: 'number' },
+  { 
+    name: 'dvrOwnership', 
+    label: 'DVR Belongs To Venue Or Third Party?', 
+    type: 'select', 
+    options: [
+      { label: 'Venue Owned', value: 'self_owned' },
+      { label: 'Hired / Borrowed', value: 'hired_borrowed' }
+    ]
+  },
+  { name: 'dvrNvrType', label: 'DVR/NVR Type', type: 'text', placeholder: 'e.g. NVR' },
+  { name: 'dvrNvrMakeModel', label: 'DVR/NVR Make & Model', type: 'text', placeholder: 'e.g. Hikvision 16CH' },
+
+  { type: 'heading', label: 'Feedback' },
+  { name: 'overallCctvCoverageFeedback', label: 'Overall CCTV Coverage Feedback', type: 'textarea', placeholder: 'Enter remarks here...' }
 ];
 
 export const LAB_DETAILS_SCHEMA = [
@@ -297,62 +354,6 @@ export const LAB_DETAILS_SCHEMA = [
   { name: 'overallLabFeedback', label: 'Overall Lab Feedback', type: 'textarea', placeholder: 'Enter remarks...' }
 ];
 
-export const CCTV_DETAILS_SCHEMA = [
-  { type: 'heading', label: 'CCTV Camera Overview' },
-  { name: 'cctvEntryExitCovered', label: 'Is CCTV camera covering complete entry and exit?', type: 'yes-no' },
-  { name: 'cctvsInAllLabs', label: 'CCTVs available in all labs without any blind spots?', type: 'yes-no' },
-  { name: 'serverRoomCctvCovered', label: 'Is the server room covered under the CCTV camera?', type: 'yes-no' },
-  { name: 'registrationCctvAvailable', label: 'CCTV cameras available in registration area to capture movement and candidate faces?', type: 'yes-no' },
-  { name: 'totalCctvCameras', label: 'Total no of cameras', type: 'number' },
-  { name: 'cctvsConnectedToMonitors', label: 'All CCTV cameras are connected to the monitors?', type: 'yes-no' },
-
-  { type: 'heading', label: 'Camera Count & Specifications' },
-  {
-    name: 'cctvNodeBifurcation',
-    label: 'Specify count of CCTV camera (Floor & Lab wise)',
-    type: 'array',
-    itemLabel: 'Floor',
-    fields: [
-      { name: 'floorName', label: 'Floor Name', type: 'text', placeholder: 'e.g. 1st Floor', required: true },
-      {
-        name: 'labs',
-        label: 'Labs on this floor',
-        type: 'array',
-        itemLabel: 'Lab',
-        fields: [
-          { name: 'labName', label: 'Lab Name', type: 'text', placeholder: 'e.g. Lab A', required: true },
-          { name: 'nodesCount', label: 'CCTV Cameras Count', type: 'number', placeholder: 'e.g. 5', required: true }
-        ]
-      }
-    ]
-  },
-  { name: 'cctvAvail2mp', label: 'No of available 2MP cameras', type: 'number' },
-  { name: 'cctvWork2mp', label: 'No of working 2MP cameras', type: 'number' },
-  { name: 'cctvAvail5mp', label: 'No of available 5MP cameras', type: 'number' },
-  { name: 'cctvWork5mp', label: 'No of working 5MP cameras', type: 'number' },
-  { name: 'cctvAvailHigher', label: 'No of available higher resolution cameras', type: 'number' },
-  { name: 'cctvWorkHigher', label: 'No of working higher resolution cameras', type: 'number' },
-
-
-  { type: 'heading', label: 'Recording & DVR/NVR Details' },
-  { name: 'cctvLiveFeedRecorded', label: 'Is the CCTV/LIVE feed being recorded?', type: 'yes-no' },
-  {
-    type: 'group',
-    className: 'bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
-    showIf: (data) => data.cctvLiveFeedRecorded === 'yes',
-    fields: [
-      { name: 'dvrNvrRecordingCapacity', label: 'Recording capacity of DVR/NVR?', type: 'text', placeholder: 'e.g. 1TB, 30 days' }
-    ]
-  },
-  { name: 'venueReadyLiveCctv', label: 'Venue ready to give for live CCTV feeding?', type: 'yes-no' },
-  { name: 'dvrOwnership', label: 'DVR belongs to the venue or to any third party?', type: 'yes-no' },
-  { name: 'cctvPassageCovered', label: 'CCTV covering the passage area?', type: 'yes-no' },
-  { name: 'dvrNvrType', label: 'Type of DVR/NVR', type: 'text', placeholder: 'e.g. DVR / NVR' },
-  { name: 'dvrNvrMakeModel', label: 'Make and model no of the DVR/NVR', type: 'text' },
-
-  { type: 'heading', label: 'Feedback' },
-  { name: 'overallCctvFeedback', label: 'Overall CCTV coverage feedback', type: 'textarea', placeholder: 'Enter remarks...' }
-];
 
 export const CONCLUSION_SCHEMA = [
   { type: 'heading', label: 'Audit Details' },

@@ -82,6 +82,11 @@ function renderField(field, control, globalDisabled = false) {
           readOnly: field.readOnly || globalDisabled
         };
 
+        const isImageField = ['image-upload', 'signature', 'power-photo', 'device-photo-list', 'document-list'].includes(field.type);
+        const wrapperClass = (globalDisabled && !isImageField) ? 'pointer-events-none opacity-80' : '';
+
+        const renderComponent = () => {
+
         switch (field.type) {
           case 'text':
           case 'phone':
@@ -204,6 +209,13 @@ function renderField(field, control, globalDisabled = false) {
           default:
             return null;
         }
+        };
+
+        return (
+          <div className={wrapperClass}>
+            {renderComponent()}
+          </div>
+        );
       }}
     />
   );

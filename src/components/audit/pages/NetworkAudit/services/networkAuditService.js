@@ -52,16 +52,39 @@ export const generateInitialState = (schemas, odooData = null) => {
     } else if (fieldType === 'signature' || f.name === 'centerSeal') {
       let hasSig = false;
       let imgData = null;
+      let timestamp = '';
       if (odooData?.signatures) {
+        // The backend sends camelCase keys for signatures, e.g. hasAuditorSignature, auditorSignatureDate
         const sigKey = `has${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`;
         hasSig = !!odooData.signatures[sigKey];
-        if (odooData.signatures[f.name]) {
-          imgData = `data:image/jpeg;base64,${odooData.signatures[f.name]}`;
+        
+        const base64Data = odooData.signatures[f.name];
+        
+        if (base64Data) {
+          // Check for Odoo double encoding pattern often seen in images
+          let finalBase64 = base64Data;
+          if (finalBase64.startsWith('Lzlq')) {
+             try { finalBase64 = atob(finalBase64); } catch (e) {}
+          }
+          imgData = `data:image/png;base64,${finalBase64}`;
         } else if (hasSig) {
+          // Fallback to a 1x1 transparent PNG if the backend says there is a signature but didn't send the data
           imgData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
         }
+        
+        // Fetch the associated date (e.g. auditorSignatureDate)
+        let rawDate = odooData.signatures[`${f.name}Date`];
+        if (rawDate) {
+          // datetime-local inputs require YYYY-MM-DDTHH:mm format. 
+          // If the backend only sends YYYY-MM-DD, append T00:00.
+          if (rawDate.length === 10) {
+            timestamp = `${rawDate}T00:00`;
+          } else {
+            timestamp = rawDate;
+          }
+        }
       }
-      state[f.name] = imgData ? { url: imgData } : null;
+      state[f.name] = imgData ? { url: imgData, timestamp } : null;
     } else if (fieldType === 'image-upload') {
       let val = null;
       if (odooData && odooData[f.name]) {
