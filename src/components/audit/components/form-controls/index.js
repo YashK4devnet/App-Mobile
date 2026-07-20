@@ -18,3 +18,4 @@ export * from './FormNumberedTextList';
 export * from './FormSignature';
 export * from './FormSelectWithCounts';
 export * from './FormSelect';
+export * from './FormBifurcation';

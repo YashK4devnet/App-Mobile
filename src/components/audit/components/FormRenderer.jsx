@@ -21,7 +21,8 @@ import {
   FormNumberedTextList,
   FormSignature,
   FormSelectWithCounts,
-  FormSelect
+  FormSelect,
+  FormBifurcation
 } from './form-controls';
 
 function renderField(field, control, globalDisabled = false) {
@@ -149,14 +150,7 @@ function renderField(field, control, globalDisabled = false) {
           case 'quality':
             return <FormQualitySelector {...commonProps} />;
           case 'node-counts':
-            return (
-              <FormNodeCounts 
-                {...commonProps} 
-                prefix={field.prefix} 
-                formData={rhfField.value || {}} // Node counts might need special handling depending on how it stores data
-                errors={{}} // Handled inside
-              />
-            );
+            return <FormNodeCounts {...commonProps} />;
           case 'dynamic-list':
             return (
               <FormDynamicList 
@@ -206,6 +200,8 @@ function renderField(field, control, globalDisabled = false) {
             return <FormDevicePhotoList {...commonProps} />;
           case 'numbered-text-list':
             return <FormNumberedTextList {...commonProps} />;
+          case 'bifurcation':
+            return <FormBifurcation {...commonProps} />;
           default:
             return null;
         }

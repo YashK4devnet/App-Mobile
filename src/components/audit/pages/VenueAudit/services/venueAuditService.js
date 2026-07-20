@@ -49,12 +49,23 @@ export const generateInitialState = (schemas, odooData = null) => {
     }
 
     if (f.type === 'node-counts') {
-      state[`${f.prefix}Available`] = '';
-      state[`${f.prefix}Working`] = '';
+      state[f.name] = {
+        Available: flatOdooData[`${f.name}Available`] || '',
+        Working: flatOdooData[`${f.name}Working`] || ''
+      };
       return;
     }
 
     if (!f.name) return;
+
+    if (f.type === 'bifurcation') {
+      if (f.name === 'nodeBifurcation') {
+        state[f.name] = flatOdooData.labBifurcation || [];
+      } else {
+        state[f.name] = flatOdooData[f.name] || [];
+      }
+      return;
+    }
 
     if (f.type === 'dynamic-list' || f.type === 'nested-list') {
       state[f.name] = flatOdooData[f.name] || [];
@@ -70,12 +81,20 @@ export const generateInitialState = (schemas, odooData = null) => {
         const base64Data = odooData.signatures[f.name];
         
         if (base64Data) {
-          // Check for Odoo double encoding pattern often seen in images
+          // Since Odoo double-encodes base64 strings, decode it once if possible
           let finalBase64 = base64Data;
-          if (finalBase64.startsWith('Lzlq')) {
-             try { finalBase64 = atob(finalBase64); } catch (e) {}
+          try {
+            const decoded = atob(base64Data);
+            // If the decoded string looks like a valid base64 image or data URI, it was indeed double encoded
+            if (decoded.startsWith('data:image') || /^[a-zA-Z0-9+/=\s]+$/.test(decoded)) {
+              finalBase64 = decoded;
+            }
+          } catch (e) {}
+          if (finalBase64.startsWith('data:')) {
+            imgData = finalBase64;
+          } else {
+            imgData = `data:image/png;base64,${finalBase64}`;
           }
-          imgData = `data:image/png;base64,${finalBase64}`;
         } else if (hasSig) {
           // Fallback to a 1x1 transparent PNG if the backend says there is a signature but didn't send the data
           imgData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
@@ -158,11 +177,11 @@ export const validateSchema = (schema, data) => {
 
     if (f.required) {
       if (f.type === 'node-counts') {
-        if (!data[`${f.prefix}Available`]) errors[`${f.prefix}Available`] = "Required";
-        if (!data[`${f.prefix}Working`]) errors[`${f.prefix}Working`] = "Required";
+        if (!data[f.name]?.Available) errors[f.name] = "Available is required";
+        else if (!data[f.name]?.Working) errors[f.name] = "Working is required";
       } else if (!f.name) {
         return;
-      } else if (f.type === 'dynamic-list' || f.type === 'nested-list') {
+      } else if (f.type === 'dynamic-list' || f.type === 'nested-list' || f.type === 'bifurcation') {
         if (!getFieldValue(data, f.name) || getFieldValue(data, f.name).length === 0) {
           errors[f.name] = "At least one item is required";
         }
@@ -199,10 +218,10 @@ export const isSchemaEmpty = (schema, data) => {
     if (f.disabled) return;
 
     if (f.type === 'node-counts') {
-      if (data[`${f.prefix}Available`] || data[`${f.prefix}Working`]) empty = false;
+      if (data[f.name]?.Available || data[f.name]?.Working) empty = false;
     } else if (!f.name) {
       return;
-    } else if (f.type === 'dynamic-list' || f.type === 'nested-list') {
+    } else if (f.type === 'dynamic-list' || f.type === 'nested-list' || f.type === 'bifurcation') {
       if (getFieldValue(data, f.name) && getFieldValue(data, f.name).length > 0) empty = false;
     } else {
       const val = getFieldValue(data, f.name);
@@ -233,13 +252,13 @@ export const calculateSchemaProgress = (schema, data) => {
 
     if (f.type === 'node-counts') {
       total += 2; // available + working
-      if (data[`${f.prefix}Available`]) filled++;
-      if (data[`${f.prefix}Working`]) filled++;
+      if (data[f.name]?.Available) filled++;
+      if (data[f.name]?.Working) filled++;
     } else if (!f.name) {
       return;
     } else {
       total++;
-      if (f.type === 'dynamic-list' || f.type === 'nested-list') {
+      if (f.type === 'dynamic-list' || f.type === 'nested-list' || f.type === 'bifurcation') {
         if (getFieldValue(data, f.name) && getFieldValue(data, f.name).length > 0) filled++;
       } else {
         const val = getFieldValue(data, f.name);
@@ -288,11 +307,11 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
     }
 
     if (f.type === 'node-counts') {
-      if (currentData[`${f.prefix}Available`] !== undefined) {
-        flatData[`${f.prefix}Available`] = currentData[`${f.prefix}Available`];
+      if (currentData[f.name]?.Available !== undefined) {
+        flatData[`${f.name}Available`] = currentData[f.name].Available;
       }
-      if (currentData[`${f.prefix}Working`] !== undefined) {
-        flatData[`${f.prefix}Working`] = currentData[`${f.prefix}Working`];
+      if (currentData[f.name]?.Working !== undefined) {
+        flatData[`${f.name}Working`] = currentData[f.name].Working;
       }
       return;
     }
@@ -403,6 +422,27 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
 
   if (Object.keys(finalPayload).length > 0) {
     await reportApiService.patchAuditSection(reportId, finalPayload);
+  }
+
+  // Handle bifurcation updates separately
+  if (flatData.nodeBifurcation) {
+    const lines = flatData.nodeBifurcation.filter(l => l.labId && l.floorId && l.count !== '');
+    if (lines.length > 0 || flatData.nodeBifurcation.length === 0) {
+      await reportApiService.patchAuditBifurcation(reportId, {
+        type: 'lab',
+        lines: flatData.nodeBifurcation
+      });
+    }
+  }
+
+  if (flatData.cctvBifurcation) {
+    const lines = flatData.cctvBifurcation.filter(l => l.labId && l.floorId && l.count !== '');
+    if (lines.length > 0 || flatData.cctvBifurcation.length === 0) {
+      await reportApiService.patchAuditBifurcation(reportId, {
+        type: 'cctv',
+        lines: flatData.cctvBifurcation
+      });
+    }
   }
 
   if (Object.keys(signatures).length > 0) {

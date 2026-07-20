@@ -185,5 +185,48 @@ export const reportApiService = {
 
       throw error;
     }
+  },
+
+  /**
+   * Patches the bifurcation (labs/cctv) for a report.
+   */
+  async patchAuditBifurcation(reportId, payload) {
+    try {
+      if (!navigator.onLine) {
+        throw new Error("Offline");
+      }
+
+      const response = await auditHttpClient(`/audits/${reportId}/bifurcation`, {
+        method: 'PATCH',
+        headers: {
+          'Odoo-DB': DB_NAME,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      return response;
+    } catch (error) {
+      console.error(`Failed to patch bifurcation for report ${reportId}`, error);
+      
+      const isNetworkError = !navigator.onLine || 
+        error.name === 'TypeError' || 
+        (error.message && (
+          error.message === 'Offline' || 
+          error.message.includes('Failed to fetch') ||
+          error.message.includes('502') || 
+          error.message.includes('503') || 
+          error.message.includes('504') ||
+          error.message.includes('500')
+        ));
+      
+      if (isNetworkError) {
+        // Ideally we queue a sync task, but for now just throw OfflineSync
+        const offlineError = new Error("OfflineSync");
+        offlineError.isOffline = true;
+        throw offlineError;
+      }
+
+      throw error;
+    }
   }
 };

@@ -273,15 +273,61 @@ export const AppProvider = ({ children }) => {
 
   // Load data from localStorage on mount
   useEffect(() => {
-    const loadStoredData = () => {
+    const loadStoredData = async () => {
+      let isLoggedOut = false;
       try {
         const loginData = localStorage.getItem("loginData");
         if (loginData) {
-          const parsedData = JSON.parse(loginData);
-          dispatch({
-            type: ActionTypes.LOGIN,
-            payload: parsedData,
-          });
+          let parsedData = JSON.parse(loginData);
+
+          // Check server access / re-auth
+          try {
+            const response = await fetch(`https://erp.eduquity.com/odoo_connect`, {
+              method: "GET",
+              headers: {
+                action: "login",
+                login: parsedData.email.trim(),
+                password: parsedData.password,
+                db: "erp-eduquity-com",
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (Mobile; app-reload-check)",
+              },
+            });
+
+            const responseText = await response.text();
+
+            if (
+              response.status === 401 ||
+              response.status === 403 ||
+              /wrong login credentials/i.test(responseText) ||
+              /already login/i.test(responseText)
+            ) {
+              alert("Session expired or invalid credentials. Please log in again.");
+              localStorage.removeItem("loginData");
+              isLoggedOut = true;
+            } else if (response.ok) {
+              try {
+                const responseData = JSON.parse(responseText);
+                if (responseData["api-key"]) {
+                  parsedData["api-Key"] = responseData["api-key"];
+                  parsedData.employeeId = responseData.employeeId;
+                  parsedData.userId = responseData.userId;
+                  localStorage.setItem("loginData", JSON.stringify(parsedData));
+                }
+              } catch (e) {
+                console.warn("Could not parse re-auth JSON response.", e);
+              }
+            }
+          } catch (networkError) {
+            console.log("Network error checking auth, assuming offline mode.");
+          }
+
+          if (!isLoggedOut) {
+            dispatch({
+              type: ActionTypes.LOGIN,
+              payload: parsedData,
+            });
+          }
         }
       } catch (error) {
         console.error("Error loading stored data:", error);

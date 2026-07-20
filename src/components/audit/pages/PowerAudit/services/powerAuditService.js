@@ -64,12 +64,20 @@ export const generateInitialState = (schemas, odooData = null) => {
         const base64Data = odooData.signatures[f.name];
         
         if (base64Data) {
-          // Check for Odoo double encoding pattern often seen in images
+          // Since Odoo double-encodes base64 strings, decode it once if possible
           let finalBase64 = base64Data;
-          if (finalBase64.startsWith('Lzlq')) {
-             try { finalBase64 = atob(finalBase64); } catch (e) {}
+          try {
+            const decoded = atob(base64Data);
+            // If the decoded string looks like a valid base64 image or data URI, it was indeed double encoded
+            if (decoded.startsWith('data:image') || /^[a-zA-Z0-9+/=\s]+$/.test(decoded)) {
+              finalBase64 = decoded;
+            }
+          } catch (e) {}
+          if (finalBase64.startsWith('data:')) {
+            imgData = finalBase64;
+          } else {
+            imgData = `data:image/png;base64,${finalBase64}`;
           }
-          imgData = `data:image/png;base64,${finalBase64}`;
         } else if (hasSig) {
           // Fallback to a 1x1 transparent PNG if the backend says there is a signature but didn't send the data
           imgData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
@@ -369,7 +377,6 @@ export const savePowerSection = async (reportId, schema, currentData, payloadKey
                 imgData = imgData.split(',')[1];
               }
               linePayload['evidence'] = imgData;
-              linePayload['evidenceType'] = imgData ? 'image' : '';
             }
           } else {
             linePayload[sub.name] = val[sub.name] || "";

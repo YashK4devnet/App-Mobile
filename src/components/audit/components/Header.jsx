@@ -11,9 +11,14 @@ export default function Header({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
+
   const handleBack = onBackClick || (() => {
     const path = location.pathname;
-    const isDashboard = path === '/audit' || path === '/audit/home' || path === '/audit/';
+    const isDashboard =
+      path === '/audit' ||
+      path === '/audit/home' ||
+      path === '/audit/';
+
     if (isDashboard) {
       navigate('/dashboard');
     } else {
@@ -23,7 +28,7 @@ export default function Header({
 
   return (
     <header
-      className="flex justify-between items-center px-5 py-4 bg-[#0F0F23]/80 backdrop-blur-xl border-b border-white/10 sticky top-0 z-10 shrink-0 select-none"
+      className="flex items-center px-5 py-4 bg-[#0F0F23]/80 backdrop-blur-xl border-b border-white/10 sticky top-0 z-10 shrink-0 select-none"
       style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1rem)' }}
     >
       <button
@@ -34,25 +39,11 @@ export default function Header({
         <ArrowLeftIcon className="w-6 h-6 text-white" />
       </button>
 
-      <h1 className="text-[18px] font-medium tracking-wide text-white drop-shadow-md flex-1 text-center truncate px-2">
+      <h1 className="ml-3 text-[18px] font-medium tracking-wide text-white truncate">
         {title}
       </h1>
 
-      {headerRight ? (
-        headerRight
-      ) : (
-        <button
-          onClick={onNotificationClick}
-          className="p-1 text-white hover:bg-white/10 rounded-lg relative active:scale-90 transition-all cursor-pointer"
-          aria-label="Open Notifications"
-        >
-          <BellIcon className="w-6 h-6" />
-          {hasNotifications && (
-            <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#ff6b6b] rounded-full border-2 border-[#0F0F23]" />
-          )}
-        </button>
-      )}
+      {headerRight}
     </header>
   );
 }
-

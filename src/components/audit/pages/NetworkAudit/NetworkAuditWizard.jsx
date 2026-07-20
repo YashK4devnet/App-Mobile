@@ -319,7 +319,7 @@ export default function NetworkAuditWizard() {
               errors={errors}
               useAccordions={true}
               watch={watch}
-              globalDisabled={isReadOnly}
+              globalDisabled={isReadOnly || ['ReportInfo', 'PersonnelInfo'].includes(currentSubsection)}
             />
           </div>
         </div>

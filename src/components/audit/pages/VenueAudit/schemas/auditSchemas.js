@@ -162,11 +162,11 @@ export const SYSTEM_DETAILS_SCHEMA = [
   { name: 'machineLookAndFeel', label: 'Look & Feel and Maintenance of Machines', type: 'quality' },
 
   { type: 'heading', label: 'Node Counts (Available vs Working)' },
-  { prefix: 'testNodes', label: 'Test Nodes', type: 'node-counts' },
-  { prefix: 'bufferNodes', label: 'Buffer Nodes', type: 'node-counts' },
-  { prefix: 'registrationDeskNodes', label: 'Registration Desk Nodes', type: 'node-counts' },
-  { prefix: 'aadhaarDeskNodes', label: 'Aadhar Desk Nodes', type: 'node-counts' },
-  { prefix: 'videoRecordingMachines', label: 'Video Recording Machine', type: 'node-counts' },
+  { name: 'testNodes', label: 'Test Nodes', type: 'node-counts' },
+  { name: 'bufferNodes', label: 'Buffer Nodes', type: 'node-counts' },
+  { name: 'registrationDeskNodes', label: 'Registration Desk Nodes', type: 'node-counts' },
+  { name: 'aadhaarDeskNodes', label: 'Aadhar Desk Nodes', type: 'node-counts' },
+  { name: 'videoRecordingMachines', label: 'Video Recording Machine', type: 'node-counts' },
 
   { type: 'heading', label: 'Types of Processors' },
   { name: 'i3Available', label: 'Number of available INTEL Core i3 processors', type: 'number' },
@@ -243,6 +243,7 @@ export const CCTV_DETAILS_SCHEMA = [
   
   { type: 'heading', label: 'Camera Details' },
   { name: 'totalCctvCameras', label: 'Total Number of CCTV Cameras', type: 'number' },
+  { name: 'cctvBifurcation', label: 'CCTV Cameras Bifurcation', type: 'bifurcation' },
   { name: 'cctvConnectedToMonitors', label: 'All CCTV Cameras Connected To Monitors?', type: 'yes-no' },
   
   {
@@ -315,21 +316,7 @@ export const LAB_DETAILS_SCHEMA = [
   {
     name: 'nodeBifurcation',
     label: 'Count of Nodes Bifurcation',
-    type: 'array',
-    itemLabel: 'Floor',
-    fields: [
-      { name: 'floorName', label: 'Floor Name', type: 'text', placeholder: 'e.g. 1st Floor, Ground Floor', required: true },
-      {
-        name: 'labs',
-        label: 'Labs on this floor',
-        type: 'array',
-        itemLabel: 'Lab',
-        fields: [
-          { name: 'labName', label: 'Lab Name', type: 'text', placeholder: 'e.g. Lab A', required: true },
-          { name: 'nodesCount', label: 'Nodes Count', type: 'number', placeholder: 'e.g. 50', required: true }
-        ]
-      }
-    ]
+    type: 'bifurcation'
   },
 
   { type: 'heading', label: 'Partition & Seating Matrix' },

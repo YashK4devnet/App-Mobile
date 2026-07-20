@@ -47,13 +47,13 @@ export const POWER_REPORT_INFO_SCHEMA = [
 ];
 
 export const POWER_VENUE_INFO_SCHEMA = [
-  { name: 'region', label: 'Region', type: 'select', options: ['North', 'South', 'East', 'West', 'Central'] },
-  { name: 'state', label: 'State', type: 'text' },
-  { name: 'city', label: 'City', type: 'text' },
-  { name: 'name', label: 'Venue Name', type: 'text' },
-  { name: 'completeAddress', label: 'Address', type: 'text' },
-  { name: 'pinCode', label: 'Pin Code', type: 'text' },
-  { name: 'googleMapLocationStatus', label: 'Is Google Map location accurate?', type: 'radio', options: ['yes', 'no'] },
+  { name: 'region', label: 'Region', type: 'select', options: ['North', 'South', 'East', 'West', 'Central'], readOnly: true },
+  { name: 'state', label: 'State', type: 'text', readOnly: true },
+  { name: 'city', label: 'City', type: 'text', readOnly: true },
+  { name: 'name', label: 'Venue Name', type: 'text', readOnly: true },
+  { name: 'completeAddress', label: 'Address', type: 'text', readOnly: true },
+  { name: 'pinCode', label: 'Pin Code', type: 'text', readOnly: true },
+  { name: 'googleMapLocationStatus', label: 'Is Google Map location accurate?', type: 'radio', options: ['yes', 'no'], readOnly: true },
   { name: 'totalNodes', label: 'Total Nodes', type: 'number', placeholder: 'e.g. 100' }
 ];
 
