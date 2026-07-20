@@ -61,6 +61,14 @@ export const generateInitialState = (schemas, odooData = null) => {
         }));
       }
       state[f.name] = list;
+    } else if (f.name === 'obs_list') {
+      let list = [];
+      if (odooData && Array.isArray(odooData.observationLines)) {
+        list = odooData.observationLines.map(item => ({
+          observation: item.name || item.observation || item.comment || ''
+        }));
+      }
+      state[f.name] = list;
     } else if (fieldType === 'document-list' || fieldType === 'custom-questions' || fieldType === 'numbered-text-list') {
       state[f.name] = [];
     } else if (fieldType === 'signature' || f.name === 'centerSeal') {
@@ -502,7 +510,7 @@ export const savePowerSection = async (reportId, schema, currentData, payloadKey
     }
   });
 
-  if (Object.keys(standardFields).length > 0 && payloadKey && payloadKey !== 'Signatures' && payloadKey !== 'report' && payloadKey !== 'venue') {
+  if (Object.keys(standardFields).length > 0 && payloadKey && payloadKey !== 'Signatures' && payloadKey !== 'report' && payloadKey !== 'venue' && payloadKey !== 'auditeeAuditor') {
     promises.push(reportApiService.patchAuditSection(reportId, { [payloadKey]: standardFields }));
   }
 

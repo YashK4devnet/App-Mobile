@@ -41,11 +41,6 @@ export const reportApiService = {
     if (!questionId) return null;
     
     try {
-      // First check cache
-      const cacheKey = `image_${questionId}`;
-      const cached = await storageService.getImage(cacheKey);
-      if (cached) return cached;
-      
       const json = await auditHttpClient(`/audits/lines/${questionId}/image`, {
         method: 'GET',
         headers: {
@@ -64,8 +59,6 @@ export const reportApiService = {
             console.warn("Failed to decode double-encoded base64", e);
           }
         }
-        
-        await storageService.saveImage(cacheKey, b64);
         return b64;
       }
       return null;

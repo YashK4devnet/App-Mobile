@@ -50,8 +50,8 @@ export const generateInitialState = (schemas, odooData = null) => {
 
     if (f.type === 'node-counts') {
       state[f.name] = {
-        Available: flatOdooData[`${f.name}Available`] || '',
-        Working: flatOdooData[`${f.name}Working`] || ''
+        Available: flatOdooData[`${f.name}_available`] !== undefined ? flatOdooData[`${f.name}_available`] : '',
+        Working: flatOdooData[`${f.name}_working`] !== undefined ? flatOdooData[`${f.name}_working`] : ''
       };
       return;
     }
@@ -308,10 +308,12 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
 
     if (f.type === 'node-counts') {
       if (currentData[f.name]?.Available !== undefined) {
-        flatData[`${f.name}Available`] = currentData[f.name].Available;
+        const aVal = currentData[f.name].Available;
+        flatData[`${f.name}_available`] = aVal !== '' && aVal !== null ? Number(aVal) : 0;
       }
       if (currentData[f.name]?.Working !== undefined) {
-        flatData[`${f.name}Working`] = currentData[f.name].Working;
+        const wVal = currentData[f.name].Working;
+        flatData[`${f.name}_working`] = wVal !== '' && wVal !== null ? Number(wVal) : 0;
       }
       return;
     }
@@ -333,6 +335,8 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
         signatures[f.name] = val || "";
       } else if (f.type === 'image-upload') {
         flatData[f.name] = val?.url || "";
+      } else if (f.type === 'number') {
+        flatData[f.name] = val !== '' && val !== null && val !== undefined ? Number(val) : 0;
       } else {
         flatData[f.name] = val;
       }
@@ -391,12 +395,12 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
     const swObj = {};
     
     // Software and Security keys
-    const swKeys = ['osLicenseAvailable', 'systemFormatAllowed', 'antivirusAvailable', 'antivirusName', 'disableAntivirusPermitted', 'remoteSoftwareFound'];
+    const swKeys = ['os_license_available', 'system_format_allowed', 'antivirus_available', 'antivirus_name', 'disable_antivirus_permitted', 'remote_software_found'];
     
     // Node details keys
-    const nodePrefixes = ['testNodes', 'bufferNodes', 'registrationDeskNodes', 'aadhaarDeskNodes', 'videoRecordingMachines'];
+    const nodePrefixes = ['test_nodes', 'buffer_nodes', 'registration_desk_nodes', 'aadhaar_desk_nodes', 'video_recording_machines'];
     const actualNodeKeys = Object.keys(flatData).filter(k => 
-      nodePrefixes.some(prefix => k.startsWith(prefix) && (k.endsWith('Available') || k.endsWith('Working')))
+      nodePrefixes.some(prefix => k.startsWith(prefix) && (k.endsWith('_available') || k.endsWith('_working')))
     );
 
     Object.keys(flatData).forEach(k => {

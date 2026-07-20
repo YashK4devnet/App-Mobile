@@ -105,6 +105,14 @@ export const generateInitialState = (schemas, odooData = null) => {
       state[f.name] = list;
     } else if (fieldType === 'device-photo-list' || fieldType === 'custom-questions') {
       state[f.name] = [];
+    } else if (f.name === 'obs_list') {
+      let list = [];
+      if (odooData && Array.isArray(odooData.observationLines)) {
+        list = odooData.observationLines.map(item => ({
+          observation: item.name || item.observation || item.comment || ''
+        }));
+      }
+      state[f.name] = list;
     } else if (fieldType === 'numbered-text-list') {
       state[f.name] = [];
     } else {
@@ -525,7 +533,7 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
     }
   });
 
-  if (Object.keys(standardFields).length > 0 && payloadKey && payloadKey !== 'Signatures' && payloadKey !== 'report' && payloadKey !== 'venue') {
+  if (Object.keys(standardFields).length > 0 && payloadKey && payloadKey !== 'Signatures' && payloadKey !== 'report' && payloadKey !== 'venue' && payloadKey !== 'auditeeAuditor') {
     if (payloadKey === 'observations') {
       promises.push(reportApiService.patchAuditSection(reportId, standardFields));
     } else {
