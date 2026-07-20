@@ -17,6 +17,7 @@ import {
   FormPowerPhotoQuestion,
   FormDocumentList,
   FormNetworkQuestion,
+  FormNetworkSecurityQuestion,
   FormDevicePhotoList,
   FormNumberedTextList,
   FormSignature,
@@ -186,6 +187,8 @@ function renderField(field, control, globalDisabled = false) {
                 {...commonProps}
                 evidence={field.evidence}
                 findingsHint={field.findingsHint}
+                hideScore={field.hideScore}
+                showPhase={field.showPhase}
               />
             );
           case 'network-question':
@@ -194,6 +197,14 @@ function renderField(field, control, globalDisabled = false) {
                 {...commonProps}
                 evidenceRecord={field.evidenceRecord}
                 remarksHint={field.remarksHint}
+              />
+            );
+          case 'network-security-question':
+            return (
+              <FormNetworkSecurityQuestion
+                {...commonProps}
+                header={field.header}
+                remarks={field.remarks}
               />
             );
           case 'device-photo-list':

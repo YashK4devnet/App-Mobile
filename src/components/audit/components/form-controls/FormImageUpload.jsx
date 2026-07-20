@@ -188,22 +188,6 @@ export function FormImageUpload({
         )}
       </div>
 
-      {hasImage && isInteractive && (
-        <div className="mt-2.5 p-3 bg-white/5 border border-white/20 rounded-xl space-y-1">
-          <label className="text-[10px] font-medium text-white/50 uppercase tracking-wider block">
-            Photo Timestamp (Auto-generated, editable)
-          </label>
-          <input
-            type="datetime-local"
-            value={imgTimestamp || ''}
-            onChange={(e) => {
-              onChange(name, { url: imgUrl, timestamp: e.target.value });
-            }}
-            className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-1.5 text-[13px] text-white focus:border-[#4ecdc4] outline-none"
-          />
-        </div>
-      )}
-
       {error && !readOnly && (
         <p className="text-[11px] text-[#ff6b6b] font-medium mt-1 flex items-center gap-1">
           <ExclamationCircleIcon className="w-3.5 h-3.5" />

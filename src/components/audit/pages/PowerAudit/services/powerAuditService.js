@@ -1,4 +1,5 @@
 import { reportApiService } from '../../../services/reportApiService';
+import { decodeOdooImage } from '../../../utils/imageUtils';
 
 /**
  * Dynamically generates the initial state object by traversing the provided schemas.
@@ -48,8 +49,18 @@ export const generateInitialState = (schemas, odooData = null) => {
       state[f.name] = { 
         findings: [lineData?.findings, lineData?.remark].filter(Boolean).join(' - ') || '', 
         score: lineData?.score || '', 
+        phase: lineData?.phase || lineData?.transformerPhase || '',
         image: imgObj 
       };
+    } else if (f.name === 'equipmentDocuments') {
+      let list = [];
+      if (odooData && Array.isArray(odooData.nameplateDocuments)) {
+        list = odooData.nameplateDocuments.map(item => ({
+          doc_name: item.doc_name || item.docName || '',
+          doc_image: item.doc_image || item.docImage ? { url: decodeOdooImage(item.doc_image || item.docImage) } : (item.id ? { pendingFetch: true, odooId: item.id, isFromServer: true } : null)
+        }));
+      }
+      state[f.name] = list;
     } else if (fieldType === 'document-list' || fieldType === 'custom-questions' || fieldType === 'numbered-text-list') {
       state[f.name] = [];
     } else if (fieldType === 'signature' || f.name === 'centerSeal') {
@@ -64,20 +75,7 @@ export const generateInitialState = (schemas, odooData = null) => {
         const base64Data = odooData.signatures[f.name];
         
         if (base64Data) {
-          // Since Odoo double-encodes base64 strings, decode it once if possible
-          let finalBase64 = base64Data;
-          try {
-            const decoded = atob(base64Data);
-            // If the decoded string looks like a valid base64 image or data URI, it was indeed double encoded
-            if (decoded.startsWith('data:image') || /^[a-zA-Z0-9+/=\s]+$/.test(decoded)) {
-              finalBase64 = decoded;
-            }
-          } catch (e) {}
-          if (finalBase64.startsWith('data:')) {
-            imgData = finalBase64;
-          } else {
-            imgData = `data:image/png;base64,${finalBase64}`;
-          }
+          imgData = decodeOdooImage(base64Data);
         } else if (hasSig) {
           // Fallback to a 1x1 transparent PNG if the backend says there is a signature but didn't send the data
           imgData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
@@ -99,7 +97,7 @@ export const generateInitialState = (schemas, odooData = null) => {
     } else if (f.type === 'image-upload') {
       let val = null;
       if (odooData && odooData[f.name]) {
-         val = { url: `data:image/jpeg;base64,${odooData[f.name]}` };
+         val = { url: decodeOdooImage(odooData[f.name]) };
       }
       state[f.name] = val;
     } else {
@@ -376,7 +374,7 @@ export const savePowerSection = async (reportId, schema, currentData, payloadKey
               if (imgData.includes(',')) {
                 imgData = imgData.split(',')[1];
               }
-              linePayload['evidence'] = imgData;
+              linePayload['image'] = imgData;
             }
           } else {
             linePayload[sub.name] = val[sub.name] || "";

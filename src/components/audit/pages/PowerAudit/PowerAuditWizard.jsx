@@ -337,7 +337,7 @@ export default function PowerAuditWizard() {
               errors={errors}
               useAccordions={true}
               watch={watch}
-              globalDisabled={isReadOnly || ['ReportInfo', 'PersonnelInfo'].includes(currentSubsection)}
+              globalDisabled={isReadOnly || ['ReportInfo'].includes(currentSubsection)}
             />
           </div>
         </div>

@@ -9,10 +9,10 @@ export default function InProgressReportsList({ reports }) {
   const handleCardClick = async (report) => {
     try {
       setFetchingId(report.id || report.reportId);
-      
+
       // Fetch full report data first
       const reportData = await reportApiService.fetchReport(report.id || report.reportId);
-      
+
       let path = '';
       if (reportData.reportType === 'network_audit') path = `/audit/network-audit/${reportData.id}`;
       else if (reportData.reportType === 'power_audit') path = `/audit/power-audit/${reportData.id}`;
@@ -21,11 +21,11 @@ export default function InProgressReportsList({ reports }) {
         if (reportData.reportType === 'network') path = `/audit/network-audit/${reportData.id}`;
         else if (reportData.reportType === 'power') path = `/audit/power-audit/${reportData.id}`;
         else if (reportData.reportType === 'venue') path = `/audit/venue-audit/${reportData.id}`;
-        else path = `/audit/${reportData.reportType || 'network'}-audit/${reportData.id}`; 
+        else path = `/audit/${reportData.reportType || 'network'}-audit/${reportData.id}`;
       }
-      
+
       navigate(path, { state: { odooData: reportData } });
-      
+
     } catch (err) {
       console.error("Failed to load report", err);
       alert("Failed to load report. Please try again.");
@@ -65,17 +65,12 @@ export default function InProgressReportsList({ reports }) {
                 In Progress
               </span>
             </div>
-            
+
             <div className="flex flex-col gap-1 mt-1">
               <div className="flex justify-between items-center text-[11px]">
-                <span className="text-white/50 font-medium">Progress</span>
-                <span className="text-blue-400 font-bold">{report.completionPercentage}%</span>
-              </div>
-              <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-blue-500 rounded-full"
-                  style={{ width: `${report.completionPercentage}%` }}
-                />
+                <span className="text-blue-400 font-bold capitalize">
+                  {report.reportType ? `${report.reportType.replace(/_audit/i, '')} Audit Report` : 'Audit Report'}
+                </span>
               </div>
             </div>
 

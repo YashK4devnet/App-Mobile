@@ -5,7 +5,7 @@ const createNetworkQuestion = (name, label, remarksHint = '') => ({
   subType: 'network-question',
   fields: [
     { name: 'remarks', label: `Remarks${remarksHint ? ` (${remarksHint})` : ''}`, type: 'textarea', placeholder: 'Enter remarks here...' },
-    { name: 'observation', label: 'Observation', type: 'select', options: [{ label: 'S', value: 's' }, { label: 'NS', value: 'ns' }, { label: 'U', value: 'u' }, { label: 'NA', value: 'na' }] },
+    { name: 'observation', label: 'Observation', type: 'textarea', placeholder: 'Enter observation here...' },
     { name: 'image', label: 'Evidence Image', type: 'image-upload' }
   ]
 });
@@ -19,7 +19,7 @@ const createCustomQuestions = (sectionName) => ({
   fields: [
     { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
     { name: 'remarks', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
-    { name: 'observation', label: 'Observation', type: 'select', options: [{ label: 'S', value: 's' }, { label: 'NS', value: 'ns' }, { label: 'U', value: 'u' }, { label: 'NA', value: 'na' }] },
+    { name: 'observation', label: 'Observation', type: 'textarea', placeholder: 'Enter observation here...' },
     { name: 'image', label: 'Evidence Image', type: 'image-upload' }
   ]
 });
@@ -49,15 +49,22 @@ export const NETWORK_VENUE_INFO_SCHEMA = [
 export const NETWORK_PERSONNEL_INFO_SCHEMA = [
   // Auditee
   { type: 'heading', label: 'Auditee Information', className: 'text-white/50 border-white/10' },
-  { name: 'auditeeName', label: 'Name', type: 'text', required: true },
-  { name: 'auditeeRole', label: 'Role', type: 'text', required: true, placeholder: 'e.g. CS / Venue Management Representative' },
-  { name: 'auditeeContact', label: 'Contact Number & Email ID', type: 'text', required: true },
+  { name: 'auditeeName', label: 'Name', type: 'text', required: true, readOnly: true },
+  { name: 'auditeeRole', label: 'Role', type: 'text', required: true, placeholder: 'e.g. CS / Venue Management Representative', readOnly: true },
+  { name: 'auditeeContact', label: 'Contact Number & Email ID', type: 'text', required: true, readOnly: true },
 
   // Auditor
   { type: 'heading', label: 'Auditor Details', className: 'text-[#F98A15] border-[#F98A15]/30 mt-6' },
-  { name: 'auditorName', label: 'Name (Auditor)', type: 'text', required: true },
+  { name: 'auditorName', label: 'Name (Auditor)', type: 'text', required: true, readOnly: true },
   { name: 'auditorRole', label: 'Role', type: 'text', disabled: true, value: 'Auditor' },
-  { name: 'auditorContact', label: 'Contact Number & Email ID', type: 'text', required: true }
+  { name: 'auditorContact', label: 'Contact Number & Email ID', type: 'text', required: true, readOnly: true },
+
+  // Signatures
+  { type: 'heading', label: 'Signatures & Verification', className: 'text-white/50 border-white/10 mt-6' },
+  { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature', required: true },
+  { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature', required: true },
+  { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature', required: true },
+  { name: 'centerSeal', label: 'Center Seal', type: 'image-upload', required: true }
 ];
 
 export const NETWORK_ARCHITECTURE_SCHEMA = [
@@ -187,7 +194,7 @@ export const NETWORK_SECURITY_COMPLIANCE_SCHEMA = [
 export const NETWORK_PHOTO_EVIDENCE_SCHEMA = [
   {
     name: 'devicePhotos',
-    label: 'Photo Evidence of Devices',
+    label: 'Image of Equipments',
     type: 'device-photo-list',
     itemLabel: 'Device Photo',
     fields: [
@@ -229,16 +236,7 @@ export const NETWORK_OBSERVATIONS_SCHEMA = [
     fields: [
       { name: 'observation', label: 'Observation Detail', type: 'textarea', placeholder: 'Enter observation' }
     ]
-  },
-  {
-    type: 'heading',
-    label: 'Signatures & Verification',
-    className: 'text-white/50 border-white/10 mt-6'
-  },
-  { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature', required: true },
-  { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature', required: true },
-  { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature', required: true },
-  { name: 'centerSeal', label: 'Center Seal', type: 'image-upload', required: true }
+  }
 ];
 
 export const NETWORK_SIGNATURES_SCHEMA = [

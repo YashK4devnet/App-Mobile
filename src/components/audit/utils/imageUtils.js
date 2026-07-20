@@ -69,3 +69,27 @@ export const prepareBase64ForOdoo = (dataUrl) => {
   }
   return dataUrl;
 };
+
+/**
+ * Decodes potentially double-encoded base64 images from Odoo
+ * 
+ * @param {string} base64Data - Raw or double-encoded base64 string
+ * @returns {string|null} Properly formatted Data URL
+ */
+export const decodeOdooImage = (base64Data) => {
+  if (!base64Data) return null;
+  
+  let finalBase64 = base64Data;
+  try {
+    const decoded = atob(base64Data);
+    // If the decoded string looks like a valid base64 image or data URI, it was indeed double encoded
+    if (decoded.startsWith('data:image') || /^[a-zA-Z0-9+/=\s]+$/.test(decoded)) {
+      finalBase64 = decoded;
+    }
+  } catch (e) {}
+
+  if (finalBase64.startsWith('data:')) {
+    return finalBase64;
+  }
+  return `data:image/jpeg;base64,${finalBase64}`;
+};

@@ -1,4 +1,5 @@
 import { reportApiService } from '../../../services/reportApiService';
+import { decodeOdooImage } from '../../../utils/imageUtils';
 
 /**
  * Dynamically generates the initial state object by traversing the provided schemas.
@@ -49,6 +50,13 @@ export const generateInitialState = (schemas, odooData = null) => {
         remarks: [lineData?.remark, lineData?.remarks].filter(Boolean).join(' - ') || '', 
         image: imgObj 
       };
+    } else if (fieldType === 'network-security-question') {
+      const lineData = getOdooLine(f.name);
+      let imgObj = null;
+      if (lineData?.id) {
+        imgObj = { pendingFetch: true, odooId: lineData.id, isFromServer: true };
+      }
+      state[f.name] = { image: imgObj };
     } else if (fieldType === 'signature' || f.name === 'centerSeal') {
       let hasSig = false;
       let imgData = null;
@@ -61,20 +69,7 @@ export const generateInitialState = (schemas, odooData = null) => {
         const base64Data = odooData.signatures[f.name];
         
         if (base64Data) {
-          // Since Odoo double-encodes base64 strings, decode it once if possible
-          let finalBase64 = base64Data;
-          try {
-            const decoded = atob(base64Data);
-            // If the decoded string looks like a valid base64 image or data URI, it was indeed double encoded
-            if (decoded.startsWith('data:image') || /^[a-zA-Z0-9+/=\s]+$/.test(decoded)) {
-              finalBase64 = decoded;
-            }
-          } catch (e) {}
-          if (finalBase64.startsWith('data:')) {
-            imgData = finalBase64;
-          } else {
-            imgData = `data:image/png;base64,${finalBase64}`;
-          }
+          imgData = decodeOdooImage(base64Data);
         } else if (hasSig) {
           // Fallback to a 1x1 transparent PNG if the backend says there is a signature but didn't send the data
           imgData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
@@ -96,9 +91,18 @@ export const generateInitialState = (schemas, odooData = null) => {
     } else if (fieldType === 'image-upload') {
       let val = null;
       if (odooData && odooData[f.name]) {
-         val = { url: `data:image/jpeg;base64,${odooData[f.name]}` };
+         val = { url: decodeOdooImage(odooData[f.name]) };
       }
       state[f.name] = val;
+    } else if (f.name === 'devicePhotos') {
+      let list = [];
+      if (odooData && Array.isArray(odooData.imageOfEquipment)) {
+        list = odooData.imageOfEquipment.map(item => ({
+          deviceName: item.doc_name || item.docName || '',
+          deviceImage: item.doc_image || item.docImage ? { url: decodeOdooImage(item.doc_image || item.docImage) } : (item.id ? { pendingFetch: true, odooId: item.id, isFromServer: true } : null)
+        }));
+      }
+      state[f.name] = list;
     } else if (fieldType === 'device-photo-list' || fieldType === 'custom-questions') {
       state[f.name] = [];
     } else if (fieldType === 'numbered-text-list') {
@@ -176,6 +180,12 @@ export const validateSchema = (schema, data) => {
         if (!hasImg) err.image = "Evidence image is required";
         
         if (Object.keys(err).length > 0) errors[f.name] = err;
+      } else if (fieldType === 'network-security-question') {
+        const err = {};
+        const imgVal = getFieldValue(data, f.name)?.image;
+        const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
+        if (!hasImg) err.image = "Evidence image is required";
+        if (Object.keys(err).length > 0) errors[f.name] = err;
       } else if (fieldType === 'image-upload') {
         const val = getFieldValue(data, f.name);
         const hasImg = typeof val === 'object' && val !== null ? !!val.url : !!val;
@@ -236,6 +246,11 @@ export const isSchemaEmpty = (schema, data) => {
       const imgVal = qVal?.image;
       const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
       hasVal = !!(qVal?.observation || qVal?.remarks || hasImg);
+    } else if (fieldType === 'network-security-question') {
+      const qVal = getFieldValue(data, f.name);
+      const imgVal = qVal?.image;
+      const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
+      hasVal = !!hasImg;
     } else if (fieldType === 'device-photo-list' || fieldType === 'custom-questions') {
       const list = getFieldValue(data, f.name) || [];
       hasVal = list.length > 0;
@@ -277,6 +292,11 @@ export const calculateSchemaProgress = (schema, data) => {
       const imgVal = qVal?.image;
       const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
       if (qVal?.observation && hasImg) filled++;
+    } else if (fieldType === 'network-security-question') {
+      const qVal = getFieldValue(data, f.name);
+      const imgVal = qVal?.image;
+      const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
+      if (hasImg) filled++;
     } else if (fieldType === 'device-photo-list' || fieldType === 'custom-questions') {
       const list = getFieldValue(data, f.name) || [];
       const validCount = list.filter(item => {
@@ -420,8 +440,8 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
               if (imgData.includes(',')) {
                 imgData = imgData.split(',')[1];
               }
-              // Backend expects 'evidence' for network-question images, mapping it here.
-              linePayload['evidence'] = imgData;
+              // Backend expects 'image' for network-question images, mapping it here.
+              linePayload['image'] = imgData;
             }
           } else {
             // Map frontend schema names to backend expected names

@@ -60,15 +60,22 @@ export const POWER_VENUE_INFO_SCHEMA = [
 export const POWER_PERSONNEL_INFO_SCHEMA = [
   // Auditee
   { type: 'heading', label: 'Auditee Information', className: 'text-white/50 border-white/10' },
-  { name: 'auditeeName', label: 'Name', type: 'text', required: true },
-  { name: 'auditeeRole', label: 'Role', type: 'text', required: true, placeholder: 'e.g. CS / Venue Management Representative' },
-  { name: 'auditeeContact', label: 'Contact Number & Email ID', type: 'text', required: true },
+  { name: 'auditeeName', label: 'Name', type: 'text', required: true, readOnly: true },
+  { name: 'auditeeRole', label: 'Role', type: 'text', required: true, placeholder: 'e.g. CS / Venue Management Representative', readOnly: true },
+  { name: 'auditeeContact', label: 'Contact Number & Email ID', type: 'text', required: true, readOnly: true },
 
   // Auditor
   { type: 'heading', label: 'Auditor Details', className: 'text-[#F98A15] border-[#F98A15]/30 mt-6' },
-  { name: 'auditorName', label: 'Name (Auditor)', type: 'text', required: true },
+  { name: 'auditorName', label: 'Name (Auditor)', type: 'text', required: true, readOnly: true },
   { name: 'auditorRole', label: 'Role', type: 'text', disabled: true, value: 'Auditor' },
-  { name: 'auditorContact', label: 'Contact Number & Email ID', type: 'text', required: true }
+  { name: 'auditorContact', label: 'Contact Number & Email ID', type: 'text', required: true, readOnly: true },
+
+  // Signatures
+  { type: 'heading', label: 'Signatures & Verification', className: 'text-white/50 border-white/10 mt-6' },
+  { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature', required: true },
+  { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature', required: true },
+  { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature', required: true },
+  { name: 'centerSeal', label: 'Center Seal', type: 'image-upload', required: true }
 ];
 
 export const POWER_SECTION_1_SCHEMA = [
@@ -214,12 +221,7 @@ export const POWER_SECTION_10_SCHEMA = [
       { name: 'doc_name', label: 'Document Name', type: 'text', placeholder: 'Enter document name' },
       { name: 'doc_image', label: 'Document Image', type: 'image-upload' }
     ]
-  },
-  { type: 'heading', label: 'Signatures & Verification', className: 'text-[#F98A15] border-[#F98A15]/30 mt-8' },
-  { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature', required: true },
-  { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature', required: true },
-  { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature', required: true },
-  { name: 'centerSeal', label: 'Center Seal', type: 'image-upload', required: true }
+  }
 ];
 
 export const POWER_SECTION_11_SCHEMA = [

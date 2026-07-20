@@ -1,8 +1,4 @@
 import React from 'react';
-// No heroicons import needed as SVGs are defined inline below
-
-// Note: If you don't have heroicons, we can fallback to your local Icons.js. 
-// Assuming we'll use local SVGs if Heroicons aren't available, but let's use standard clean SVGs for now.
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -51,16 +47,10 @@ export default React.memo(function ReportCard({ report, onClick }) {
       </div>
 
       <div className="flex items-center gap-4 mt-4 text-[13px] text-white/70">
+
         <div className="flex items-center gap-1.5">
-           {/* SVG for User/Auditor */}
-           <svg className="w-4 h-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-          {report.auditorName}
-        </div>
-        <div className="flex items-center gap-1.5">
-           {/* SVG for Date */}
-           <svg className="w-4 h-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          {/* SVG for Date */}
+          <svg className="w-4 h-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
           {new Date(report.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -74,19 +64,19 @@ export default React.memo(function ReportCard({ report, onClick }) {
             <span className="text-[#4ecdc4]">{report.progress}%</span>
           </div>
           <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
-            <div 
-              className="bg-[#4ecdc4] h-1.5 rounded-full transition-all duration-1000 ease-out" 
+            <div
+              className="bg-[#4ecdc4] h-1.5 rounded-full transition-all duration-1000 ease-out"
               style={{ width: `${report.progress}%` }}
             />
           </div>
         </div>
       )}
-      
+
       {report.issuesFound > 0 && (
         <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
           <span className="text-[12px] text-white/50">Issues Identified</span>
           <span className="text-[12px] font-bold text-rose-400 bg-rose-400/10 px-2 py-0.5 rounded flex items-center gap-1">
-             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             {report.issuesFound}

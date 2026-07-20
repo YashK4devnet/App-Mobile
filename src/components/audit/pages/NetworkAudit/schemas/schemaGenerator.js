@@ -18,16 +18,16 @@ export const generateNetworkQuestionsSchema = (apiLines, lineField) => {
       subType: 'network-question',
       fields: [
         { 
-          name: 'remark', 
+          name: 'remarks', 
           label: `Remarks${remarksHint ? ` (${remarksHint})` : ''}`, 
           type: 'textarea', 
           placeholder: 'Enter remarks here...' 
         },
         { 
-          name: 'findings', 
+          name: 'observation', 
           label: 'Observation', 
-          type: 'select', 
-          options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] 
+          type: 'textarea',
+          placeholder: 'Enter observation here...'
         },
         { 
           name: 'image', 
@@ -48,12 +48,40 @@ export const generateNetworkQuestionsSchema = (apiLines, lineField) => {
       itemLabel: 'Custom Question',
       fields: [
         { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
-        { name: 'remark', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
-        { name: 'findings', label: 'Observation', type: 'select', options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] },
+        { name: 'remarks', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
+        { name: 'observation', label: 'Observation', type: 'textarea', placeholder: 'Enter observation here...' },
         { name: 'image', label: 'Evidence Image', type: 'image-upload' }
       ]
     });
   }
+
+  return questions;
+};
+
+export const generateNetworkSecuritySchema = (apiLines, lineField) => {
+  if (!apiLines || !Array.isArray(apiLines)) {
+    apiLines = [];
+  }
+  
+  const snakeField = lineField ? camelToSnake(lineField) : 'unknown';
+
+  const questions = apiLines.map(line => {
+    return {
+      name: `odoo_${snakeField}___${line.id}`,
+      label: line.name,
+      header: line.header,
+      remarks: line.remarks || line.remark || line.remakes,
+      type: 'object',
+      subType: 'network-security-question',
+      fields: [
+        { 
+          name: 'image', 
+          label: 'Evidence Image', 
+          type: 'image-upload' 
+        }
+      ]
+    };
+  });
 
   return questions;
 };
@@ -64,6 +92,8 @@ export const generatePowerQuestionsSchema = (apiLines, lineField) => {
   }
   
   const snakeField = lineField ? camelToSnake(lineField) : 'unknown';
+  const isFirstSection = ['supply_trasnfer_lines', 'disel_generator_lines', 'ups_lines', 'ups_batteries_lines'].includes(lineField);
+  const showPhase = lineField === 'supply_trasnfer_lines';
 
   const questions = apiLines.map(line => {
     const findingsHint = line.evidence || '';
@@ -73,6 +103,8 @@ export const generatePowerQuestionsSchema = (apiLines, lineField) => {
       label: line.name,
       type: 'object',
       subType: 'power-question',
+      hideScore: isFirstSection,
+      showPhase,
       fields: [
         { 
           name: 'findings', 
@@ -80,18 +112,23 @@ export const generatePowerQuestionsSchema = (apiLines, lineField) => {
           type: 'textarea', 
           placeholder: 'Enter findings here...' 
         },
-        { 
+        showPhase ? {
+          name: 'phase',
+          label: 'Phase',
+          type: 'text',
+          placeholder: 'e.g. 3-phase or Single phase'
+        } : (isFirstSection ? null : { 
           name: 'score', 
           label: 'Score', 
           type: 'select', 
           options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] 
-        },
+        }),
         { 
           name: 'image', 
           label: 'Evidence Image', 
           type: 'image-upload' 
         }
-      ]
+      ].filter(Boolean)
     };
   });
 

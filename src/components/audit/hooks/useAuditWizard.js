@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { storageService } from '../services/storageService';
 import { reportApiService } from '../services/reportApiService';
+import { decodeOdooImage } from '../utils/imageUtils';
 import toast from 'react-hot-toast';
 
 export function useAuditWizard({
@@ -158,30 +159,38 @@ export function useAuditWizard({
 
       const fieldData = getValues(f.name);
       
-      // Check if it's a field with an image object
-      if (fieldData && typeof fieldData === 'object' && fieldData.image) {
-        const imgObj = fieldData.image;
-        if (imgObj.pendingFetch && imgObj.odooId && imgObj.isFromServer && !fetchingImages.current.has(imgObj.odooId)) {
-          // Mark as fetching
+      const fetchImage = (imgObj, path) => {
+        if (imgObj && imgObj.pendingFetch && imgObj.odooId && imgObj.isFromServer && !fetchingImages.current.has(imgObj.odooId)) {
           fetchingImages.current.add(imgObj.odooId);
-          
           const promise = reportApiService.fetchLineImage(imgObj.odooId).then(base64 => {
             if (base64) {
-              setValue(`${f.name}.image`, {
-                url: `data:image/jpeg;base64,${base64}`,
+              setValue(path, {
+                url: decodeOdooImage(base64),
                 isFromServer: true
               }, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
             } else {
-              setValue(`${f.name}.image`, null, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+              setValue(path, null, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
             }
           }).catch(err => {
             console.error(`Error processing fetched image for ${imgObj.odooId}:`, err);
-            setValue(`${f.name}.image`, null, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+            setValue(path, null, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
           }).finally(() => {
             fetchingImages.current.delete(imgObj.odooId);
           });
           fetchPromises.push(promise);
         }
+      };
+
+      if (Array.isArray(fieldData)) {
+        fieldData.forEach((item, index) => {
+          if (item && typeof item === 'object') {
+            if (item.deviceImage) fetchImage(item.deviceImage, `${f.name}[${index}].deviceImage`);
+            if (item.doc_image) fetchImage(item.doc_image, `${f.name}[${index}].doc_image`);
+            if (item.image) fetchImage(item.image, `${f.name}[${index}].image`);
+          }
+        });
+      } else if (fieldData && typeof fieldData === 'object' && fieldData.image) {
+        fetchImage(fieldData.image, `${f.name}.image`);
       }
     };
 

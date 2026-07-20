@@ -6,14 +6,16 @@ import { FormImageUpload } from './FormImageUpload';
 export function FormPowerQuestion({
   label,
   name,
-  value = { score: '', findings: '', image: '' },
+  value = { score: '', findings: '', image: '', phase: '' },
   error,
   onChange,
   required = false,
   evidence,
   findingsHint,
   readOnly = false,
-  disabled = false
+  disabled = false,
+  hideScore = false,
+  showPhase = false
 }) {
   const isInteractive = !readOnly && !disabled;
 
@@ -57,9 +59,10 @@ export function FormPowerQuestion({
         />
       </div>
 
-      <div className="space-y-1.5">
-        <span className="text-[11px] text-white/50 font-medium uppercase tracking-wider block mb-1">Score</span>
-        <div className="flex gap-2">
+      {!hideScore && !showPhase && (
+        <div className="space-y-1.5">
+          <span className="text-[11px] text-white/50 font-medium uppercase tracking-wider block mb-1">Score</span>
+          <div className="flex gap-2">
           {scores.map(s => {
             const isActive = value?.score === s.value;
             let activeClass = '';
@@ -90,6 +93,21 @@ export function FormPowerQuestion({
           })}
         </div>
       </div>
+      )}
+      
+      {showPhase && (
+        <div className="space-y-1.5">
+          <span className="text-[11px] text-white/50 font-medium uppercase tracking-wider block mb-1">Phase</span>
+          <input
+            type="text"
+            value={value?.phase || ''}
+            onChange={(e) => handleFieldChange('phase', e.target.value)}
+            placeholder="e.g. 3-phase or Single phase"
+            disabled={!isInteractive}
+            className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-[13px] transition-all focus:ring-1 focus:ring-[#4ecdc4] focus:border-[#4ecdc4] outline-none text-white placeholder-white/40 disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+        </div>
+      )}
 
       <div className="pt-2">
         <FormImageUpload

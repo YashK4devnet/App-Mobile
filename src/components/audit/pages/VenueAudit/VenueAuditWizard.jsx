@@ -286,7 +286,7 @@ export default function VenueAuditWizard() {
               control={control}
               errors={errors}
               watch={watch}
-              globalDisabled={isReadOnly || ['ReportInfo', 'VenueInfo', 'PersonnelInfo'].includes(currentSubsection)}
+              globalDisabled={isReadOnly || ['ReportInfo', 'VenueInfo', 'PersonnelInfo', 'A.1'].includes(currentSubsection)}
             />
           </div>
         </div>

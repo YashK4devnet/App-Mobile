@@ -25,7 +25,7 @@ import {
   NETWORK_OBSERVATIONS_SCHEMA,
   NETWORK_SIGNATURES_SCHEMA
 } from './schemas/networkAuditSchemas';
-import { generateNetworkQuestionsSchema } from './schemas/schemaGenerator';
+import { generateNetworkQuestionsSchema, generateNetworkSecuritySchema } from './schemas/schemaGenerator';
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -116,7 +116,7 @@ export default function NetworkAuditWizard() {
         'SystemConfiguration': generateNetworkQuestionsSchema(odooData.systemConfLines || odooData.system_conf_lines, 'system_conf_lines'),
         'NetworkConfiguration': generateNetworkQuestionsSchema(odooData.networkConfLines || odooData.network_conf_lines, 'network_conf_lines'),
         'BackupDevices': generateNetworkQuestionsSchema(odooData.backupDeviceLines || odooData.backup_device_lines, 'backup_device_lines'),
-        'NetworkSecurityCompliance': generateNetworkQuestionsSchema(odooData.securityComplianceLines || odooData.security_compliance_lines, 'security_compliance_lines'),
+        'NetworkSecurityCompliance': generateNetworkSecuritySchema(odooData.securityComplianceLines || odooData.security_compliance_lines, 'security_compliance_lines'),
         'PhotoEvidence': NETWORK_PHOTO_EVIDENCE_SCHEMA,
         'Observations': NETWORK_OBSERVATIONS_SCHEMA
       };
@@ -209,7 +209,7 @@ export default function NetworkAuditWizard() {
           { id: 'NetworkConfiguration', title: '9. Network Configuration', itemsCount: getItemsCount('NetworkConfiguration'), status: statusNetworkConfiguration, icon: DocumentIcon },
           { id: 'BackupDevices', title: '10. Backup Devices', itemsCount: getItemsCount('BackupDevices'), status: statusBackupDevices, icon: DocumentIcon },
           { id: 'NetworkSecurityCompliance', title: '11. Network Security Compliance', itemsCount: getItemsCount('NetworkSecurityCompliance'), status: statusNetworkSecurityCompliance, icon: DocumentIcon },
-          { id: 'PhotoEvidence', title: '12. Photo Evidence of Devices', itemsCount: getItemsCount('PhotoEvidence'), status: statusPhotoEvidence, icon: DocumentIcon },
+          { id: 'PhotoEvidence', title: '12. Image of Equipments', itemsCount: getItemsCount('PhotoEvidence'), status: statusPhotoEvidence, icon: DocumentIcon },
           { id: 'Observations', title: '13. Observations & Signatures', itemsCount: getItemsCount('Observations'), status: statusObservations, icon: DocumentIcon }
         ]
       }
@@ -261,7 +261,7 @@ export default function NetworkAuditWizard() {
       { id: 'NetworkConfiguration', label: '9. Network Configuration', status: statusNetworkConfiguration },
       { id: 'BackupDevices', label: '10. Backup Devices', status: statusBackupDevices },
       { id: 'NetworkSecurityCompliance', label: '11. Network Security Compliance', status: statusNetworkSecurityCompliance },
-      { id: 'PhotoEvidence', label: '12. Photo Evidence of Devices', status: statusPhotoEvidence },
+      { id: 'PhotoEvidence', label: '12. Image of Equipments', status: statusPhotoEvidence },
       { id: 'Observations', label: '13. Observations & Signatures', status: statusObservations }
     ];
 
@@ -319,7 +319,7 @@ export default function NetworkAuditWizard() {
               errors={errors}
               useAccordions={true}
               watch={watch}
-              globalDisabled={isReadOnly || ['ReportInfo', 'PersonnelInfo'].includes(currentSubsection)}
+              globalDisabled={isReadOnly || ['ReportInfo'].includes(currentSubsection)}
             />
           </div>
         </div>
