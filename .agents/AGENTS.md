@@ -15,7 +15,7 @@ This document provides persistent context for the App-Mobile React application, 
 - **Signatures Mapping:** Signatures are routed directly to the `signatures` JSON object rather than the standard fields.
 - **Observations:** The GET API returns `observationLines` as `{ id, name }`. This must be specifically mapped to `observation` in the `obs_list` numbered-text-list schema.
 - **Strict Integer Casting:** Odoo's PostgreSQL backend crashes with 400 Bad Request if you send a string to an integer field. **Always** cast HTML `number` and `node-counts` inputs with `Number(val)` before sending them in a PATCH payload (e.g. inside `venueAuditService.js`).
-- **Strict Snake Case:** Always make sure that schemas perfectly match Odoo's `snake_case` API payloads for mapping (e.g. `total_systems_available` instead of `totalSystemsAvailable`).
+- **Venue System Details Mapping:** The Venue Audit `systemDetails` PATCH payload expects strictly **camelCase** keys grouped into nested objects (e.g., `nodeDetails`, `processorDetails`, `osDetails`, `ramDetails`, etc.), *not* a flat snake_case list.
 - **Image Caching Bypass:** We do not cache individual image items in `storageService` anymore. `reportApiService.fetchLineImage` unconditionally hits the network to guarantee the user sees the latest backend edits.
 
 ## Recent Changes (July 2026)

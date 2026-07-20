@@ -35,9 +35,23 @@ export const generateInitialState = (schemas, odooData = null) => {
     if (odooData.conclusion) Object.assign(flatOdooData, odooData.conclusion);
     
     if (odooData.systemDetails) {
-      Object.assign(flatOdooData, odooData.systemDetails);
-      if (odooData.systemDetails.nodeDetails) Object.assign(flatOdooData, odooData.systemDetails.nodeDetails);
-      if (odooData.systemDetails.softwareAndSecurity) Object.assign(flatOdooData, odooData.systemDetails.softwareAndSecurity);
+      // The GET API returns flat snake_case for system details, but our schema/patch uses camelCase.
+      const snakeToCamel = (s) => s.replace(/_([a-z0-9])/gi, (match, p1) => p1.toUpperCase());
+      Object.keys(odooData.systemDetails).forEach(k => {
+        flatOdooData[snakeToCamel(k)] = odooData.systemDetails[k];
+      });
+      
+      // Keep support for nested structure if GET API ever returns nested objects
+      if (odooData.systemDetails.nodeDetails) {
+        Object.keys(odooData.systemDetails.nodeDetails).forEach(k => {
+          flatOdooData[snakeToCamel(k)] = odooData.systemDetails.nodeDetails[k];
+        });
+      }
+      if (odooData.systemDetails.softwareAndSecurity) {
+        Object.keys(odooData.systemDetails.softwareAndSecurity).forEach(k => {
+          flatOdooData[snakeToCamel(k)] = odooData.systemDetails.softwareAndSecurity[k];
+        });
+      }
     }
   }
 
@@ -50,8 +64,8 @@ export const generateInitialState = (schemas, odooData = null) => {
 
     if (f.type === 'node-counts') {
       state[f.name] = {
-        Available: flatOdooData[`${f.name}_available`] !== undefined ? flatOdooData[`${f.name}_available`] : '',
-        Working: flatOdooData[`${f.name}_working`] !== undefined ? flatOdooData[`${f.name}_working`] : ''
+        Available: flatOdooData[`${f.name}Available`] !== undefined ? flatOdooData[`${f.name}Available`] : '',
+        Working: flatOdooData[`${f.name}Working`] !== undefined ? flatOdooData[`${f.name}Working`] : ''
       };
       return;
     }
@@ -309,11 +323,11 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
     if (f.type === 'node-counts') {
       if (currentData[f.name]?.Available !== undefined) {
         const aVal = currentData[f.name].Available;
-        flatData[`${f.name}_available`] = aVal !== '' && aVal !== null ? Number(aVal) : 0;
+        flatData[`${f.name}Available`] = aVal !== '' && aVal !== null ? Number(aVal) : 0;
       }
       if (currentData[f.name]?.Working !== undefined) {
         const wVal = currentData[f.name].Working;
-        flatData[`${f.name}_working`] = wVal !== '' && wVal !== null ? Number(wVal) : 0;
+        flatData[`${f.name}Working`] = wVal !== '' && wVal !== null ? Number(wVal) : 0;
       }
       return;
     }
@@ -392,28 +406,45 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
   } else if (payloadKey === 'systemDetails') {
     const sysObj = {};
     const nodeObj = {};
+    const procObj = {};
+    const osObj = {};
+    const ramObj = {};
+    const hddObj = {};
+    const monitorObj = {};
     const swObj = {};
     
     // Software and Security keys
-    const swKeys = ['os_license_available', 'system_format_allowed', 'antivirus_available', 'antivirus_name', 'disable_antivirus_permitted', 'remote_software_found'];
+    const swKeys = ['osLicenseAvailable', 'systemFormatAllowed', 'antivirusAvailable', 'antivirusName', 'disableAntivirusPermitted', 'remoteSoftwareFound'];
     
-    // Node details keys
-    const nodePrefixes = ['test_nodes', 'buffer_nodes', 'registration_desk_nodes', 'aadhaar_desk_nodes', 'video_recording_machines'];
-    const actualNodeKeys = Object.keys(flatData).filter(k => 
-      nodePrefixes.some(prefix => k.startsWith(prefix) && (k.endsWith('_available') || k.endsWith('_working')))
-    );
+    // Node details prefixes
+    const nodePrefixes = ['testNodes', 'bufferNodes', 'registrationDeskNodes', 'aadhaarDeskNodes', 'videoRecordingMachines'];
 
     Object.keys(flatData).forEach(k => {
       if (swKeys.includes(k)) {
         swObj[k] = flatData[k];
-      } else if (actualNodeKeys.includes(k)) {
+      } else if (nodePrefixes.some(prefix => k.startsWith(prefix))) {
         nodeObj[k] = flatData[k];
+      } else if (k.startsWith('i3') || k.startsWith('i5') || k.startsWith('i7')) {
+        procObj[k] = flatData[k];
+      } else if (k.startsWith('win') || k.startsWith('linux') || k.startsWith('otherOs') || k === 'ieVersion') {
+        osObj[k] = flatData[k];
+      } else if (k.startsWith('ram')) {
+        ramObj[k] = flatData[k];
+      } else if (k.startsWith('hdd')) {
+        hddObj[k] = flatData[k];
+      } else if (k.startsWith('monitor')) {
+        monitorObj[k] = flatData[k];
       } else {
         sysObj[k] = flatData[k];
       }
     });
 
     if (Object.keys(nodeObj).length > 0) sysObj.nodeDetails = nodeObj;
+    if (Object.keys(procObj).length > 0) sysObj.processorDetails = procObj;
+    if (Object.keys(osObj).length > 0) sysObj.osDetails = osObj;
+    if (Object.keys(ramObj).length > 0) sysObj.ramDetails = ramObj;
+    if (Object.keys(hddObj).length > 0) sysObj.hddDetails = hddObj;
+    if (Object.keys(monitorObj).length > 0) sysObj.monitorDetails = monitorObj;
     if (Object.keys(swObj).length > 0) sysObj.softwareAndSecurity = swObj;
     
     finalPayload.systemDetails = sysObj;
