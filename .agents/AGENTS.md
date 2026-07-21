@@ -17,6 +17,8 @@ This document provides persistent context for the App-Mobile React application, 
 - **Strict Integer Casting:** Odoo's PostgreSQL backend crashes with 400 Bad Request if you send a string to an integer field. **Always** cast HTML `number` and `node-counts` inputs with `Number(val)` before sending them in a PATCH payload (e.g. inside `venueAuditService.js`).
 - **Venue System Details Mapping:** The Venue Audit `systemDetails` PATCH payload expects strictly **camelCase** keys grouped into nested objects (e.g., `nodeDetails`, `processorDetails`, `osDetails`, `ramDetails`, etc.), *not* a flat snake_case list.
 - **Image Caching Bypass:** We do not cache individual image items in `storageService` anymore. `reportApiService.fetchLineImage` unconditionally hits the network to guarantee the user sees the latest backend edits.
+- **Unified Authentication:** The audit feature does not manage its own auth state or context. `httpClient.js` dynamically reads the main application's `serverApiKey` and `loginData` directly from `localStorage` on every request.
+- **Live Server Proxy (Web Dev):** When testing on the web (Vite), requests to `/api` are automatically proxied to `https://erp.eduquity.com` to bypass CORS.
 
 ## Recent Changes (July 2026)
 - **Image Mapping:** Refactored `networkAuditService.js` and `powerAuditService.js` to correctly map dynamic arrays (`devicePhotos`, `equipmentDocuments`).
@@ -27,3 +29,4 @@ This document provides persistent context for the App-Mobile React application, 
 - **Image Caching:** Removed IndexedDB caching from `reportApiService.fetchLineImage` so lazy-loaded images unconditionally hit the network, ensuring no stale images are ever shown.
 - **Venue Schema Refactor:** Converted `SYSTEM_DETAILS_SCHEMA` to strictly use `snake_case` keys matching the backend, fixing broken mappings in Venue Audit.
 - **Venue Service Types:** Enforced `Number()` casting on all `node-counts` and `number` fields in `venueAuditService.js` to prevent string/int mismatch crashes in Odoo.
+- **Authentication Unification:** Removed all global mock auth (`mockFetch.js`) and audit "silent login" bypasses. The entire application now strictly uses real Odoo credentials against the live server (`erp.eduquity.com`).
