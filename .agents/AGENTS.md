@@ -30,3 +30,5 @@ This document provides persistent context for the App-Mobile React application, 
 - **Venue Schema Refactor:** Converted `SYSTEM_DETAILS_SCHEMA` to strictly use `snake_case` keys matching the backend, fixing broken mappings in Venue Audit.
 - **Venue Service Types:** Enforced `Number()` casting on all `node-counts` and `number` fields in `venueAuditService.js` to prevent string/int mismatch crashes in Odoo.
 - **Authentication Unification:** Removed all global mock auth (`mockFetch.js`) and audit "silent login" bypasses. The entire application now strictly uses real Odoo credentials against the live server (`erp.eduquity.com`).
+- **Dynamic User Context:** Removed hardcoded user credentials (like "Yash" and `userId = 2`). `AuditDashboardPage` and `AuditProvider` now dynamically inherit the authenticated user object directly from `useAppContext()`.
+- **Session Reload Stability:** Modified `AppContext.jsx` to treat the `"already login"` Odoo response during an app background refresh as a successful session validation, preventing the app from erroneously deleting local storage and locking the user out.

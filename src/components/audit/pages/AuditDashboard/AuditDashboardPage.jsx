@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAuditDashboard } from '../../hooks/useAuditDashboard';
+import { useAppContext } from '../../../../store/AppContext';
 import DashboardHeader from './components/DashboardHeader';
 import QuickStats from './components/QuickStats';
 import InProgressReportsList from './components/InProgressReportsList';
@@ -7,6 +8,7 @@ import CompletedReportsList from './components/CompletedReportsList';
 import PullToRefresh from '../../components/PullToRefresh';
 
 export default function AuditDashboardPage() {
+  const { user } = useAppContext();
   const {
     loading,
     error,
@@ -93,7 +95,7 @@ export default function AuditDashboardPage() {
             </div>
           </div>
         )}
-        <DashboardHeader totalAssigned={totalAssigned} />
+        <DashboardHeader totalAssigned={totalAssigned} userName={user?.name} />
         
         <QuickStats 
           totalAssigned={totalAssigned}

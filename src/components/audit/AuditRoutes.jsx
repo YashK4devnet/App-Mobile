@@ -12,6 +12,7 @@ import AuditDashboardPage from './pages/AuditDashboard/AuditDashboardPage';
 import AuditReportsPage from './pages/AuditReports/AuditReportsPage';
 import AuditSettingsPage from './pages/AuditSettings/AuditSettingsPage';
 import { AuditProvider } from './stores/AuditContext';
+import { useAppContext } from '../../store/AppContext';
 
 const getHeaderTitle = (pathname) => {
   if (pathname.startsWith('/audit/reports/')) {
@@ -116,6 +117,7 @@ function LoadingFallback() {
 }
 
 export default function AuditRoutes() {
+  const { user } = useAppContext();
   useNativeBackButton();
   const location = useLocation();
   const navigate = useNavigate();
@@ -141,7 +143,7 @@ export default function AuditRoutes() {
 
   return (
     <ModuleContext.Provider value={{ basePath }}>
-      <AuditProvider>
+      <AuditProvider userId={user?.Id || user?.userId}>
         <MobileLayout
           header={
             !isAuditActive && (

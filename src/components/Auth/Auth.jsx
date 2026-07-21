@@ -173,6 +173,7 @@ const Auth = () => {
 
       // If JSON and auth successful
       if (responseData && responseData.Status === "auth successful") {
+        console.log("LOGIN API RESPONSE:", responseData); // <-- LOGGED HERE FOR DEBUGGING
         const userData = {
           name: responseData.User,
           email: data.email.trim(),

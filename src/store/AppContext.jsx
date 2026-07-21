@@ -296,26 +296,31 @@ export const AppProvider = ({ children }) => {
 
             const responseText = await response.text();
 
+            const isAlreadyLogin = /already login/i.test(responseText);
+
             if (
               response.status === 401 ||
               response.status === 403 ||
-              /wrong login credentials/i.test(responseText) ||
-              /already login/i.test(responseText)
+              /wrong login credentials/i.test(responseText)
             ) {
               alert("Session expired or invalid credentials. Please log in again.");
               localStorage.removeItem("loginData");
               isLoggedOut = true;
-            } else if (response.ok) {
-              try {
-                const responseData = JSON.parse(responseText);
-                if (responseData["api-key"]) {
-                  parsedData["api-Key"] = responseData["api-key"];
-                  parsedData.employeeId = responseData.employeeId;
-                  parsedData.userId = responseData.userId;
-                  localStorage.setItem("loginData", JSON.stringify(parsedData));
+            } else if (response.ok || isAlreadyLogin) {
+              if (isAlreadyLogin) {
+                console.log("Server reports session is active. Maintaining current login state.");
+              } else {
+                try {
+                  const responseData = JSON.parse(responseText);
+                  if (responseData["api-key"]) {
+                    parsedData["api-Key"] = responseData["api-key"];
+                    parsedData.employeeId = responseData.employeeId;
+                    parsedData.userId = responseData.userId;
+                    localStorage.setItem("loginData", JSON.stringify(parsedData));
+                  }
+                } catch (e) {
+                  console.warn("Could not parse re-auth JSON response.", e);
                 }
-              } catch (e) {
-                console.warn("Could not parse re-auth JSON response.", e);
               }
             }
           } catch (networkError) {
