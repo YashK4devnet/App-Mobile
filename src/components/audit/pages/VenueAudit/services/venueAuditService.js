@@ -461,21 +461,35 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
 
   // Handle bifurcation updates separately
   if (flatData.nodeBifurcation) {
-    const lines = flatData.nodeBifurcation.filter(l => l.labId && l.floorId && l.count !== '');
-    if (lines.length > 0 || flatData.nodeBifurcation.length === 0) {
+    const validLines = flatData.nodeBifurcation
+      .filter(l => l.labId && l.floorId && l.count !== '')
+      .map(l => ({
+        ...l,
+        labId: Number(l.labId),
+        floorId: Number(l.floorId),
+        count: Number(l.count)
+      }));
+    if (validLines.length > 0 || flatData.nodeBifurcation.length === 0) {
       await reportApiService.patchAuditBifurcation(reportId, {
         type: 'lab',
-        lines: flatData.nodeBifurcation
+        lines: validLines
       });
     }
   }
 
   if (flatData.cctvBifurcation) {
-    const lines = flatData.cctvBifurcation.filter(l => l.labId && l.floorId && l.count !== '');
-    if (lines.length > 0 || flatData.cctvBifurcation.length === 0) {
+    const validLines = flatData.cctvBifurcation
+      .filter(l => l.labId && l.floorId && l.count !== '')
+      .map(l => ({
+        ...l,
+        labId: Number(l.labId),
+        floorId: Number(l.floorId),
+        count: Number(l.count)
+      }));
+    if (validLines.length > 0 || flatData.cctvBifurcation.length === 0) {
       await reportApiService.patchAuditBifurcation(reportId, {
         type: 'cctv',
-        lines: flatData.cctvBifurcation
+        lines: validLines
       });
     }
   }

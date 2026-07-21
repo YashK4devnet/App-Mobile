@@ -240,12 +240,12 @@ export const CCTV_DETAILS_SCHEMA = [
   { name: 'cctvServerRoomCovered', label: 'Server Room Covered Under CCTV Camera?', type: 'yes-no' },
   { name: 'cctvRegistrationAreaAvailable', label: 'CCTV Cameras Available In Registration Area?', type: 'yes-no' },
   { name: 'cctvPassageAreaCovered', label: 'CCTV Covering The Passage Area?', type: 'yes-no' },
-  
+
   { type: 'heading', label: 'Camera Details' },
   { name: 'totalCctvCameras', label: 'Total Number of CCTV Cameras', type: 'number' },
   { name: 'cctvBifurcation', label: 'CCTV Cameras Bifurcation', type: 'bifurcation' },
   { name: 'cctvConnectedToMonitors', label: 'All CCTV Cameras Connected To Monitors?', type: 'yes-no' },
-  
+
   {
     type: 'row',
     fields: [
@@ -272,10 +272,10 @@ export const CCTV_DETAILS_SCHEMA = [
   { name: 'cctvLiveFeedRecorded', label: 'CCTV Live Feed Being Recorded?', type: 'yes-no' },
   { name: 'venueReadyLiveCctvFeeding', label: 'Venue Ready To Give Live CCTV Feeding?', type: 'yes-no' },
   { name: 'dvrNvrRecordingCapacity', label: 'DVR/NVR Recording Capacity (Days)', type: 'number' },
-  { 
-    name: 'dvrOwnership', 
-    label: 'DVR Belongs To Venue Or Third Party?', 
-    type: 'select', 
+  {
+    name: 'dvrOwnership',
+    label: 'DVR Belongs To Venue Or Third Party?',
+    type: 'select',
     options: [
       { label: 'Venue Owned', value: 'self_owned' },
       { label: 'Hired / Borrowed', value: 'hired_borrowed' }
@@ -349,7 +349,7 @@ export const CONCLUSION_SCHEMA = [
   { name: 'auditorName', label: 'Auditor Name', type: 'text', placeholder: 'e.g. R CHARAN KUMAR' },
   { type: 'heading', label: 'Final Assessment' },
   { name: 'overallVenueRating', label: 'Overall Venue Rating', type: 'select', options: [{ label: '0-3', value: '0_3' }, { label: '4-7', value: '4_7' }, { label: '8-10', value: '8_10' }] },
-  { name: 'recommendedExamConduct', label: 'Is Venue Recommended for Exam?', type: 'select', options: [{ label: 'Recommended', value: 'recommended' }, { label: 'Not Recommended', value: 'not recommended' }] },
+  { name: 'recommendedExamConduct', label: 'Is Venue Recommended for Exam?', type: 'select', options: [{ label: 'Recommended', value: 'recommended' }, { label: 'Not Recommended', value: 'not_recommended' }] },
   { name: 'otherPersonnelDetails', label: 'Other Personnel Details', type: 'textarea', placeholder: 'Enter other personnel details...' },
   { type: 'heading', label: 'Signatures & Seals' },
   { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature', required: true },
