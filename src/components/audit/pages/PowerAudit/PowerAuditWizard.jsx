@@ -139,7 +139,7 @@ export default function PowerAuditWizard() {
        { type: 'heading', label: 'Battery System', className: 'text-[#F98A15] border-[#F98A15]/30 mt-6' },
        ...generatePowerQuestionsSchema(odooData.upsBatteriesSystemLines || odooData.ups_batteries_system_lines, 'ups_batteries_system_lines')
     ],
-    'Section7': generatePowerQuestionsSchema(odooData.electricalEarthingLines || odooData.electrical_earthing_lines, 'eq_func_lines'),
+    'Section7': generatePowerQuestionsSchema(odooData.eqFuncLines || odooData.eq_func_lines, 'eq_func_lines'),
     'Section8': generatePowerQuestionsSchema(odooData.maintenanceRecordLines || odooData.maintenance_record_lines, 'maintenance_record_lines'),
     'Section9': generatePowerQuestionsSchema(odooData.toolsSparesLines || odooData.tools_spares_lines, 'tools_spares_lines'),
     'Section10': POWER_SECTION_10_SCHEMA,
