@@ -53,7 +53,9 @@ export default function AuditReportsPage({ hideHeader = false }) {
     return venues.filter(venue => {
       if (debouncedSearchQuery) {
         const query = debouncedSearchQuery.toLowerCase();
-        return venue.name.toLowerCase().includes(query) || venue.location.toLowerCase().includes(query) || venue.id.toLowerCase().includes(query);
+        return (venue.name || '').toLowerCase().includes(query) || 
+               (venue.location || '').toLowerCase().includes(query) || 
+               String(venue.id).toLowerCase().includes(query);
       }
       return true;
     });
@@ -68,8 +70,8 @@ export default function AuditReportsPage({ hideHeader = false }) {
       // Filter by Search Query (matching venueName or ID)
       if (debouncedSearchQuery) {
         const query = debouncedSearchQuery.toLowerCase();
-        const matchesName = report.venueName.toLowerCase().includes(query);
-        const matchesId = report.id.toLowerCase().includes(query);
+        const matchesName = (report.venueName || '').toLowerCase().includes(query);
+        const matchesId = String(report.id).toLowerCase().includes(query);
         if (!matchesName && !matchesId) return false;
       }
 
