@@ -1,13 +1,11 @@
 import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { auditHttpClient, setAuditApiKey } from '../services/httpClient';
+import { auditHttpClient } from '../services/httpClient';
 
 export const AuditContext = createContext();
 
 export const AuditProvider = ({ children, userId, apiKey }) => {
-  // Set API key synchronously so it's available for the first fetch request
-  if (apiKey) {
-    setAuditApiKey(apiKey);
-  }
+  // The API key is now dynamically fetched from localStorage ('serverApiKey') 
+  // directly inside httpClient.js, so we no longer need to set it here.
 
   // Synchronously load initial cache to avoid layout flashes
   const [reports, setReports] = useState(() => {

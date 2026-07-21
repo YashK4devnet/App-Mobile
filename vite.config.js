@@ -9,8 +9,10 @@ import path from "path";
 dotenv.config({ path: path.resolve(__dirname, "src/components/audit/.env") });
 
 const ipAddress = process.env.AUDIT_API_IP || "";
-const cleanIp = ipAddress.replace(/^(https?:\/\/)?/, "").replace(/\/$/, "");
-const proxyTarget = cleanIp ? `http://${cleanIp}` : "http://localhost:8099";
+const cleanIp = ipAddress.replace(/\/$/, "");
+const proxyTarget = cleanIp 
+  ? (cleanIp.startsWith("http") ? cleanIp : `http://${cleanIp}`) 
+  : "http://localhost:8099";
 
 export default defineConfig({
   define: {
