@@ -67,9 +67,12 @@ export default function AuditSettingsPage() {
       setIsClearing(true);
       try {
         await storageService.clearAllData();
-        // Clear API keys and other related localStorage keys
         if (typeof localStorage !== 'undefined') {
-          localStorage.removeItem('audit_api_key');
+          Object.keys(localStorage).forEach((key) => {
+            if (key.startsWith('audit_reports_cache_')) {
+              localStorage.removeItem(key);
+            }
+          });
         }
         await refreshSyncCount();
         toast.success('Successfully cleared all local cached databases.', {

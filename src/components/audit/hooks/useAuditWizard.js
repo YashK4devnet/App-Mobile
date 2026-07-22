@@ -127,15 +127,36 @@ export function useAuditWizard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storageKey, reset]);
 
+  const saveTimeoutRef = useRef(null);
+
   // Subscribe to changes for auto-save, using watch
   useEffect(() => {
     if (!isInitializing) {
-      const subscription = watch((value) => {
+      const subscription = watch((value, { name }) => {
+        // Local IndexedDB Draft (Immediate)
         storageService.saveDraft(storageKey, value).catch(err => {
           console.error("Failed to save draft to IndexedDB", err);
         });
+
+        // Layer 3: Debounced Inactivity Sync (5s timer)
+        if (saveTimeoutRef.current) {
+          clearTimeout(saveTimeoutRef.current);
+        }
+
+        if (name) {
+          saveTimeoutRef.current = setTimeout(() => {
+            if (handleSaveCurrentRef.current) {
+              console.log("Debounced auto-save triggered for section change.");
+              handleSaveCurrentRef.current(true); // true = silent
+            }
+          }, 5000);
+        }
       });
-      return () => subscription.unsubscribe();
+      
+      return () => {
+        subscription.unsubscribe();
+        if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      };
     }
   }, [watch, storageKey, isInitializing]);
 
@@ -212,7 +233,10 @@ export function useAuditWizard({
     setCurrentSubsection(sectionId);
   };
 
-  const handleSaveCurrent = () => {
+  // Keep track of the latest save function for the debounce timer
+  const handleSaveCurrentRef = useRef(null);
+
+  const handleSaveCurrent = (silent = false) => {
     const currentData = getValues();
     if (reportId && saveSectionData && !isReadOnly) {
       const payloadKey = sectionToPayloadKey ? sectionToPayloadKey[currentSubsection] : null;
@@ -220,11 +244,11 @@ export function useAuditWizard({
       if (sectionSchema) {
         saveSectionData(reportId, sectionSchema, currentData, payloadKey)
           .then(() => {
-            toast.success('Section saved', { duration: 2000, position: 'bottom-center' });
+            if (!silent) toast.success('Section saved', { duration: 2000, position: 'bottom-center' });
           })
           .catch(err => {
             if (err.isOffline) {
-              toast('Offline mode: Section saved locally. Will sync automatically.', {
+              if (!silent) toast('Offline mode: Section saved locally. Will sync automatically.', {
                 icon: '📶',
                 style: {
                   borderRadius: '10px',
@@ -234,7 +258,7 @@ export function useAuditWizard({
               });
             } else {
               console.error("Background sync failed on section save:", err);
-              toast.error('Failed to sync section to server. Please try again.', {
+              if (!silent) toast.error('Failed to sync section to server. Please try again.', {
                 style: {
                   borderRadius: '10px',
                   background: '#ef4444',
@@ -245,6 +269,17 @@ export function useAuditWizard({
           });
       }
     }
+  };
+
+  useEffect(() => {
+    handleSaveCurrentRef.current = handleSaveCurrent;
+  }, [handleSaveCurrent]);
+
+  const handleExitFormWithSave = async () => {
+    if (!isReadOnly) {
+      handleSaveCurrent(false);
+    }
+    if (onExitForm) onExitForm();
   };
 
   const handleNextClick = () => {
@@ -295,11 +330,12 @@ export function useAuditWizard({
   const handlePrevClick = () => {
     const currentIndex = steps.findIndex(s => s.id === currentSubsection);
     if (currentIndex > 0) {
+      handleSaveCurrent();
       setCurrentSubsection(steps[currentIndex - 1].id);
       const container = document.getElementById('audit-form-container');
       if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      if (onExitForm) onExitForm();
+      handleExitFormWithSave();
     }
   };
 
@@ -314,6 +350,7 @@ export function useAuditWizard({
     calculateGlobalProgress,
     handleSectionSelect,
     handleSaveCurrent,
-    handleNextClick, handlePrevClick
+    handleNextClick, handlePrevClick,
+    handleExitFormWithSave
   };
 }

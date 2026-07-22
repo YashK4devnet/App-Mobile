@@ -1,7 +1,7 @@
 import { storageService } from './storageService';
 import { auditHttpClient } from './httpClient';
 
-const DB_NAME = import.meta.env.VITE_AUDIT_API_DB || 'audit_rest_api';
+const DB_NAME = import.meta.env.VITE_AUDIT_API_DB || 'erp-eduquity-com';
 
 export const reportApiService = {
   /**

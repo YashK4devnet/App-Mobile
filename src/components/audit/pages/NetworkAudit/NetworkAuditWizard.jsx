@@ -133,7 +133,8 @@ export default function NetworkAuditWizard() {
     getSectionStatus,
     handleSectionSelect,
     handleSaveCurrent,
-    handleNextClick, handlePrevClick
+    handleNextClick, handlePrevClick,
+    handleExitFormWithSave
   } = useAuditWizard({
     schemas: dynamicSchemas,
     steps: STEPS,
@@ -273,7 +274,7 @@ export default function NetworkAuditWizard() {
           title="Network Audit Details" 
           showBack={true} 
           onBackClick={() => {
-            setViewMode('index');
+            handleExitFormWithSave();
             setIsAccordionOpen(false);
           }} 
           headerRight={stepPill}
@@ -303,7 +304,7 @@ export default function NetworkAuditWizard() {
           isOpen={isAccordionOpen}
           onToggle={() => setIsAccordionOpen(!isAccordionOpen)}
           onSelect={(subId) => {
-            setCurrentSubsection(subId);
+            handleSectionSelect(subId);
             setIsAccordionOpen(false);
             const container = document.getElementById('audit-form-container');
             if (container) container.scrollTo({ top: 0 });
@@ -350,12 +351,20 @@ export default function NetworkAuditWizard() {
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={handleNextClick}
-                  className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
-                >
-                  Save & Next
-                </button>
+                <>
+                  <button
+                    onClick={() => handleSaveCurrent(false)}
+                    className="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={handleNextClick}
+                    className="flex-1 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                  >
+                    {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Exit' : 'Save & Next'}
+                  </button>
+                </>
               )
             ) : (
               <button

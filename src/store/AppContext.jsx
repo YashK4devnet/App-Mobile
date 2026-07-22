@@ -308,7 +308,15 @@ export const AppProvider = ({ children }) => {
               isLoggedOut = true;
             } else if (response.ok || isAlreadyLogin) {
               if (isAlreadyLogin) {
-                console.log("Server reports session is active. Maintaining current login state.");
+                const storedApiKey = localStorage.getItem("serverApiKey");
+                if (!storedApiKey) {
+                  console.warn("Server reports session active, but local serverApiKey is missing. Wiping local session.");
+                  localStorage.removeItem("loginData");
+                  localStorage.removeItem("serverApiKey");
+                  isLoggedOut = true;
+                } else {
+                  console.log("Server reports session is active. Maintaining current login state.");
+                }
               } else {
                 try {
                   const responseData = JSON.parse(responseText);
@@ -317,6 +325,7 @@ export const AppProvider = ({ children }) => {
                     parsedData.employeeId = responseData.employeeId;
                     parsedData.userId = responseData.userId;
                     localStorage.setItem("loginData", JSON.stringify(parsedData));
+                    localStorage.setItem("serverApiKey", responseData["api-key"]);
                   }
                 } catch (e) {
                   console.warn("Could not parse re-auth JSON response.", e);

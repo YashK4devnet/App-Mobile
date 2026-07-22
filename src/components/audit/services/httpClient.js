@@ -32,6 +32,8 @@ const getBaseUrl = () => {
     }
   }
 
+  // Native production fallback
+  return 'https://erp.eduquity.com';
 };
 
 

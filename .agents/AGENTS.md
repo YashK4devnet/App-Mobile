@@ -32,3 +32,5 @@ This document provides persistent context for the App-Mobile React application, 
 - **Authentication Unification:** Removed all global mock auth (`mockFetch.js`) and audit "silent login" bypasses. The entire application now strictly uses real Odoo credentials against the live server (`erp.eduquity.com`).
 - **Dynamic User Context:** Removed hardcoded user credentials (like "Yash" and `userId = 2`). `AuditDashboardPage` and `AuditProvider` now dynamically inherit the authenticated user object directly from `useAppContext()`.
 - **Session Reload Stability:** Modified `AppContext.jsx` to treat the `"already login"` Odoo response during an app background refresh as a successful session validation, preventing the app from erroneously deleting local storage and locking the user out.
+- **AuditContext Syntax & Fallback Fix:** Fixed missing `try` block error in `AuditContext.jsx` (`fetchAuditData`), and ensured dynamic fallback to `localStorage` (`loginData`) for `effectiveUserId` when `userId` prop is omitted.
+
