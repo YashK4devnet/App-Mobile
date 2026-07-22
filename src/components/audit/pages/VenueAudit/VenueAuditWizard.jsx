@@ -104,9 +104,8 @@ export default function VenueAuditWizard() {
   const {
     currentSubsection, setCurrentSubsection,
     control, getValues, watch, setValue,
-    errors,
+    errors: formErrors,
     isInitializing,
-    isReadOnly,
     getSectionStatus,
     handleSectionSelect,
     handleSaveCurrent,
@@ -115,8 +114,7 @@ export default function VenueAuditWizard() {
     handleNextClick,
     handlePrevClick,
     isReadOnly,
-    submittedSections,
-    reportId
+    submittedSections
   } = useAuditWizard({
     schemas: SUBSECTION_SCHEMAS,
     steps: STEPS,
