@@ -21,22 +21,26 @@ const createPowerPhotoQuestion = (name, label, evidence = '', findingsHint = '')
   ]
 });
 
-const createCustomQuestions = (sectionName) => ({
-  name: `customQuestions_${sectionName}`,
-  label: 'Additional Custom Questions',
-  type: 'array',
-  subType: 'custom-questions',
-  itemLabel: 'Custom Question',
-  fields: [
-    { name: 'questionTitle', label: 'Question Title', type: 'text', required: true, placeholder: 'Enter question' },
-    { name: 'phase', label: 'Phase', type: 'select', options: [{label: 'Single Phase', value: 'single'}, {label: 'Three Phase', value: 'three'}] },
-    { name: 'records', label: 'Records', type: 'textarea', placeholder: 'Enter records here...' },
+const createCustomQuestions = (sectionName, additionalFields) => {
+  const defaultFields = [
+    { name: 'evidence', label: 'Evidence', type: 'textarea', placeholder: 'Enter evidence here...' },
     { name: 'findings', label: 'Findings', type: 'textarea', placeholder: 'Enter findings here...' },
-    { name: 'remarks', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
     { name: 'score', label: 'Score', type: 'select', options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] },
     { name: 'image', label: 'Evidence Image', type: 'image-upload' }
-  ]
-});
+  ];
+
+  return {
+    name: `customQuestions_${sectionName}`,
+    label: 'Additional Custom Questions',
+    type: 'array',
+    subType: 'custom-questions',
+    itemLabel: 'Custom Question',
+    fields: [
+      { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
+      ...(additionalFields || defaultFields)
+    ]
+  };
+};
 
 export const POWER_REPORT_INFO_SCHEMA = [
   { name: 'reportName', label: 'Report Name', type: 'text', required: true, placeholder: 'e.g. Q2 Assessment', readOnly: true },
@@ -94,7 +98,11 @@ export const POWER_SECTION_1_SCHEMA = [
   createPowerQuestion('q1_1_b', 'Check Transformer for any abnormality', 'Visual', 'Check for Blue colour of silica gel & any oil leakage'),
   createPowerQuestion('q1_1_c', 'Check Transformer for any abnormality', 'Visual', 'Check for any Tree or burning material near transformer'),
   createPowerQuestion('q1_1_d', 'Check Earth Pit', 'Visual', 'No break in earthing wire/ metal strip, wet earth pit'),
-  createCustomQuestions('sec1')
+  createCustomQuestions('sec1', [
+    { name: 'findings', label: 'Findings', type: 'textarea', placeholder: 'Enter findings here...' },
+    { name: 'phase', label: 'Phase', type: 'select', options: [{label: 'Single Phase', value: 'single'}, {label: 'Three Phase', value: 'three'}] },
+    { name: 'image', label: 'Evidence Image', type: 'image-upload' }
+  ])
 ];
 
 export const POWER_SECTION_2_SCHEMA = [
