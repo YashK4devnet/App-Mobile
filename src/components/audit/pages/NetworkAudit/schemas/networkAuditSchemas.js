@@ -206,7 +206,7 @@ export const NETWORK_PHOTO_EVIDENCE_SCHEMA = [
 
 export const NETWORK_OBSERVATIONS_SCHEMA = [
   {
-    name: 'audit_scope',
+    name: 'auditScope',
     label: 'Audit scope',
     type: 'text',
   },
