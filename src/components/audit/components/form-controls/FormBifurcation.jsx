@@ -17,13 +17,14 @@ export function FormBifurcation({
   const { reportId } = useParams();
   const { reports } = useContext(AuditContext) || { reports: [] };
 
-  // First try location state, then fallback to finding it in context
-  let odooData = location.state?.odooData || null;
-  if (!odooData && reportId && reports.length > 0) {
-    odooData = reports.find(r => r.id?.toString() === reportId);
-  }
+  const stateOdooData = location.state?.odooData || null;
+  const contextOdooData = reports?.find(r => r.id?.toString() === reportId) || null;
 
-  const labSummary = odooData?.labSummary || odooData?.lab_summary;
+  // The API sometimes returns labSummary only in the /audits/by-user/{id} endpoint (contextOdooData)
+  // and sometimes in the /audits/{id} endpoint (stateOdooData). Check both.
+  const labSummary = stateOdooData?.labSummary || stateOdooData?.lab_summary || 
+                     contextOdooData?.labSummary || contextOdooData?.lab_summary;
+
   const allLabs = labSummary?.allLabs || [];
   const allFloors = labSummary?.allFloors || [];
 
