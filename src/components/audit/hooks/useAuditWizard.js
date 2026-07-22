@@ -44,6 +44,7 @@ export function useAuditWizard({
   const location = useLocation();
   const params = useParams();
   const [currentSubsection, setCurrentSubsection] = useState(steps[0].id);
+  const [submittedSections, setSubmittedSections] = useState([]);
 
   const venueId = initialVenue?.id || 'new';
   const typeId = auditName === 'Venue Audit Report' ? 'venue-audit' : auditName === 'Venue Power Audit Report' ? 'power-audit' : 'network-audit';
@@ -224,46 +225,49 @@ export function useAuditWizard({
   const handleSaveCurrent = (silent = false) => {
     const currentData = getValues();
     const currentDataStr = JSON.stringify(currentData);
+    lastSavedDataRef.current = currentDataStr;
+    storageService.saveDraft(storageKey, currentData).catch(err => console.error(err));
+    if (!silent) toast.success('Saved locally', { duration: 1500, position: 'bottom-center' });
+  };
 
-    // Deep compare to prevent redundant API calls
-    if (lastSavedDataRef.current === currentDataStr) {
-      if (!silent) toast.success('Section up to date', { duration: 1500, position: 'bottom-center' });
-      return;
-    }
-
-    if (reportId && saveSectionData && !isReadOnly) {
-      const payloadKey = sectionToPayloadKey ? sectionToPayloadKey[currentSubsection] : null;
-      const sectionSchema = schemas[currentSubsection];
+  const handleSubmitSection = async (sectionIdToSubmit) => {
+    const targetSection = sectionIdToSubmit || currentSubsection;
+    if (isReadOnly || submittedSections.includes(targetSection)) return true;
+    
+    const currentData = getValues();
+    if (reportId && saveSectionData) {
+      const payloadKey = sectionToPayloadKey ? sectionToPayloadKey[targetSection] : null;
+      const sectionSchema = schemas[targetSection];
       if (sectionSchema) {
-        saveSectionData(reportId, sectionSchema, currentData, payloadKey)
-          .then(() => {
-            lastSavedDataRef.current = currentDataStr;
-            if (!silent) toast.success('Section saved', { duration: 2000, position: 'bottom-center' });
-          })
-          .catch(err => {
-            if (err.isOffline) {
-              lastSavedDataRef.current = currentDataStr;
-              if (!silent) toast('Offline mode: Section saved locally. Will sync automatically.', {
-                icon: '📶',
-                style: {
-                  borderRadius: '10px',
-                  background: '#333',
-                  color: '#fff',
-                },
-              });
-            } else {
-              console.error("Background sync failed on section save:", err);
-              if (!silent) toast.error('Failed to sync section to server. Please try again.', {
-                style: {
-                  borderRadius: '10px',
-                  background: '#ef4444',
-                  color: '#fff',
-                }
-              });
-            }
+        try {
+          await saveSectionData(reportId, sectionSchema, currentData, payloadKey);
+          
+          setSubmittedSections(prev => {
+            if (!prev.includes(targetSection)) return [...prev, targetSection];
+            return prev;
           });
+          
+          lastSavedDataRef.current = JSON.stringify(currentData);
+          toast.success('Section submitted', { duration: 2000, position: 'bottom-center' });
+          return true;
+        } catch (err) {
+          if (err.isOffline) {
+            toast('Offline mode: Saved locally. Will sync automatically.', {
+              icon: '📶',
+              style: { borderRadius: '10px', background: '#333', color: '#fff' },
+            });
+            return true;
+          } else {
+            console.error("Submission failed:", err);
+            toast.error('Failed to submit section. Please try again.', {
+              style: { borderRadius: '10px', background: '#ef4444', color: '#fff' }
+            });
+            return false;
+          }
+        }
       }
     }
+    return true;
   };
 
   const handleExitFormWithSave = async () => {
@@ -336,12 +340,17 @@ export function useAuditWizard({
     control, getValues, watch, setValue,
     errors: formErrors,
     isInitializing,
-    isReadOnly,
+    formErrors,
     getSectionStatus,
     calculateGlobalProgress,
     handleSectionSelect,
     handleSaveCurrent,
-    handleNextClick, handlePrevClick,
-    handleExitFormWithSave
+    handleSubmitSection,
+    handleExitFormWithSave,
+    handleNextClick,
+    handlePrevClick,
+    isReadOnly,
+    submittedSections,
+    reportId
   };
 }

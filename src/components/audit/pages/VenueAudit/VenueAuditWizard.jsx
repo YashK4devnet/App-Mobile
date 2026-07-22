@@ -110,8 +110,13 @@ export default function VenueAuditWizard() {
     getSectionStatus,
     handleSectionSelect,
     handleSaveCurrent,
-    handleNextClick, handlePrevClick,
-    handleExitFormWithSave
+    handleSubmitSection,
+    handleExitFormWithSave,
+    handleNextClick,
+    handlePrevClick,
+    isReadOnly,
+    submittedSections,
+    reportId
   } = useAuditWizard({
     schemas: SUBSECTION_SCHEMAS,
     steps: STEPS,
@@ -128,10 +133,10 @@ export default function VenueAuditWizard() {
     onExitForm: () => setViewMode('index')
   });
 
-
+  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
 
   // Get current form data for status checks (doesn't trigger re-render on keystrokes)
-  const currentData = getValues();
+  const currentData = getValues ? getValues() : {};
   const progressPercent = calculateGlobalProgress(SUBSECTION_SCHEMAS, currentData);
 
   const statusReportInfo = getSectionStatus('ReportInfo', currentData);
@@ -296,7 +301,7 @@ export default function VenueAuditWizard() {
               control={control}
               errors={errors}
               watch={watch}
-              globalDisabled={isReadOnly || ['ReportInfo', 'VenueInfo', 'PersonnelInfo', 'A.1'].includes(currentSubsection)}
+              isReadOnly={isReadOnly || submittedSections.includes(currentSubsection)}
             />
           </div>
         </div>
@@ -310,30 +315,14 @@ export default function VenueAuditWizard() {
             >
               {isFirst ? 'Exit' : 'Previous'}
             </button>
-            {!isReadOnly ? (
-              currentSubsection === STEPS[STEPS.length - 1]?.id ? (
-                <>
-                  <button
-                    onClick={handleSaveCurrent}
-                    className="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={handleNextClick}
-                    className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
-                  >
-                    Submit Audit
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={handleNextClick}
-                  className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-900/20 transition-all active:scale-95 cursor-pointer"
-                >
-                  Save & Next
-                </button>
-              )
+            
+            {isReadOnly || submittedSections.includes(currentSubsection) ? (
+              <button
+                onClick={handleNextClick}
+                className="flex-1 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+              >
+                {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Exit' : 'Next'}
+              </button>
             ) : (
               <>
                 <button
@@ -343,10 +332,14 @@ export default function VenueAuditWizard() {
                   Save
                 </button>
                 <button
-                  onClick={handleNextClick}
-                  className="flex-1 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                  onClick={() => setShowSubmitConfirm(true)}
+                  className={`flex-1 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer ${
+                    currentSubsection === STEPS[STEPS.length - 1]?.id 
+                      ? 'bg-[#ff6b6b] hover:bg-rose-600 shadow-lg shadow-rose-900/20' 
+                      : 'bg-white/10 hover:bg-white/20'
+                  }`}
                 >
-                  {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Exit' : 'Save & Next'}
+                  {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit & Exit' : 'Submit & Next'}
                 </button>
               </>
             )}
@@ -362,6 +355,42 @@ export default function VenueAuditWizard() {
         renderIndexView()
       ) : (
         renderFormView()
+      )}
+
+      {/* Submit Confirmation Modal */}
+      {showSubmitConfirm && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+            <h3 className="text-xl font-bold text-white mb-2">Submit Section?</h3>
+            <p className="text-white/70 text-sm mb-6">
+              Are you sure? No changes will be allowed to this section after submission.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowSubmitConfirm(false)}
+                className="flex-1 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all font-bold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  setShowSubmitConfirm(false);
+                  const success = await handleSubmitSection();
+                  if (success) {
+                    if (currentSubsection === STEPS[STEPS.length - 1]?.id) {
+                      handleExitFormWithSave();
+                    } else {
+                      handleNextClick();
+                    }
+                  }
+                }}
+                className="flex-1 py-3 bg-[#4ecdc4] text-black font-bold rounded-xl hover:bg-[#45b7b0] transition-all shadow-[0_0_15px_rgba(78,205,196,0.3)]"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Premium Success Overlay */}
