@@ -91,6 +91,7 @@ export function useAuditWizard({
   });
   
   const navigate = useNavigate();
+  const lastSavedDataRef = useRef(null);
 
   useEffect(() => {
     // If we just received fresh data from the API (via navigation state), 
@@ -98,6 +99,7 @@ export function useAuditWizard({
     if (location.state?.odooData) {
       storageService.saveDraft(storageKey, initialFormValues).catch(e => console.error(e));
       reset(initialFormValues);
+      lastSavedDataRef.current = JSON.stringify(initialFormValues);
       
       // Auto-start audit if it's assigned
       if (location.state.odooData.state === 'assign_user' && reportId) {
@@ -114,12 +116,15 @@ export function useAuditWizard({
       // Only reset with draftData if it actually exists, otherwise keep initialFormValues
       if (draftData && Object.keys(draftData).length > 0) {
         reset(draftData);
+        lastSavedDataRef.current = JSON.stringify(draftData);
       } else {
         reset(initialFormValues);
+        lastSavedDataRef.current = JSON.stringify(initialFormValues);
       }
     }).catch(err => {
       console.error("Failed to load draft from IndexedDB", err);
       reset(initialFormValues);
+      lastSavedDataRef.current = JSON.stringify(initialFormValues);
     }).finally(() => {
       setIsInitializing(false);
     });
@@ -127,35 +132,18 @@ export function useAuditWizard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storageKey, reset]);
 
-  const saveTimeoutRef = useRef(null);
-
   // Subscribe to changes for auto-save, using watch
   useEffect(() => {
     if (!isInitializing) {
-      const subscription = watch((value, { name }) => {
+      const subscription = watch((value) => {
         // Local IndexedDB Draft (Immediate)
         storageService.saveDraft(storageKey, value).catch(err => {
           console.error("Failed to save draft to IndexedDB", err);
         });
-
-        // Layer 3: Debounced Inactivity Sync (5s timer)
-        if (saveTimeoutRef.current) {
-          clearTimeout(saveTimeoutRef.current);
-        }
-
-        if (name) {
-          saveTimeoutRef.current = setTimeout(() => {
-            if (handleSaveCurrentRef.current) {
-              console.log("Debounced auto-save triggered for section change.");
-              handleSaveCurrentRef.current(true); // true = silent
-            }
-          }, 5000);
-        }
       });
       
       return () => {
         subscription.unsubscribe();
-        if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
       };
     }
   }, [watch, storageKey, isInitializing]);
@@ -233,21 +221,28 @@ export function useAuditWizard({
     setCurrentSubsection(sectionId);
   };
 
-  // Keep track of the latest save function for the debounce timer
-  const handleSaveCurrentRef = useRef(null);
-
   const handleSaveCurrent = (silent = false) => {
     const currentData = getValues();
+    const currentDataStr = JSON.stringify(currentData);
+
+    // Deep compare to prevent redundant API calls
+    if (lastSavedDataRef.current === currentDataStr) {
+      if (!silent) toast.success('Section up to date', { duration: 1500, position: 'bottom-center' });
+      return;
+    }
+
     if (reportId && saveSectionData && !isReadOnly) {
       const payloadKey = sectionToPayloadKey ? sectionToPayloadKey[currentSubsection] : null;
       const sectionSchema = schemas[currentSubsection];
       if (sectionSchema) {
         saveSectionData(reportId, sectionSchema, currentData, payloadKey)
           .then(() => {
+            lastSavedDataRef.current = currentDataStr;
             if (!silent) toast.success('Section saved', { duration: 2000, position: 'bottom-center' });
           })
           .catch(err => {
             if (err.isOffline) {
+              lastSavedDataRef.current = currentDataStr;
               if (!silent) toast('Offline mode: Section saved locally. Will sync automatically.', {
                 icon: '📶',
                 style: {
@@ -270,10 +265,6 @@ export function useAuditWizard({
       }
     }
   };
-
-  useEffect(() => {
-    handleSaveCurrentRef.current = handleSaveCurrent;
-  }, [handleSaveCurrent]);
 
   const handleExitFormWithSave = async () => {
     if (!isReadOnly) {
