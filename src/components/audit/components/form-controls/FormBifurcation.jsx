@@ -1,7 +1,8 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
 import { PlusIcon, TrashIcon } from '../Icons';
 import { Label } from './Label';
+import { AuditContext } from '../../stores/AuditContext';
 
 export function FormBifurcation({
   label,
@@ -13,7 +14,15 @@ export function FormBifurcation({
   error
 }) {
   const location = useLocation();
-  const odooData = location.state?.odooData || null;
+  const { reportId } = useParams();
+  const { reports } = useContext(AuditContext) || { reports: [] };
+
+  // First try location state, then fallback to finding it in context
+  let odooData = location.state?.odooData || null;
+  if (!odooData && reportId && reports.length > 0) {
+    odooData = reports.find(r => r.id?.toString() === reportId);
+  }
+
   const labSummary = odooData?.labSummary || odooData?.lab_summary;
   const allLabs = labSummary?.allLabs || [];
   const allFloors = labSummary?.allFloors || [];
