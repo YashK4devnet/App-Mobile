@@ -127,7 +127,7 @@ export default function NetworkAuditWizard() {
   const {
     currentSubsection, setCurrentSubsection,
     control, getValues, watch, setValue,
-    errors: formErrors,
+    errors,
     isInitializing,
     getSectionStatus,
     calculateGlobalProgress,
@@ -319,7 +319,7 @@ export default function NetworkAuditWizard() {
             <FormRenderer
               schema={dynamicSchemas[currentSubsection]}
               control={control}
-              errors={formErrors}
+              errors={errors}
               useAccordions={true}
               watch={watch}
               isReadOnly={isReadOnly || submittedSections.includes(currentSubsection)}

@@ -104,7 +104,7 @@ export default function VenueAuditWizard() {
   const {
     currentSubsection, setCurrentSubsection,
     control, getValues, watch, setValue,
-    errors: formErrors,
+    errors,
     isInitializing,
     getSectionStatus,
     handleSectionSelect,

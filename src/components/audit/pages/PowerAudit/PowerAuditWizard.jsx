@@ -151,7 +151,7 @@ export default function PowerAuditWizard() {
   const {
     currentSubsection, setCurrentSubsection,
     control, getValues, watch, setValue,
-    errors: formErrors,
+    errors,
     isInitializing,
     getSectionStatus,
     calculateGlobalProgress,
@@ -337,7 +337,7 @@ export default function PowerAuditWizard() {
             <FormRenderer
               schema={activeSchemas[currentSubsection]}
               control={control}
-              errors={formErrors}
+              errors={errors}
               isReadOnly={isReadOnly || submittedSections.includes(currentSubsection)}
               useAccordions={true}
               watch={watch}
