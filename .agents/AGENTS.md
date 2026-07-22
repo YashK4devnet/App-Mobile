@@ -33,4 +33,5 @@ This document provides persistent context for the App-Mobile React application, 
 - **Dynamic User Context:** Removed hardcoded user credentials (like "Yash" and `userId = 2`). `AuditDashboardPage` and `AuditProvider` now dynamically inherit the authenticated user object directly from `useAppContext()`.
 - **Session Reload Stability:** Modified `AppContext.jsx` to treat the `"already login"` Odoo response during an app background refresh as a successful session validation, preventing the app from erroneously deleting local storage and locking the user out.
 - **AuditContext Syntax & Fallback Fix:** Fixed missing `try` block error in `AuditContext.jsx` (`fetchAuditData`), and ensured dynamic fallback to `localStorage` (`loginData`) for `effectiveUserId` when `userId` prop is omitted.
-
+- **Audit Auto-Save Refactor:** Replaced the 5-second inactivity auto-save timer in `useAuditWizard` with a mandatory navigation-triggered save (via "Save", "Save & Next", "Previous", or accordion clicks). This prevents duplicate array items from being created in Odoo when users are actively typing out new dynamic lines.
+- **Deep-Compare Dirty Check:** Implemented a `lastSavedDataRef` snapshot system in `useAuditWizard` to deeply compare the active form data against the last successfully PATCHed state, ensuring we don't spam the Odoo API with redundant saves.
