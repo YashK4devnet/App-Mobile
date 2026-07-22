@@ -21,19 +21,25 @@ const createPowerPhotoQuestion = (name, label, evidence = '', findingsHint = '')
   ]
 });
 
-const createCustomQuestions = (sectionName) => ({
-  name: `customQuestions_${sectionName}`,
-  label: 'Additional Custom Questions',
-  type: 'array',
-  subType: 'custom-questions',
-  itemLabel: 'Custom Question',
-  fields: [
-    { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
+const createCustomQuestions = (sectionName, additionalFields) => {
+  const defaultFields = [
     { name: 'findings', label: 'Findings', type: 'textarea', placeholder: 'Enter findings here...' },
     { name: 'score', label: 'Score', type: 'select', options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] },
     { name: 'image', label: 'Evidence Image', type: 'image-upload' }
-  ]
-});
+  ];
+
+  return {
+    name: `customQuestions_${sectionName}`,
+    label: 'Additional Custom Questions',
+    type: 'array',
+    subType: 'custom-questions',
+    itemLabel: 'Custom Question',
+    fields: [
+      { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
+      ...(additionalFields || defaultFields)
+    ]
+  };
+};
 
 export const POWER_REPORT_INFO_SCHEMA = [
   { name: 'reportName', label: 'Report Name', type: 'text', required: true, placeholder: 'e.g. Q2 Assessment', readOnly: true },

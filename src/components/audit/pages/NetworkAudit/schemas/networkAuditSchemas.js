@@ -10,19 +10,25 @@ const createNetworkQuestion = (name, label, remarksHint = '') => ({
   ]
 });
 
-const createCustomQuestions = (sectionName) => ({
-  name: `customQuestions_${sectionName}`,
-  label: 'Additional Custom Questions',
-  type: 'array',
-  subType: 'custom-questions',
-  itemLabel: 'Custom Question',
-  fields: [
-    { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
+const createCustomQuestions = (sectionName, additionalFields) => {
+  const defaultFields = [
     { name: 'remarks', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
     { name: 'observation', label: 'Observation', type: 'textarea', placeholder: 'Enter observation here...' },
     { name: 'image', label: 'Evidence Image', type: 'image-upload' }
-  ]
-});
+  ];
+
+  return {
+    name: `customQuestions_${sectionName}`,
+    label: 'Additional Custom Questions',
+    type: 'array',
+    subType: 'custom-questions',
+    itemLabel: 'Custom Question',
+    fields: [
+      { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
+      ...(additionalFields || defaultFields)
+    ]
+  };
+};
 
 export const NETWORK_REPORT_INFO_SCHEMA = [
   { name: 'reportName', label: 'Report Name', type: 'text', required: true, placeholder: 'e.g. Q2 Assessment', readOnly: true },
@@ -188,7 +194,7 @@ export const NETWORK_SECURITY_COMPLIANCE_SCHEMA = [
   createNetworkQuestion('net_sec_9', 'Check if any additional or hidden devices/cables are connected to the exam network', 'Any additional device/cable should not be present in the exam network'),
   createNetworkQuestion('net_sec_10', 'Check if any suspicious cable extends from exam lab/server room to outside the exam area', 'Check for any suspicious cable available in exam network'),
   createNetworkQuestion('net_sec_11', 'Check if Syslog server is available and configured', 'Verify Syslog server configuration and log collection'),
-  createCustomQuestions('net_sec')
+  createCustomQuestions('net_sec', [{ name: 'image', label: 'Evidence Image', type: 'image-upload' }])
 ];
 
 export const NETWORK_PHOTO_EVIDENCE_SCHEMA = [
