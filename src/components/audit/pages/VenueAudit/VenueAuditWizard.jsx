@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useAuditWizard } from '../../hooks/useAuditWizard';
+import { AuditContext } from '../../stores/AuditContext';
 import Header from '../../components/Header';
 import BottomNav from '../../components/BottomNav';
 import AuditIndex from '../../components/AuditIndex';
@@ -85,8 +86,16 @@ const INITIAL_AUDIT_STATE = generateInitialState(SUBSECTION_SCHEMAS);
 export default function VenueAuditWizard() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { reportId } = useParams();
+  const { reports } = useContext(AuditContext) || { reports: [] };
+
   const initialVenue = location.state?.venue || null;
-  const odooData = location.state?.odooData || null;
+  let odooData = location.state?.odooData || null;
+
+  const contextData = reports?.find(r => r.id?.toString() === reportId);
+  if (contextData?.labSummary) {
+    odooData = odooData ? { ...odooData, labSummary: contextData.labSummary } : contextData;
+  }
 
   const [viewMode, setViewMode] = useState('index');
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);

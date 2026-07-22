@@ -34,6 +34,15 @@ export const generateInitialState = (schemas, odooData = null) => {
     if (odooData.cctvDetails) Object.assign(flatOdooData, odooData.cctvDetails);
     if (odooData.conclusion) Object.assign(flatOdooData, odooData.conclusion);
     
+    if (odooData.labSummary) {
+      if (odooData.labSummary.labBifurcation) {
+        flatOdooData.labBifurcation = odooData.labSummary.labBifurcation;
+      }
+      if (odooData.labSummary.cctvBifurcation) {
+        flatOdooData.cctvBifurcation = odooData.labSummary.cctvBifurcation;
+      }
+    }
+    
     if (odooData.systemDetails) {
       // The GET API returns flat snake_case for system details, but our schema/patch uses camelCase.
       const snakeToCamel = (s) => s.replace(/_([a-z0-9])/gi, (match, p1) => p1.toUpperCase());
