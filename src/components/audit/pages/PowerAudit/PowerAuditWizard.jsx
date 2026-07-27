@@ -106,6 +106,7 @@ export default function PowerAuditWizard() {
   const [viewMode, setViewMode] = useState('index');
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
+  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   
   const odooData = location.state?.odooData || null;
 
@@ -148,13 +149,28 @@ export default function PowerAuditWizard() {
   
   const activeSchemas = dynamicSchemas || SUBSECTION_SCHEMAS;
 
+  const STATUS_KEY_TO_SECTION_ID = {
+    'auditeeAuditor': 'PersonnelInfo',
+    'supplyTransformerEarthPit': 'Section1',
+    'mainsSupplyLtPanel': 'Section2',
+    'dieselGenerator': 'Section3',
+    'dgRunningChecks': 'Section4',
+    'ups': 'Section5',
+    'upsBatteries': 'Section6',
+    'equipmentFunctionalityChecks': 'Section7',
+    'maintenanceRecordsChecks': 'Section8',
+    'electrician': 'Section9',
+    'toolsSpares': 'Section9',
+    'nameplateDocumentation': 'Section10',
+    'observation': 'Section11'
+  };
+
   const {
     currentSubsection, setCurrentSubsection,
     control, getValues, watch, setValue,
     errors,
     isInitializing,
     getSectionStatus,
-    calculateGlobalProgress,
     handleSectionSelect,
     handleSaveCurrent,
     handleSubmitSection,
@@ -176,6 +192,7 @@ export default function PowerAuditWizard() {
     nextAuditMonths: 6,
     saveSectionData: savePowerSection,
     sectionToPayloadKey: SECTION_TO_PAYLOAD_KEY,
+    statusKeyToSectionId: STATUS_KEY_TO_SECTION_ID,
     onComplete: () => setShowSuccessOverlay(true),
     onExitForm: () => setViewMode('index')
   });
@@ -359,7 +376,7 @@ export default function PowerAuditWizard() {
             {isReadOnly || submittedSections.includes(currentSubsection) ? (
               <button
                 onClick={handleNextClick}
-                className="flex-1 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                className="flex-1 bg-white/20 hover:bg-white/30 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
               >
                 {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Exit' : 'Next'}
               </button>
@@ -367,16 +384,16 @@ export default function PowerAuditWizard() {
               <>
                 <button
                   onClick={() => handleSaveCurrent(false)}
-                  className="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                  className="px-5 py-3.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
                 >
                   Save
                 </button>
                 <button
                   onClick={() => setShowSubmitConfirm(true)}
-                  className={`flex-1 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer ${
+                  className={`flex-1 text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer ${
                     currentSubsection === STEPS[STEPS.length - 1]?.id 
-                      ? 'bg-[#ff6b6b] hover:bg-rose-600 shadow-lg shadow-rose-900/20' 
-                      : 'bg-white/10 hover:bg-white/20'
+                      ? 'bg-[#ff6b6b] text-white hover:bg-rose-600 shadow-lg shadow-rose-900/20' 
+                      : 'bg-[#4ecdc4] text-black hover:bg-[#45b7b0] shadow-lg shadow-[#4ecdc4]/20'
                   }`}
                 >
                   {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit & Exit' : 'Submit & Next'}

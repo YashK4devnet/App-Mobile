@@ -48,7 +48,7 @@ export const generateNetworkQuestionsSchema = (apiLines, lineField) => {
       itemLabel: 'Custom Question',
       fields: [
         { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
-        { name: 'records', label: 'Records', type: 'textarea', placeholder: 'Enter records here...' },
+        { name: 'evidence', label: 'Evidence', type: 'textarea', placeholder: 'Enter evidence here...' },
         { name: 'remarks', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
         { name: 'observation', label: 'Observation', type: 'textarea', placeholder: 'Enter observation here...' },
         { name: 'image', label: 'Evidence Image', type: 'image-upload' }
@@ -144,7 +144,7 @@ export const generatePowerQuestionsSchema = (apiLines, lineField) => {
         { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
         { name: 'evidence', label: 'Evidence', type: 'textarea', placeholder: 'Enter evidence here...' },
         { name: 'findings', label: 'Findings', type: 'textarea', placeholder: 'Enter findings here...' },
-        showPhase ? { name: 'phase', label: 'Phase', type: 'select', options: [{label: 'Single Phase', value: 'single'}, {label: 'Three Phase', value: 'three'}] } : null,
+        showPhase ? { name: 'phase', label: 'Phase', type: 'text', placeholder: 'e.g. 3-phase or Single phase' } : null,
         !isFirstSection ? { name: 'score', label: 'Score', type: 'select', options: [{label: 'S', value: 's'}, {label: 'NS', value: 'ns'}, {label: 'U', value: 'u'}, {label: 'NA', value: 'na'}] } : null,
         { name: 'image', label: 'Evidence Image', type: 'image-upload' }
       ].filter(Boolean)

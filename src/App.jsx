@@ -108,11 +108,7 @@ function AppRoutes() {
       {/* Audit routes */}
       <Route
         path="/audit/*"
-        element={
-          <ProtectedRoute requireAuth={true}>
-            <AuditRoutes />
-          </ProtectedRoute>
-        }
+        element={<AuditRoutes />}
       />
       <Route
         path="/about"

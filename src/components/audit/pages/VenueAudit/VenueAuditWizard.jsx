@@ -101,6 +101,18 @@ export default function VenueAuditWizard() {
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
 
+  const STATUS_KEY_TO_SECTION_ID = {
+    'auditor': 'PersonnelInfo',
+    'locationDetails': 'A.1',
+    'contactDetails': 'A.2',
+    'accessibilityDetails': 'A.3',
+    'administrativeDetails': 'A.4',
+    'systemDetails': 'B.1',
+    'labDetails': 'B.3',
+    'cctvDetails': 'B.4',
+    'conclusion': 'Conclusion'
+  };
+
   const {
     currentSubsection, setCurrentSubsection,
     control, getValues, watch, setValue,
@@ -127,6 +139,7 @@ export default function VenueAuditWizard() {
     nextAuditMonths: 3,
     saveSectionData: saveVenueSection,
     sectionToPayloadKey: SECTION_TO_PAYLOAD_KEY,
+    statusKeyToSectionId: STATUS_KEY_TO_SECTION_ID,
     onComplete: () => setShowSuccessOverlay(true),
     onExitForm: () => setViewMode('index')
   });
@@ -299,7 +312,7 @@ export default function VenueAuditWizard() {
               control={control}
               errors={errors}
               watch={watch}
-              isReadOnly={isReadOnly || submittedSections.includes(currentSubsection)}
+              globalDisabled={isReadOnly || submittedSections.includes(currentSubsection)}
             />
           </div>
         </div>
@@ -317,7 +330,7 @@ export default function VenueAuditWizard() {
             {isReadOnly || submittedSections.includes(currentSubsection) ? (
               <button
                 onClick={handleNextClick}
-                className="flex-1 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                className="flex-1 bg-white/20 hover:bg-white/30 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
               >
                 {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Exit' : 'Next'}
               </button>
@@ -325,16 +338,16 @@ export default function VenueAuditWizard() {
               <>
                 <button
                   onClick={() => handleSaveCurrent(false)}
-                  className="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                  className="px-5 py-3.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
                 >
                   Save
                 </button>
                 <button
                   onClick={() => setShowSubmitConfirm(true)}
-                  className={`flex-1 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer ${
+                  className={`flex-1 text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer ${
                     currentSubsection === STEPS[STEPS.length - 1]?.id 
-                      ? 'bg-[#ff6b6b] hover:bg-rose-600 shadow-lg shadow-rose-900/20' 
-                      : 'bg-white/10 hover:bg-white/20'
+                      ? 'bg-[#ff6b6b] text-white hover:bg-rose-600 shadow-lg shadow-rose-900/20' 
+                      : 'bg-[#4ecdc4] text-black hover:bg-[#45b7b0] shadow-lg shadow-[#4ecdc4]/20'
                   }`}
                 >
                   {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit & Exit' : 'Submit & Next'}

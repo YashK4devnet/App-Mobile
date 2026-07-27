@@ -18,6 +18,7 @@ export function useAuditWizard({
   nextAuditMonths = 3,
   saveSectionData,
   sectionToPayloadKey,
+  statusKeyToSectionId,
   onComplete,
   onExitForm
 }) {
@@ -44,11 +45,47 @@ export function useAuditWizard({
   const location = useLocation();
   const params = useParams();
   const [currentSubsection, setCurrentSubsection] = useState(steps[0].id);
-  const [submittedSections, setSubmittedSections] = useState([]);
+  
+  const reportId = location.state?.odooData?.id || params.reportId;
+  
+  const getInitialSubmittedSections = () => {
+    let initialSubmitted = [];
+    
+    // 1. Try to load from localStorage first for persistence during active editing
+    const stored = localStorage.getItem(`audit_submitted_${reportId}`);
+    if (stored) {
+      try {
+        initialSubmitted = JSON.parse(stored);
+      } catch (e) {}
+    }
+
+    // 2. Merge with backend sectionStatus if provided
+    let sectionStatusArray = location.state?.odooData?.sectionStatus || location.state?.odooData?.section_status;
+    if (typeof sectionStatusArray === 'string') {
+      try { sectionStatusArray = JSON.parse(sectionStatusArray); } catch(e) {}
+    }
+
+    if (Array.isArray(sectionStatusArray) && statusKeyToSectionId) {
+      sectionStatusArray.forEach(status => {
+        // Handle both boolean true and string "true" from Odoo
+        if (status.enabled === true || String(status.enabled).toLowerCase() === 'true') {
+          const sectionId = statusKeyToSectionId[status.key];
+          if (sectionId && !initialSubmitted.includes(sectionId)) {
+            initialSubmitted.push(sectionId);
+          }
+        }
+      });
+      // Save the merged result back to localStorage
+      localStorage.setItem(`audit_submitted_${reportId}`, JSON.stringify(initialSubmitted));
+    }
+
+    return initialSubmitted;
+  };
+
+  const [submittedSections, setSubmittedSections] = useState(getInitialSubmittedSections);
 
   const venueId = initialVenue?.id || 'new';
   const typeId = auditName === 'Venue Audit Report' ? 'venue-audit' : auditName === 'Venue Power Audit Report' ? 'power-audit' : 'network-audit';
-  const reportId = location.state?.odooData?.id || params.reportId;
   const storageKey = reportId 
     ? `audit_draft_report_${reportId}_${typeId}` 
     : `audit_draft_venue_${venueId}_${typeId}`;
@@ -109,6 +146,7 @@ export function useAuditWizard({
          location.state.odooData.state = 'in_progress'; // update locally
       }
       
+      setSubmittedSections(getInitialSubmittedSections());
       setIsInitializing(false);
       return;
     }
@@ -243,7 +281,11 @@ export function useAuditWizard({
           await saveSectionData(reportId, sectionSchema, currentData, payloadKey);
           
           setSubmittedSections(prev => {
-            if (!prev.includes(targetSection)) return [...prev, targetSection];
+            if (!prev.includes(targetSection)) {
+              const next = [...prev, targetSection];
+              localStorage.setItem(`audit_submitted_${reportId}`, JSON.stringify(next));
+              return next;
+            }
             return prev;
           });
           

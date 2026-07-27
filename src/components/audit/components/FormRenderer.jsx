@@ -85,7 +85,7 @@ function renderField(field, control, globalDisabled = false) {
         };
 
         const isImageField = ['image-upload', 'signature', 'power-photo', 'device-photo-list', 'document-list'].includes(field.type);
-        const wrapperClass = (globalDisabled && !isImageField) ? 'pointer-events-none opacity-80' : '';
+        const wrapperClass = globalDisabled ? 'pointer-events-none opacity-80' : '';
 
         const renderComponent = () => {
 

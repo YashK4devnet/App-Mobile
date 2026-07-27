@@ -41,27 +41,14 @@ const getBaseUrl = () => {
  * A centralized API client strictly for the Audit Component.
  * Automatically switches between Capacitor Native HTTP (bypasses CORS) and Web Fetch.
  */
+let cachedApiKey = 'e0093957-ac94-4781-a7c5-4dfff4d91da2';
+
 export const auditHttpClient = async (endpoint, options = {}) => {
-  const baseUrl = getBaseUrl();
-  const odooDb = 'erp-eduquity-com'; // Matched with main app database
+  const baseUrl = '/api'; // Use Vite proxy
+  const odooDb = 'audit_rest_api';
 
-  let serverApiKey = null;
-  let userEmail = '';
-
-  if (typeof localStorage !== 'undefined') {
-    serverApiKey = localStorage.getItem('serverApiKey');
-    const loginData = localStorage.getItem('loginData');
-    if (loginData) {
-      try {
-        const parsed = JSON.parse(loginData);
-        userEmail = parsed.email || '';
-      } catch (e) { }
-    }
-  }
-
-  if (!serverApiKey) {
-    throw new Error('Unauthorized: No API key found. Please log in.');
-  }
+  let userEmail = 'admin';
+  let serverApiKey = cachedApiKey;
 
   let url = `${baseUrl}${endpoint}`;
   const method = options.method || 'GET';

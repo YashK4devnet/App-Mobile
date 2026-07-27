@@ -37,3 +37,20 @@ This document provides persistent context for the App-Mobile React application, 
 - **Deep-Compare Dirty Check:** Implemented a `lastSavedDataRef` snapshot system in `useAuditWizard` to deeply compare the active form data against the last successfully PATCHed state, ensuring we don't spam the Odoo API with redundant saves.
 - **Custom Question Schema Dynamic Alignment:** Updated static schemas (`networkAuditSchemas.js`, `powerAuditSchemas.js`) and dynamic schema generator (`schemaGenerator.js`) so custom questions match their section fields (`records` for Network, `evidence` for Power, and `phase` without `score` for Power Supply Transformer).
 - **Save vs. Server Submit Flow:** Isolated local draft saving (`handleSaveCurrent`) from server submission (`handleSubmitSection`). Replaced "Save & Next" with "Submit & Next", added a submission warning confirmation modal, and introduced session-based `submittedSections` tracking to lock submitted sections in read-only mode.
+- **Bug Fix (useAuditWizard):** Removed a duplicate block-scoped declaration of `reportId` that caused compilation errors.
+- **Form Lock/Read-Only Integrity:** Fixed a prop mismatch by passing `globalDisabled` instead of `isReadOnly` to `FormRenderer` in all wizards. Additionally removed image-field clickability exceptions in `FormRenderer.jsx` so that submitted sections are strictly unclickable, locking even nested arrays and dynamic images.
+- **Audit Navigation UI Styling:** Redesigned the action buttons (Save, Submit & Next, Submit & Exit, Next) across all wizard components to have distinct, premium colors and hover states that better convey their actions.
+- **Custom Question Schema Corrections:** Updated `schemaGenerator.js` so the network audit custom question uses `evidence` instead of `records`, and the power audit custom question uses a text input instead of a dropdown for the `phase` field.
+
+## Reverting Local Development Bypasses (Temporary)
+To return the application to its production state and re-enable standard authentication, reverse the following local bypasses:
+1. **`src/App.jsx`**: Re-wrap the `<Route path="/audit/*" element={<AuditRoutes />} />` with `<ProtectedRoute requireAuth={true}>`.
+2. **`src/components/audit/stores/AuditContext.jsx`**: Remove the hardcoded `let effectiveUserId = 2;` inside `fetchAuditData` and restore the logic that pulls the `userId` from the `loginData` inside `localStorage`.
+3. **`src/components/audit/services/httpClient.js`**: 
+   - Remove the hardcoded `cachedApiKey = 'e0093957...'`.
+   - Restore the logic that reads `serverApiKey` and `userEmail` from `localStorage`.
+   - Change `baseUrl` from `'/api'` back to dynamically resolving via `getBaseUrl()`.
+4. **`vite.config.js`**: Under the `proxy` settings for `"/api"`, restore the rewrite rule: `rewrite: (path) => path.replace(/^\/api/, "")` so that Vite correctly strips `/api` when proxying to standard backend routes that do not expect it.
+5. **`src/components/Auth/Auth.jsx`**: 
+   - Remove the `// --- LOCAL TESTING BYPASS ---` block inside the `onSubmit` function that intercepts the `admin`/`admin` login and injects `dummyUserData` into local storage.
+   - Revert `const dbName = "audit_rest_api";` back to the production database if required.

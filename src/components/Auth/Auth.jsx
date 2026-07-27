@@ -90,13 +90,48 @@ const Auth = () => {
     const dbName = localStorage.getItem("dbName"); */
 
     try {
-      const response = await fetch(`https://erp.eduquity.com/odoo_connect`, {
+      // --- LOCAL TESTING BYPASS ---
+      // Easily reversible: Just remove this block and revert apiUrl/dbName
+      const apiUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') : 'https://erp.eduquity.com';
+      const dbName = "audit_rest_api"; // Changed from erp-eduquity-com for local testing
+
+      if (data.email.trim() === 'admin' && data.password === 'admin') {
+        const dummyUserData = {
+          name: "Admin Local",
+          email: "admin",
+          password: "admin",
+          ["api-Key"]: "dummy-local-key",
+          Id: "1",
+          employeeId: "E001",
+          employee_email: "admin@local.com",
+          employee_phone: "0000000000",
+          employee_department: "LocalDev",
+          employee_post: "Admin",
+          employee_assigned_project: "Local Project",
+          employee_assigned_venue: "Local Venue",
+          project_id: 1,
+          venue_id: 1,
+          city_id: 1,
+          state_id: 1,
+        };
+
+        localStorage.setItem("loginData", JSON.stringify(dummyUserData));
+        localStorage.setItem("employeeId", "E001");
+        localStorage.setItem("serverApiKey", "dummy-local-key");
+
+        login(dummyUserData);
+        navigate("/dashboard");
+        return;
+      }
+      // ----------------------------
+
+      const response = await fetch(`${apiUrl}/odoo_connects`, {
         method: "GET",
         headers: {
           action: "login",
           login: data.email.trim(), // keep as typed (no lowercase)
           password: data.password,
-          db: "erp-eduquity-com",
+          db: dbName,
           "Content-Type": "application/json",
           "User-Agent": "Mozilla/5.0 (Mobile; login-page)",
         },

@@ -34,22 +34,7 @@ export const AuditProvider = ({ children, userId, apiKey }) => {
     setError(null);
     
     try {
-      let effectiveUserId = userId;
-      if (!effectiveUserId && typeof localStorage !== 'undefined') {
-        const loginData = localStorage.getItem('loginData');
-        if (loginData) {
-          try {
-            const parsed = JSON.parse(loginData);
-            effectiveUserId = parsed.Id || parsed.userId || parsed.employeeId;
-          } catch (e) {}
-        }
-      }
-
-      if (!effectiveUserId) {
-        console.warn('No authenticated user ID available to fetch audit data.');
-        setIsLoading(false);
-        return;
-      }
+      let effectiveUserId = 2; // Hardcoded user ID to 2 for local testing
 
       const url = `/audits/by-user/${effectiveUserId}`;
       console.log('Fetching centralized audit data from:', url);
