@@ -34,7 +34,20 @@ export const AuditProvider = ({ children, userId, apiKey }) => {
     setError(null);
     
     try {
-      let effectiveUserId = 2; // Hardcoded user ID to 2 for local testing
+      let effectiveUserId = userId;
+      if (!effectiveUserId) {
+        try {
+          const loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
+          effectiveUserId = loginData.Id || loginData.uid || loginData.user_id || loginData.id || loginData.UserID;
+        } catch (e) {
+          console.error('Failed to parse loginData for effectiveUserId', e);
+        }
+      }
+
+      if (!effectiveUserId) {
+        setIsLoading(false);
+        return;
+      }
 
       const url = `/audits/by-user/${effectiveUserId}`;
       console.log('Fetching centralized audit data from:', url);

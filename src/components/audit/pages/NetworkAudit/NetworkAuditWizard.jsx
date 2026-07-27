@@ -231,7 +231,7 @@ export default function NetworkAuditWizard() {
           { id: 'BackupDevices', title: '10. Backup Devices', itemsCount: getItemsCount('BackupDevices'), status: statusBackupDevices, icon: DocumentIcon },
           { id: 'NetworkSecurityCompliance', title: '11. Network Security Compliance', itemsCount: getItemsCount('NetworkSecurityCompliance'), status: statusNetworkSecurityCompliance, icon: DocumentIcon },
           { id: 'PhotoEvidence', title: '12. Image of Equipments', itemsCount: getItemsCount('PhotoEvidence'), status: statusPhotoEvidence, icon: DocumentIcon },
-          { id: 'Observations', title: '13. Observations & Signatures', itemsCount: getItemsCount('Observations'), status: statusObservations, icon: DocumentIcon }
+          { id: 'Observations', title: '13. Observations', itemsCount: getItemsCount('Observations'), status: statusObservations, icon: DocumentIcon }
         ]
       }
     ];
@@ -282,7 +282,7 @@ export default function NetworkAuditWizard() {
       { id: 'BackupDevices', label: '10. Backup Devices', status: statusBackupDevices },
       { id: 'NetworkSecurityCompliance', label: '11. Network Security Compliance', status: statusNetworkSecurityCompliance },
       { id: 'PhotoEvidence', label: '12. Image of Equipments', status: statusPhotoEvidence },
-      { id: 'Observations', label: '13. Observations & Signatures', status: statusObservations }
+      { id: 'Observations', label: '13. Observations', status: statusObservations }
     ];
 
     return (
@@ -297,7 +297,7 @@ export default function NetworkAuditWizard() {
           headerRight={stepPill}
         />
         
-        {isReadOnly && (
+        {isReadOnly ? (
           <div className="mx-5 mt-4 px-4 py-3 bg-rose-500/10 border border-rose-500/25 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
             <ExclamationCircleIcon className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
             <div className="flex-1">
@@ -305,7 +305,15 @@ export default function NetworkAuditWizard() {
               <p className="text-rose-200/70 text-[12px] mt-0.5">This report has been finalized and cannot be edited.</p>
             </div>
           </div>
-        )}
+        ) : submittedSections.includes(currentSubsection) ? (
+          <div className="mx-5 mt-4 px-4 py-3 bg-amber-500/10 border border-amber-500/25 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
+            <ExclamationCircleIcon className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-amber-200 text-[13px] font-semibold leading-tight">Section Submitted (Read-Only)</p>
+              <p className="text-amber-200/70 text-[12px] mt-0.5">This section has already been submitted and is locked for editing.</p>
+            </div>
+          </div>
+        ) : null}
 
         {/* Subsection Progress Indicator (Sticky) */}
         <LiveProgressBar 
@@ -352,13 +360,35 @@ export default function NetworkAuditWizard() {
               {isFirst ? 'Exit' : 'Previous'}
             </button>
             
-            {isReadOnly || submittedSections.includes(currentSubsection) ? (
+            {isReadOnly ? (
               <button
-                onClick={handleNextClick}
+                onClick={() => {
+                  if (currentSubsection === STEPS[STEPS.length - 1]?.id) {
+                    if (onExitForm) onExitForm();
+                  } else {
+                    handleNextClick();
+                  }
+                }}
                 className="flex-1 bg-white/20 hover:bg-white/30 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
               >
                 {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Exit' : 'Next'}
               </button>
+            ) : submittedSections.includes(currentSubsection) ? (
+              currentSubsection === STEPS[STEPS.length - 1]?.id ? (
+                <button
+                  onClick={() => setShowSubmitConfirm(true)}
+                  className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-lg shadow-rose-900/20"
+                >
+                  Submit Audit
+                </button>
+              ) : (
+                <button
+                  onClick={handleNextClick}
+                  className="flex-1 bg-white/20 hover:bg-white/30 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                >
+                  Next
+                </button>
+              )
             ) : (
               <>
                 <button
@@ -375,7 +405,7 @@ export default function NetworkAuditWizard() {
                       : 'bg-[#4ecdc4] text-black hover:bg-[#45b7b0] shadow-lg shadow-[#4ecdc4]/20'
                   }`}
                 >
-                  {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit & Exit' : 'Submit & Next'}
+                  {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit Audit' : 'Submit & Next'}
                 </button>
               </>
             )}
@@ -397,9 +427,13 @@ export default function NetworkAuditWizard() {
       {showSubmitConfirm && (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-            <h3 className="text-xl font-bold text-white mb-2">Submit Section?</h3>
+            <h3 className="text-xl font-bold text-white mb-2">
+              {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit Audit Report?' : 'Submit Section?'}
+            </h3>
             <p className="text-white/70 text-sm mb-6">
-              Are you sure? No changes will be allowed to this section after submission.
+              {currentSubsection === STEPS[STEPS.length - 1]?.id 
+                ? 'Are you sure? Once submitted, the audit report will be sent for approval and locked for editing.'
+                : 'Are you sure? No changes will be allowed to this section after submission.'}
             </p>
             <div className="flex gap-3">
               <button
@@ -413,14 +447,14 @@ export default function NetworkAuditWizard() {
                   setShowSubmitConfirm(false);
                   const success = await handleSubmitSection();
                   if (success) {
-                    if (currentSubsection === STEPS[STEPS.length - 1]?.id) {
-                      handleExitFormWithSave();
-                    } else {
-                      handleNextClick();
-                    }
+                    handleNextClick();
                   }
                 }}
-                className="flex-1 py-3 bg-[#4ecdc4] text-black font-bold rounded-xl hover:bg-[#45b7b0] transition-all shadow-[0_0_15px_rgba(78,205,196,0.3)]"
+                className={`flex-1 py-3 font-bold rounded-xl transition-all ${
+                  currentSubsection === STEPS[STEPS.length - 1]?.id
+                    ? 'bg-[#ff6b6b] text-white hover:bg-rose-600 shadow-[0_0_15px_rgba(255,107,107,0.3)]'
+                    : 'bg-[#4ecdc4] text-black hover:bg-[#45b7b0] shadow-[0_0_15px_rgba(78,205,196,0.3)]'
+                }`}
               >
                 Submit
               </button>
