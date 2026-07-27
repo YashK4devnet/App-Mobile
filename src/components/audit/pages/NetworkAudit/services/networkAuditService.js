@@ -46,8 +46,9 @@ export const generateInitialState = (schemas, odooData = null) => {
       }
 
       state[f.name] = {
-        observation: lineData?.score || lineData?.findings || '',
-        remarks: [lineData?.remark, lineData?.remarks].filter(Boolean).join(' - ') || '',
+        observation: lineData?.findings || lineData?.observation || lineData?.score || '',
+        remarks: lineData?.remark || lineData?.remarks || '',
+        evidence: lineData?.evidence || '',
         image: imgObj
       };
     } else if (fieldType === 'network-security-question') {
@@ -436,6 +437,13 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
         payloadsByLineField[lineField] = [];
       }
 
+      const mapToBackendFieldName = (fieldName) => {
+        if (fieldName === 'questionTitle' || fieldName === 'checklist') return 'name';
+        if (fieldName === 'observation') return 'findings';
+        if (fieldName === 'remarks') return 'remark';
+        return fieldName;
+      };
+
       const linePayload = { id };
       if (f.fields) {
         f.fields.forEach(sub => {
@@ -448,12 +456,10 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
               if (imgData.includes(',')) {
                 imgData = imgData.split(',')[1];
               }
-              // Backend expects 'image' for network-question images, mapping it here.
               linePayload['image'] = imgData;
             }
           } else {
-            // Map frontend schema names to backend expected names
-            const backendFieldName = sub.name === 'observation' ? 'findings' : (sub.name === 'remarks' ? 'remark' : sub.name);
+            const backendFieldName = mapToBackendFieldName(sub.name);
             linePayload[backendFieldName] = val[sub.name] || "";
           }
         });
@@ -473,21 +479,28 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
         payloadsByLineField[lineField] = [];
       }
 
+      const mapToBackendFieldName = (fieldName) => {
+        if (fieldName === 'questionTitle' || fieldName === 'checklist') return 'name';
+        if (fieldName === 'observation') return 'findings';
+        if (fieldName === 'remarks') return 'remark';
+        return fieldName;
+      };
+
       if (Array.isArray(customArray)) {
         customArray.forEach(item => {
-          if (item.questionTitle || item.name) {
+          if (item.questionTitle || item.name || item.checklist) {
             const linePayload = {};
             if (f.fields) {
               f.fields.forEach(sub => {
-                const subValName = sub.name === 'questionTitle' ? 'name' : sub.name;
+                const backendFieldName = mapToBackendFieldName(sub.name);
                 if (sub.type === 'image-upload') {
                   let imgData = item[sub.name]?.url || "";
                   if (imgData.includes(',')) {
                     imgData = imgData.split(',')[1];
                   }
-                  linePayload[subValName] = imgData;
+                  linePayload['image'] = imgData;
                 } else {
-                  linePayload[subValName] = item[sub.name] || "";
+                  linePayload[backendFieldName] = item[sub.name] || "";
                 }
               });
             }

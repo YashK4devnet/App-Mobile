@@ -67,6 +67,10 @@ export function useAuditWizard({
 
     if (Array.isArray(sectionStatusArray) && statusKeyToSectionId) {
       sectionStatusArray.forEach(status => {
+        // Exclude auditeeAuditor from backend auto-locking because the auditor is assigned before the audit starts,
+        // while signatures in PersonnelInfo are captured on-site during/at the end of the audit.
+        if (status.key === 'auditeeAuditor') return;
+
         // Handle both boolean true and string "true" from Odoo
         if (status.enabled === true || String(status.enabled).toLowerCase() === 'true') {
           const sectionId = statusKeyToSectionId[status.key];
