@@ -10,7 +10,7 @@ This document provides persistent context for the App-Mobile React application, 
 
 ## API & Data Mapping Quirks (Critical)
 - **Odoo Base64 Double Encoding:** The backend (Odoo) often double-encodes base64 image strings (which usually start with `LzlqLzRB...`). **Always** use the `decodeOdooImage` helper function from `src/components/audit/utils/imageUtils.js` when mapping images received from the API.
-- **Lazy Loading Images:** Do not fetch all images on report initialization to prevent massive API payloads. List-based images (like device photos) should be initialized with `{ pendingFetch: true, odooId: item.id, isFromServer: true }` and lazy-loaded via `reportApiService.fetchLineImage` inside `useAuditWizard` when their specific subsection is active.
+- **Lazy Loading Images:** Do not fetch all images on report initialization to prevent massive API payloads. List-based images (like device photos and equipment documents) should be initialized with `{ pendingFetch: true, odooId: item.id, isFromServer: true }` and lazy-loaded via `reportApiService.fetchLineImage` inside `useAuditWizard` when their specific subsection is active.
 - **Read-Only Fields Patching:** When saving a section, ensure that read-only fields (like the Auditor/Auditee details in the `PersonnelInfo` tab, which map to the `auditeeAuditor` payload) are **excluded** from the standard `patchAuditSection` API call. Pushing them causes 400-level errors and infinite retries.
 - **Signatures Mapping:** Signatures are routed directly to the `signatures` JSON object rather than the standard fields.
 - **Observations:** The GET API returns `observationLines` as `{ id, name }`. This must be specifically mapped to `observation` in the `obs_list` numbered-text-list schema.
@@ -53,3 +53,8 @@ This document provides persistent context for the App-Mobile React application, 
   - Set `auditorName` in Venue Conclusion (`CONCLUSION_SCHEMA`) to `readOnly: true`.
 - **Venue Navigation Simplification:** Replaced `Submit & Next` and `Save` buttons with a simple **`Next`** button on early Venue Audit sections (`ReportInfo`, `PersonnelInfo`, `LocationDetails`), allowing smooth section transition without triggering section lock confirmation modals.
 - **Remote Software Status Select Field:** Converted `remoteSoftwareFound` in Venue Audit (*Policies & Software*) from a text field to a selection dropdown with options **`Yes installed`** (`installed`) and **`Nothing Found`** (`not_found`).
+- **Power Audit Section 10 Renaming & Equipment Document Image Fix:**
+  - Renamed Section 10 in Power Audit (`PowerAuditWizard.jsx` & `powerAuditSchemas.js`) to **`13. Nameplate and Document of Equipments`** (`POWER_SECTION_10_SCHEMA` label: `Nameplate and Document of Equipments`).
+  - Fixed `powerAuditService.js` initialization logic for `equipmentDocuments` to map incoming backend lines (`nameplateDocumentEquipmentLines`, `equipment_documents`, `documents`, etc.) into array state with `{ pendingFetch: true, odooId: item.id, isFromServer: true }` for lazy image fetching.
+  - Updated `FormDocumentList.jsx` to normalize both `doc_name`/`doc_image` and `documentName`/`documentImage` keys and inherit `readOnly`/`disabled` props.
+  - Updated `useAuditWizard.js` lazy image hook to check `item.doc_image`, `item.docImage`, and `item.documentImage` properties.

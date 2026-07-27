@@ -241,6 +241,8 @@ export function useAuditWizard({
           if (item && typeof item === 'object') {
             if (item.deviceImage) fetchImage(item.deviceImage, `${f.name}[${index}].deviceImage`);
             if (item.doc_image) fetchImage(item.doc_image, `${f.name}[${index}].doc_image`);
+            if (item.docImage) fetchImage(item.docImage, `${f.name}[${index}].docImage`);
+            if (item.documentImage) fetchImage(item.documentImage, `${f.name}[${index}].documentImage`);
             if (item.image) fetchImage(item.image, `${f.name}[${index}].image`);
           }
         });

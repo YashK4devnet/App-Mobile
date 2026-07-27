@@ -225,7 +225,7 @@ export const POWER_SECTION_10_SCHEMA = [
     name: 'equipmentDocuments',
     type: 'array',
     subType: 'document-list',
-    label: 'Nameplate & Documentation of Equipment(s)',
+    label: 'Nameplate and Document of Equipments',
     itemLabel: 'Document',
     fields: [
       { name: 'doc_name', label: 'Document Name', type: 'text', placeholder: 'Enter document name' },

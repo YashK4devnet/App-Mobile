@@ -249,7 +249,7 @@ export default function PowerAuditWizard() {
           { id: 'Section7', title: '10. Equipment functionality checks', itemsCount: getItemsCount('Section7'), status: statusSec7, icon: BuildingIcon },
           { id: 'Section8', title: '11. Maintenance Records checks', itemsCount: getItemsCount('Section8'), status: statusSec8, icon: BuildingIcon },
           { id: 'Section9', title: '12. Electrician, Tools & Spares', itemsCount: getItemsCount('Section9'), status: statusSec9, icon: BuildingIcon },
-          { id: 'Section10', title: '13. Nameplate, Docs & Signatures', itemsCount: getItemsCount('Section10'), status: statusSec10, icon: BuildingIcon },
+          { id: 'Section10', title: '13. Nameplate and Document of Equipments', itemsCount: getItemsCount('Section10'), status: statusSec10, icon: BuildingIcon },
           { id: 'Section11', title: '14. Observations', itemsCount: getItemsCount('Section11'), status: statusSec11, icon: BuildingIcon }
         ]
       }
@@ -301,7 +301,7 @@ export default function PowerAuditWizard() {
       { id: 'Section7', label: '10. Equipment functionality checks', status: statusSec7 },
       { id: 'Section8', label: '11. Maintenance Records checks', status: statusSec8 },
       { id: 'Section9', label: '12. Electrician, Tools & Spares', status: statusSec9 },
-      { id: 'Section10', label: '13. Nameplate, Docs & Signatures', status: statusSec10 },
+      { id: 'Section10', label: '13. Nameplate and Document of Equipments', status: statusSec10 },
       { id: 'Section11', label: '14. Observations', status: statusSec11 }
     ];
 

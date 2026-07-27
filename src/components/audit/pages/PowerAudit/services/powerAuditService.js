@@ -108,6 +108,37 @@ export const generateInitialState = (schemas, odooData = null) => {
          val = { url: decodeOdooImage(odooData[f.name]) };
       }
       state[f.name] = val;
+    } else if (f.name === 'equipmentDocuments' || f.subType === 'document-list') {
+      let list = [];
+      const rawLines = odooData?.nameplateDocumentEquipmentLines || 
+                       odooData?.nameplate_document_equipment_lines || 
+                       odooData?.equipmentDocuments || 
+                       odooData?.equipment_documents || 
+                       odooData?.imageOfEquipment || 
+                       odooData?.documents || 
+                       [];
+      if (Array.isArray(rawLines)) {
+        list = rawLines.map(item => {
+          const docName = item.doc_name || item.docName || item.documentName || item.doc_title || item.name || '';
+          const rawImg = item.doc_image || item.docImage || item.documentImage || item.image;
+          
+          let imgObj = null;
+          if (rawImg && typeof rawImg === 'string' && rawImg.length > 50) {
+            imgObj = { url: decodeOdooImage(rawImg) };
+          } else if (item.id) {
+            imgObj = { pendingFetch: true, odooId: item.id, isFromServer: true };
+          }
+
+          return {
+            id: item.id,
+            doc_name: docName,
+            doc_image: imgObj,
+            documentName: docName,
+            documentImage: imgObj
+          };
+        });
+      }
+      state[f.name] = list;
     } else {
       let odooVal = null;
       if (odooData) {

@@ -9,20 +9,41 @@ export function FormDocumentList({
   value = [],
   error,
   onChange,
-  required = false
+  required = false,
+  readOnly = false,
+  disabled = false
 }) {
+  const isInteractive = !readOnly && !disabled;
+  const safeList = Array.isArray(value) ? value : [];
+
   const handleAddItem = () => {
-    onChange(name, [...value, { documentName: '', documentImage: null }]);
+    if (!isInteractive) return;
+    onChange(name, [...safeList, { doc_name: '', doc_image: null, documentName: '', documentImage: null }]);
   };
 
   const handleRemoveItem = (index) => {
-    const newItems = value.filter((_, i) => i !== index);
+    if (!isInteractive) return;
+    const newItems = safeList.filter((_, i) => i !== index);
     onChange(name, newItems);
   };
 
   const handleItemChange = (index, key, val) => {
-    const newItems = [...value];
-    newItems[index] = { ...newItems[index], [key]: val };
+    if (!isInteractive) return;
+    const newItems = [...safeList];
+    const item = newItems[index] || {};
+    
+    let updatedItem = { ...item };
+    if (key === 'doc_name' || key === 'documentName') {
+      updatedItem.doc_name = val;
+      updatedItem.documentName = val;
+    } else if (key === 'doc_image' || key === 'documentImage') {
+      updatedItem.doc_image = val;
+      updatedItem.documentImage = val;
+    } else {
+      updatedItem[key] = val;
+    }
+    
+    newItems[index] = updatedItem;
     onChange(name, newItems);
   };
 
@@ -30,55 +51,67 @@ export function FormDocumentList({
     <div className="space-y-4 p-5 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl text-left">
       <div className="flex justify-between items-center mb-1">
         <Label text={label} required={required} />
-        <button
-          type="button"
-          onClick={handleAddItem}
-          className="flex items-center gap-1 text-[12px] font-medium text-[#ff6b6b] hover:text-white active:scale-[0.98] transition-all bg-[#ff6b6b]/10 hover:bg-[#ff6b6b]/20 px-3 py-1.5 rounded-lg cursor-pointer"
-        >
-          <PlusIcon className="w-3.5 h-3.5" />
-          Add Document
-        </button>
+        {isInteractive && (
+          <button
+            type="button"
+            onClick={handleAddItem}
+            className="flex items-center gap-1 text-[12px] font-medium text-[#ff6b6b] hover:text-white active:scale-[0.98] transition-all bg-[#ff6b6b]/10 hover:bg-[#ff6b6b]/20 px-3 py-1.5 rounded-lg cursor-pointer"
+          >
+            <PlusIcon className="w-3.5 h-3.5" />
+            Add Document
+          </button>
+        )}
       </div>
 
-      {value.length === 0 ? (
+      {safeList.length === 0 ? (
         <div className="text-center py-6 bg-white/5 rounded-xl border border-dashed border-white/20">
           <p className="text-[13px] text-white/50 font-light">No documents added yet.</p>
         </div>
       ) : (
         <div className="space-y-4">
-          {value.map((item, index) => (
-            <div key={index} className="relative p-4 bg-white/10 border border-white/10 rounded-xl animate-fade-in">
-              <button
-                type="button"
-                onClick={() => handleRemoveItem(index)}
-                className="absolute -top-2.5 -right-2.5 w-6 h-6 bg-[#ff6b6b] border border-white/10 text-white hover:bg-rose-600 hover:border-rose-200 rounded-full flex items-center justify-center shadow-sm cursor-pointer z-10 transition-colors"
-              >
-                <TrashIcon className="w-3.5 h-3.5" />
-              </button>
+          {safeList.map((item, index) => {
+            const docName = item.doc_name || item.docName || item.documentName || '';
+            const docImage = item.doc_image || item.docImage || item.documentImage || null;
 
-              <div className="space-y-4">
-                <div>
-                  <span className="text-[11px] text-white/50 font-medium uppercase tracking-wider mb-1 block">Document Name</span>
-                  <input
-                    type="text"
-                    value={item.documentName || ''}
-                    onChange={(e) => handleItemChange(index, 'documentName', e.target.value)}
-                    placeholder="Enter document name (e.g. DG Nameplate, Panel Diagram)"
-                    className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#4ecdc4] text-white placeholder-white/40"
-                  />
-                </div>
+            return (
+              <div key={index} className="relative p-4 bg-white/10 border border-white/10 rounded-xl animate-fade-in">
+                {isInteractive && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveItem(index)}
+                    className="absolute -top-2.5 -right-2.5 w-6 h-6 bg-[#ff6b6b] border border-white/10 text-white hover:bg-rose-600 hover:border-rose-200 rounded-full flex items-center justify-center shadow-sm cursor-pointer z-10 transition-colors"
+                  >
+                    <TrashIcon className="w-3.5 h-3.5" />
+                  </button>
+                )}
 
-                <div>
-                  <FormImageUpload
-                    label="Document Image"
-                    name={`${name}_row_${index}`}
-                    value={item.documentImage}
-                    onChange={(_, imgVal) => handleItemChange(index, 'documentImage', imgVal)}
-                  />
+                <div className="space-y-4">
+                  <div>
+                    <span className="text-[11px] text-white/50 font-medium uppercase tracking-wider mb-1 block">Document Name</span>
+                    <input
+                      type="text"
+                      value={docName}
+                      onChange={(e) => handleItemChange(index, 'doc_name', e.target.value)}
+                      placeholder="Enter document name (e.g. DG Nameplate, Panel Diagram)"
+                      disabled={!isInteractive}
+                      className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#4ecdc4] text-white placeholder-white/40 disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+
+                  <div>
+                    <FormImageUpload
+                      label="Document Image"
+                      name={`${name}_row_${index}`}
+                      value={docImage}
+                      onChange={(_, imgVal) => handleItemChange(index, 'doc_image', imgVal)}
+                      readOnly={readOnly}
+                      disabled={disabled}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
