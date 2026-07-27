@@ -57,7 +57,11 @@ export const generateInitialState = (schemas, odooData = null) => {
       if (lineData?.id) {
         imgObj = { pendingFetch: true, odooId: lineData.id, isFromServer: true };
       }
-      state[f.name] = { image: imgObj };
+      state[f.name] = {
+        header: lineData?.header || lineData?.category || lineData?.head || '',
+        remarks: lineData?.remarks || lineData?.remark || lineData?.remakes || lineData?.comment || lineData?.description || '',
+        image: imgObj
+      };
     } else if (fieldType === 'signature' || f.name === 'centerSeal') {
       let hasSig = false;
       let imgData = null;

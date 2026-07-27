@@ -59,6 +59,9 @@ export function useAuditWizard({
       } catch (e) {}
     }
 
+    // Always filter out PersonnelInfo from initialSubmitted so signatures are not pre-locked
+    initialSubmitted = initialSubmitted.filter(id => id !== 'PersonnelInfo' && id !== 'personnel-info');
+
     // 2. Merge with backend sectionStatus if provided
     let sectionStatusArray = location.state?.odooData?.sectionStatus || location.state?.odooData?.section_status;
     if (typeof sectionStatusArray === 'string') {
@@ -74,7 +77,7 @@ export function useAuditWizard({
         // Handle both boolean true and string "true" from Odoo
         if (status.enabled === true || String(status.enabled).toLowerCase() === 'true') {
           const sectionId = statusKeyToSectionId[status.key];
-          if (sectionId && !initialSubmitted.includes(sectionId)) {
+          if (sectionId && sectionId !== 'PersonnelInfo' && !initialSubmitted.includes(sectionId)) {
             initialSubmitted.push(sectionId);
           }
         }
