@@ -364,6 +364,13 @@ export default function VenueAuditWizard() {
                   Next
                 </button>
               )
+            ) : ['ReportInfo', 'PersonnelInfo', 'A.1'].includes(currentSubsection) ? (
+              <button
+                onClick={handleNextClick}
+                className="flex-1 bg-[#4ecdc4] text-black hover:bg-[#45b7b0] py-3.5 text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-lg shadow-[#4ecdc4]/20"
+              >
+                Next
+              </button>
             ) : (
               <>
                 <button
@@ -374,7 +381,7 @@ export default function VenueAuditWizard() {
                 </button>
                 <button
                   onClick={() => setShowSubmitConfirm(true)}
-                  className={`flex-1 text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer ${
+                  className={`flex-1 py-3.5 text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer ${
                     currentSubsection === STEPS[STEPS.length - 1]?.id 
                       ? 'bg-[#ff6b6b] text-white hover:bg-rose-600 shadow-lg shadow-rose-900/20' 
                       : 'bg-[#4ecdc4] text-black hover:bg-[#45b7b0] shadow-lg shadow-[#4ecdc4]/20'

@@ -14,15 +14,15 @@ export const VENUE_REPORT_INFO_SCHEMA = [
 export const VENUE_PERSONNEL_INFO_SCHEMA = [
   // Auditee
   { type: 'heading', label: 'Auditee Information', className: 'text-white/50 border-white/10' },
-  { name: 'auditeeName', label: 'Name', type: 'text', required: true },
-  { name: 'auditeeRole', label: 'Role', type: 'text', required: true, placeholder: 'e.g. CS / Venue Management Representative' },
-  { name: 'auditeeContact', label: 'Contact Number & Email ID', type: 'text', required: true },
+  { name: 'auditeeName', label: 'Name', type: 'text', required: true, readOnly: true },
+  { name: 'auditeeRole', label: 'Role', type: 'text', required: true, placeholder: 'e.g. CS / Venue Management Representative', readOnly: true },
+  { name: 'auditeeContact', label: 'Contact Number & Email ID', type: 'text', required: true, readOnly: true },
 
   // Auditor
   { type: 'heading', label: 'Auditor Details', className: 'text-[#F98A15] border-[#F98A15]/30 mt-6' },
-  { name: 'auditorName', label: 'Name (Auditor)', type: 'text', required: true },
-  { name: 'auditorRole', label: 'Role', type: 'text', disabled: true, value: 'Auditor' },
-  { name: 'auditorContact', label: 'Contact Number & Email ID', type: 'text', required: true }
+  { name: 'auditorName', label: 'Name (Auditor)', type: 'text', required: true, readOnly: true },
+  { name: 'auditorRole', label: 'Role', type: 'text', disabled: true, value: 'Auditor', readOnly: true },
+  { name: 'auditorContact', label: 'Contact Number & Email ID', type: 'text', required: true, readOnly: true }
 ];
 
 export const LOCATION_DETAILS_SCHEMA = [
@@ -30,13 +30,13 @@ export const LOCATION_DETAILS_SCHEMA = [
   {
     type: 'row',
     fields: [
-      { name: 'state', label: 'State', type: 'text' },
-      { name: 'city', label: 'City', type: 'text' }
+      { name: 'state', label: 'State', type: 'text', readOnly: true },
+      { name: 'city', label: 'City', type: 'text', readOnly: true }
     ]
   },
-  { name: 'name', label: 'Venue Name', type: 'text' },
-  { name: 'completeAddress', label: 'Complete Venue Address', type: 'textarea', placeholder: 'Enter complete address' },
-  { name: 'pinCode', label: 'Pin Code', type: 'pincode', placeholder: 'Enter 6-digit pin code' },
+  { name: 'name', label: 'Venue Name', type: 'text', readOnly: true },
+  { name: 'completeAddress', label: 'Complete Venue Address', type: 'textarea', placeholder: 'Enter complete address', readOnly: true },
+  { name: 'pinCode', label: 'Pin Code', type: 'pincode', placeholder: 'Enter 6-digit pin code', readOnly: true },
   { name: 'googleMapLocationStatus', label: 'Google Map Location Accurate?', type: 'yes-no', noColor: 'orange' }
 ];
 
@@ -227,7 +227,15 @@ export const SYSTEM_DETAILS_SCHEMA = [
       { name: 'disableAntivirusPermitted', label: 'Disabling Antivirus Permitted?', type: 'yes-no' }
     ]
   },
-  { name: 'remoteSoftwareFound', label: 'Remote Software Status', type: 'text', placeholder: 'e.g. AnyDesk installed, TeamViewer disabled' },
+  { 
+    name: 'remoteSoftwareFound', 
+    label: 'Remote Software Status', 
+    type: 'select', 
+    options: [
+      { label: 'Yes installed', value: 'installed' },
+      { label: 'Nothing Found', value: 'not_found' }
+    ] 
+  },
 
   { type: 'heading', label: 'Feedback' },
   { name: 'overallSystemFeedback', label: 'Overall System Feedback', type: 'textarea', placeholder: 'Enter remarks...' }
@@ -346,7 +354,7 @@ export const CONCLUSION_SCHEMA = [
   { type: 'heading', label: 'Audit Details' },
   { name: 'auditDateTime', label: 'Audit Date & Time', type: 'datetime-local' },
   { name: 'auditDuration', label: 'Audit Duration', type: 'select', options: [{ label: '<2HRS', value: 'lt_2hrs' }, { label: '2-4HRS', value: '2-4hrs' }, { label: '>4HRS', value: 'gt_4hrs' }] },
-  { name: 'auditorName', label: 'Auditor Name', type: 'text', placeholder: 'e.g. R CHARAN KUMAR' },
+  { name: 'auditorName', label: 'Auditor Name', type: 'text', placeholder: 'e.g. R CHARAN KUMAR', readOnly: true },
   { type: 'heading', label: 'Final Assessment' },
   { name: 'overallVenueRating', label: 'Overall Venue Rating', type: 'select', options: [{ label: '0-3', value: '0_3' }, { label: '4-7', value: '4_7' }, { label: '8-10', value: '8_10' }] },
   { name: 'recommendedExamConduct', label: 'Is Venue Recommended for Exam?', type: 'select', options: [{ label: 'Recommended', value: 'recommended' }, { label: 'Not Recommended', value: 'not_recommended' }] },

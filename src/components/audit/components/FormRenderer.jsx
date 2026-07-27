@@ -73,19 +73,21 @@ function renderField(field, control, globalDisabled = false) {
           };
         }
 
+        const isFieldReadOnly = field.readOnly || field.disabled || globalDisabled;
+
         const commonProps = {
           label: field.label,
           name: field.name,
           value: rhfField.value,
           error: error ? error.message : undefined,
-          onChange: globalDisabled ? () => {} : customOnChange,
+          onChange: isFieldReadOnly ? () => {} : customOnChange,
           required: field.required,
-          disabled: field.disabled || globalDisabled,
-          readOnly: field.readOnly || globalDisabled
+          disabled: isFieldReadOnly,
+          readOnly: isFieldReadOnly
         };
 
         const isImageField = ['image-upload', 'signature', 'power-photo', 'device-photo-list', 'document-list'].includes(field.type);
-        const wrapperClass = globalDisabled ? 'pointer-events-none opacity-80' : '';
+        const wrapperClass = isFieldReadOnly ? 'pointer-events-none opacity-80' : '';
 
         const renderComponent = () => {
           const fieldType = field.subType || field.type;
