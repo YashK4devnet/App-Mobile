@@ -478,8 +478,10 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
     });
   }
 
+  const promises = [];
+
   if (Object.keys(finalPayload).length > 0) {
-    await reportApiService.patchAuditSection(reportId, finalPayload);
+    promises.push(reportApiService.patchAuditSection(reportId, finalPayload));
   }
 
   // Handle bifurcation updates separately via lines endpoint
@@ -492,7 +494,7 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
         count: String(l.count)
       }));
     if (validLines.length > 0 || flatData.nodeBifurcation.length === 0) {
-      await reportApiService.patchAuditLines(reportId, 'lab_bifurcation_ids', validLines);
+      promises.push(reportApiService.patchAuditLines(reportId, 'lab_bifurcation_ids', validLines));
     }
   }
 
@@ -505,11 +507,15 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
         count: String(l.count)
       }));
     if (validLines.length > 0 || flatData.cctvBifurcation.length === 0) {
-      await reportApiService.patchAuditLines(reportId, 'cctv_bifurcation_ids', validLines);
+      promises.push(reportApiService.patchAuditLines(reportId, 'cctv_bifurcation_ids', validLines));
     }
   }
 
   if (Object.keys(signatures).length > 0) {
-    await reportApiService.patchAuditSection(reportId, signatures);
+    promises.push(reportApiService.patchAuditSection(reportId, signatures));
+  }
+
+  if (promises.length > 0) {
+    await Promise.all(promises);
   }
 };

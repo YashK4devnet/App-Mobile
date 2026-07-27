@@ -139,42 +139,50 @@ export function useAuditWizard({
   const lastSavedDataRef = useRef(null);
 
   useEffect(() => {
-    // If we just received fresh data from the API (via navigation state), 
-    // we bypass the cache and start fresh to avoid stale drafts.
-    if (location.state?.odooData) {
-      storageService.saveDraft(storageKey, initialFormValues).catch(e => console.error(e));
-      reset(initialFormValues);
-      lastSavedDataRef.current = JSON.stringify(initialFormValues);
-      
-      // Auto-start audit if it's assigned
-      if (location.state.odooData.state === 'assign_user' && reportId) {
-         reportApiService.patchAuditSection(reportId, { state: 'in_progress' })
-           .catch(err => console.error("Failed to update status to in_progress", err));
-         location.state.odooData.state = 'in_progress'; // update locally
+    let isSubscribed = true;
+
+    async function loadInitialData() {
+      try {
+        const draftData = await storageService.getDraft(storageKey);
+        if (!isSubscribed) return;
+
+        if (draftData && Object.keys(draftData).length > 0) {
+          // Merge initialFormValues with draftData (draftData takes precedence so offline/saved edits are preserved)
+          const mergedData = { ...initialFormValues, ...draftData };
+          reset(mergedData);
+          lastSavedDataRef.current = JSON.stringify(mergedData);
+        } else {
+          reset(initialFormValues);
+          lastSavedDataRef.current = JSON.stringify(initialFormValues);
+          await storageService.saveDraft(storageKey, initialFormValues).catch(e => console.error(e));
+        }
+      } catch (err) {
+        console.error("Failed to load draft from IndexedDB", err);
+        if (isSubscribed) {
+          reset(initialFormValues);
+          lastSavedDataRef.current = JSON.stringify(initialFormValues);
+        }
+      } finally {
+        if (isSubscribed) {
+          // Auto-start audit if it's assigned
+          if (location.state?.odooData?.state === 'assign_user' && reportId && navigator.onLine) {
+            reportApiService.patchAuditSection(reportId, { state: 'in_progress' })
+              .catch(err => console.error("Failed to update status to in_progress", err));
+            if (location.state?.odooData) {
+              location.state.odooData.state = 'in_progress';
+            }
+          }
+          setSubmittedSections(getInitialSubmittedSections());
+          setIsInitializing(false);
+        }
       }
-      
-      setSubmittedSections(getInitialSubmittedSections());
-      setIsInitializing(false);
-      return;
     }
 
-    storageService.getDraft(storageKey).then(draftData => {
-      // Only reset with draftData if it actually exists, otherwise keep initialFormValues
-      if (draftData && Object.keys(draftData).length > 0) {
-        reset(draftData);
-        lastSavedDataRef.current = JSON.stringify(draftData);
-      } else {
-        reset(initialFormValues);
-        lastSavedDataRef.current = JSON.stringify(initialFormValues);
-      }
-    }).catch(err => {
-      console.error("Failed to load draft from IndexedDB", err);
-      reset(initialFormValues);
-      lastSavedDataRef.current = JSON.stringify(initialFormValues);
-    }).finally(() => {
-      setIsInitializing(false);
-    });
-    // We only want to load draft once on mount or when storageKey changes
+    loadInitialData();
+
+    return () => {
+      isSubscribed = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storageKey, reset]);
 
@@ -302,7 +310,16 @@ export function useAuditWizard({
           toast.success('Section submitted', { duration: 2000, position: 'bottom-center' });
           return true;
         } catch (err) {
-          if (err.isOffline) {
+          if (err.isOffline || !navigator.onLine) {
+            handleSaveCurrent(true);
+            setSubmittedSections(prev => {
+              if (!prev.includes(targetSection)) {
+                const next = [...prev, targetSection];
+                localStorage.setItem(`audit_submitted_${reportId}`, JSON.stringify(next));
+                return next;
+              }
+              return prev;
+            });
             toast('Offline mode: Saved locally. Will sync automatically.', {
               icon: '📶',
               style: { borderRadius: '10px', background: '#333', color: '#fff' },

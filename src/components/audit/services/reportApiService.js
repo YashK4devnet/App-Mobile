@@ -3,6 +3,56 @@ import { auditHttpClient } from './httpClient';
 
 const DB_NAME = import.meta.env.VITE_AUDIT_API_DB || 'erp-eduquity-com';
 
+/**
+ * Helper to check if an error is due to network connectivity failure,
+ * Capacitor HTTP status 0, offline status, or server 5xx errors.
+ */
+const isNetworkOrServerError = (error) => {
+  if (!navigator.onLine) return true;
+  if (!error) return false;
+  if (error.isOffline) return true;
+  if (error.name === 'TypeError') return true;
+
+  const msg = (error.message || '').toString().toLowerCase();
+  const str = (error.toString() || '').toLowerCase();
+
+  const networkKeywords = [
+    'offline',
+    'failed to fetch',
+    'networkerror',
+    'network request failed',
+    'network error',
+    'capacitor',
+    ': 0',
+    'status 0',
+    'code 0',
+    '500', '502', '503', '504',
+    'load failed',
+    'internet connection',
+    'err_',
+    'enotfound',
+    'econnrefused',
+    'econnreset',
+    'etimedout',
+    'timeout',
+    'unknownhostexception',
+    'unable to resolve host',
+    'no address associated with hostname',
+    'connectexception',
+    'noroutetohostexception',
+    'sockettimeoutexception',
+    'socketexception',
+    'sslhandshakeexception',
+    'system error',
+    'connection refused',
+    'host unreachable',
+    'could not connect',
+    'api error (capacitor)'
+  ];
+
+  return networkKeywords.some(kw => msg.includes(kw) || str.includes(kw));
+};
+
 export const reportApiService = {
   /**
    * Fetches a report by ID from Odoo and caches it in IndexedDB.
@@ -97,20 +147,8 @@ export const reportApiService = {
     } catch (error) {
       console.error(`Failed to patch lineField ${lineField} for report ${reportId}`, error);
       
-      const isNetworkError = !navigator.onLine || 
-        error.name === 'TypeError' || 
-        (error.message && (
-          error.message === 'Offline' || 
-          error.message.includes('Failed to fetch') ||
-          error.message.includes('502') || 
-          error.message.includes('503') || 
-          error.message.includes('504') ||
-          error.message.includes('500')
-        ));
-      
-      // If it's a network error or server is down/unreachable
-      if (isNetworkError) {
-        const taskId = `${reportId}_lines_${lineField}`;
+      if (isNetworkOrServerError(error)) {
+        const taskId = `${reportId}_lines_${lineField}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
         await storageService.addSyncTask({
           id: taskId,
           reportId,
@@ -150,19 +188,8 @@ export const reportApiService = {
     } catch (error) {
       console.error(`Failed to patch section for report ${reportId}`, error);
       
-      const isNetworkError = !navigator.onLine || 
-        error.name === 'TypeError' || 
-        (error.message && (
-          error.message === 'Offline' || 
-          error.message.includes('Failed to fetch') ||
-          error.message.includes('502') || 
-          error.message.includes('503') || 
-          error.message.includes('504') ||
-          error.message.includes('500')
-        ));
-      
-      if (isNetworkError) {
-        const taskId = `${reportId}_section`;
+      if (isNetworkOrServerError(error)) {
+        const taskId = `${reportId}_section_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
         await storageService.addSyncTask({
           id: taskId,
           reportId,
