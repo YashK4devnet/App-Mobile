@@ -115,12 +115,12 @@ export const ADMINISTRATIVE_DETAILS_SCHEMA = [
   { name: 'comfortableSeatsAvailable', label: 'Does Computer Lab Have Comfortable Seats?', type: 'yes-no' },
   { name: 'adequateSpaceBetweenCandidates', label: 'Adequate Space Available Between Two Adjacent Candidates?', type: 'yes-no' },
   { name: 'approximateSpaceBetweenCandidates', label: 'Approximate Space Between Two Seats/Candidates', type: 'select', options: [{ label: '3FT', value: '3ft' }, { label: 'More than 3FT', value: 'more_than_3ft' }] },
-  { name: 'liftFacilityAvailable', label: 'Lift Facility Available If There Are Multiple Floors?', type: 'yes-no-na' },
+  { name: 'liftFacilityAvailable', label: 'Lift Facility Available If There Are Multiple Floors?', type: 'yes-no' },
   { name: 'wheelchairRampAvailable', label: 'Wheel Chair/Ramp Facility Available for PH Candidates?', type: 'yes-no' },
-  { name: 'groundFloorLabAvailable', label: 'Lab Available on Ground Floor for PH Candidates?', type: 'yes-no-na' },
+  { name: 'groundFloorLabAvailable', label: 'Lab Available on Ground Floor for PH Candidates?', type: 'yes-no' },
   { name: 'separateToiletForPh', label: 'Separate Toilet Available for PH Candidates?', type: 'yes-no' },
   { name: 'sufficientLightingAvailable', label: 'Sufficient Lighting Available to Create an Exam Environment?', type: 'yes-no' },
-  { name: 'airConditioningAdequate', label: 'Is the Air Conditioning Facility Adequate?', type: 'yes-no-na' },
+  { name: 'airConditioningAdequate', label: 'Is the Air Conditioning Facility Adequate?', type: 'yes-no' },
 
   { type: 'heading', label: 'Manpower & Verification' },
   { name: 'venueManpowerCount', label: 'Total Number of Venue Manpower Available', type: 'select', options: [{ label: '<10', value: 'lt_10' }, { label: '10-20', value: '10_20' }, { label: '>20', value: 'gt_20' }] },
@@ -147,7 +147,7 @@ export const ADMINISTRATIVE_DETAILS_SCHEMA = [
     className: 'bg-white/5 p-3 rounded-xl border border-white/10 animate-fade-in',
     showIf: (data) => data.emergencyExitAvailable === 'yes',
     fields: [
-      { name: 'emergencyExitEachFloor', label: 'Emergency Exit Access Available on Every Floor?', type: 'yes-no-na' }
+      { name: 'emergencyExitEachFloor', label: 'Emergency Exit Access Available on Every Floor?', type: 'yes-no' }
     ]
   },
   { name: 'visitorLogbookAvailable', label: 'Visitor Log Book Available and Clearly Maintained?', type: 'yes-no' },
