@@ -34,12 +34,15 @@ export const generateInitialState = (schemas, odooData = null) => {
     if (odooData.cctvDetails) Object.assign(flatOdooData, odooData.cctvDetails);
     if (odooData.conclusion) Object.assign(flatOdooData, odooData.conclusion);
     
+    if (odooData.lab_bifurcation_ids) flatOdooData.labBifurcation = odooData.lab_bifurcation_ids;
+    if (odooData.cctv_bifurcation_ids) flatOdooData.cctvBifurcation = odooData.cctv_bifurcation_ids;
+
     if (odooData.labSummary) {
-      if (odooData.labSummary.labBifurcation) {
-        flatOdooData.labBifurcation = odooData.labSummary.labBifurcation;
+      if (odooData.labSummary.labBifurcation || odooData.labSummary.lab_bifurcation_ids) {
+        flatOdooData.labBifurcation = odooData.labSummary.labBifurcation || odooData.labSummary.lab_bifurcation_ids;
       }
-      if (odooData.labSummary.cctvBifurcation) {
-        flatOdooData.cctvBifurcation = odooData.labSummary.cctvBifurcation;
+      if (odooData.labSummary.cctvBifurcation || odooData.labSummary.cctv_bifurcation_ids) {
+        flatOdooData.cctvBifurcation = odooData.labSummary.cctvBifurcation || odooData.labSummary.cctv_bifurcation_ids;
       }
     }
     
@@ -64,6 +67,15 @@ export const generateInitialState = (schemas, odooData = null) => {
     }
   }
 
+  const normalizeBifurcationLines = (rawLines) => {
+    if (!Array.isArray(rawLines)) return [];
+    return rawLines.map(item => ({
+      labId: item.labId ?? item.lab_id ?? (Array.isArray(item.lab) ? item.lab[0] : item.lab) ?? '',
+      floorId: item.floorId ?? item.floor_id ?? (Array.isArray(item.floor) ? item.floor[0] : item.floor) ?? '',
+      count: item.count !== undefined && item.count !== null ? String(item.count) : ''
+    }));
+  };
+
   const processField = (f) => {
     if (f.type === 'heading') return;
     if (f.type === 'row' || f.type === 'group') {
@@ -83,9 +95,11 @@ export const generateInitialState = (schemas, odooData = null) => {
 
     if (f.type === 'bifurcation') {
       if (f.name === 'nodeBifurcation') {
-        state[f.name] = flatOdooData.labBifurcation || [];
+        const raw = flatOdooData.labBifurcation || flatOdooData.lab_bifurcation_ids || flatOdooData.nodeBifurcation || [];
+        state[f.name] = normalizeBifurcationLines(raw);
       } else {
-        state[f.name] = flatOdooData[f.name] || [];
+        const raw = flatOdooData.cctvBifurcation || flatOdooData.cctv_bifurcation_ids || flatOdooData[f.name] || [];
+        state[f.name] = normalizeBifurcationLines(raw);
       }
       return;
     }
@@ -468,38 +482,30 @@ export const saveVenueSection = async (reportId, schema, currentData, payloadKey
     await reportApiService.patchAuditSection(reportId, finalPayload);
   }
 
-  // Handle bifurcation updates separately
+  // Handle bifurcation updates separately via lines endpoint
   if (flatData.nodeBifurcation) {
     const validLines = flatData.nodeBifurcation
-      .filter(l => l.labId && l.floorId && l.count !== '')
+      .filter(l => (l.labId || l.labId === 0) && (l.floorId || l.floorId === 0) && l.count !== '' && l.count !== null && l.count !== undefined)
       .map(l => ({
-        ...l,
-        labId: Number(l.labId),
-        floorId: Number(l.floorId),
-        count: Number(l.count)
+        labId: String(l.labId),
+        floorId: String(l.floorId),
+        count: String(l.count)
       }));
     if (validLines.length > 0 || flatData.nodeBifurcation.length === 0) {
-      await reportApiService.patchAuditBifurcation(reportId, {
-        type: 'lab',
-        lines: validLines
-      });
+      await reportApiService.patchAuditLines(reportId, 'lab_bifurcation_ids', validLines);
     }
   }
 
   if (flatData.cctvBifurcation) {
     const validLines = flatData.cctvBifurcation
-      .filter(l => l.labId && l.floorId && l.count !== '')
+      .filter(l => (l.labId || l.labId === 0) && (l.floorId || l.floorId === 0) && l.count !== '' && l.count !== null && l.count !== undefined)
       .map(l => ({
-        ...l,
-        labId: Number(l.labId),
-        floorId: Number(l.floorId),
-        count: Number(l.count)
+        labId: String(l.labId),
+        floorId: String(l.floorId),
+        count: String(l.count)
       }));
     if (validLines.length > 0 || flatData.cctvBifurcation.length === 0) {
-      await reportApiService.patchAuditBifurcation(reportId, {
-        type: 'cctv',
-        lines: validLines
-      });
+      await reportApiService.patchAuditLines(reportId, 'cctv_bifurcation_ids', validLines);
     }
   }
 

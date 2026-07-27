@@ -10,7 +10,7 @@ export const generateInitialState = (schemas, odooData = null) => {
   // Helper to find a specific line by id across all arrays in odooData
   const getOdooLine = (idStr) => {
     if (!odooData || !idStr.startsWith('odoo_')) return null;
-    
+
     let id;
     const match = idStr.match(/^odoo_.+___(\d+)$/);
     if (match) {
@@ -18,7 +18,7 @@ export const generateInitialState = (schemas, odooData = null) => {
     } else {
       id = parseInt(idStr.replace('odoo_', ''), 10);
     }
-    
+
     for (const key of Object.keys(odooData)) {
       if (Array.isArray(odooData[key])) {
         const line = odooData[key].find(item => item.id === id);
@@ -27,16 +27,16 @@ export const generateInitialState = (schemas, odooData = null) => {
     }
     return null;
   };
-  
+
   const processField = (f) => {
     if (f.type === 'heading' || f.type === 'row' || f.type === 'group') {
       if (f.fields) f.fields.forEach(processField);
       return;
     }
     if (!f.name) return;
-    
+
     const fieldType = f.subType || f.type;
-    
+
     if (fieldType === 'network-question') {
       const lineData = getOdooLine(f.name);
       let imgObj = null;
@@ -45,10 +45,10 @@ export const generateInitialState = (schemas, odooData = null) => {
         imgObj = { pendingFetch: true, odooId: lineData.id, isFromServer: true };
       }
 
-      state[f.name] = { 
-        observation: lineData?.score || lineData?.findings || '', 
-        remarks: [lineData?.remark, lineData?.remarks].filter(Boolean).join(' - ') || '', 
-        image: imgObj 
+      state[f.name] = {
+        observation: lineData?.score || lineData?.findings || '',
+        remarks: [lineData?.remark, lineData?.remarks].filter(Boolean).join(' - ') || '',
+        image: imgObj
       };
     } else if (fieldType === 'network-security-question') {
       const lineData = getOdooLine(f.name);
@@ -65,16 +65,16 @@ export const generateInitialState = (schemas, odooData = null) => {
         // The backend sends camelCase keys for signatures, e.g. hasAuditorSignature, auditorSignatureDate
         const sigKey = `has${f.name.charAt(0).toUpperCase() + f.name.slice(1)}`;
         hasSig = !!odooData.signatures[sigKey];
-        
+
         const base64Data = odooData.signatures[f.name];
-        
+
         if (base64Data) {
           imgData = decodeOdooImage(base64Data);
         } else if (hasSig) {
           // Fallback to a 1x1 transparent PNG if the backend says there is a signature but didn't send the data
           imgData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
         }
-        
+
         // Fetch the associated date (e.g. auditorSignatureDate)
         let rawDate = odooData.signatures[`${f.name}Date`];
         if (rawDate) {
@@ -91,7 +91,7 @@ export const generateInitialState = (schemas, odooData = null) => {
     } else if (fieldType === 'image-upload') {
       let val = null;
       if (odooData && odooData[f.name]) {
-         val = { url: decodeOdooImage(odooData[f.name]) };
+        val = { url: decodeOdooImage(odooData[f.name]) };
       }
       state[f.name] = val;
     } else if (f.name === 'devicePhotos') {
@@ -133,12 +133,12 @@ export const generateInitialState = (schemas, odooData = null) => {
         else if (f.name === 'activity') odooVal = odooData.activity;
         else if (f.name === 'location') odooVal = odooData.location;
       }
-      state[f.name] = odooVal || f.value || ''; 
+      state[f.name] = odooVal || f.value || '';
     }
   };
 
   Object.values(schemas).forEach(schema => schema.forEach(processField));
-  
+
   // Hardcoded default map selection since it's a radio group that defaults empty
   state.googleMapLocationStatus = '';
   return state;
@@ -147,7 +147,7 @@ export const generateInitialState = (schemas, odooData = null) => {
 const getFieldValue = (data, fieldName) => {
   if (!data) return undefined;
   if (data[fieldName] !== undefined) return data[fieldName];
-  
+
   const reconstructed = {};
   let found = false;
   if (typeof data === 'object') {
@@ -182,11 +182,11 @@ export const validateSchema = (schema, data) => {
       if (fieldType === 'network-question') {
         const err = {};
         if (!getFieldValue(data, f.name)?.observation) err.observation = "Observation is required";
-        
+
         const imgVal = getFieldValue(data, f.name)?.image;
         const hasImg = typeof imgVal === 'object' && imgVal !== null ? !!imgVal.url : !!imgVal;
         if (!hasImg) err.image = "Evidence image is required";
-        
+
         if (Object.keys(err).length > 0) errors[f.name] = err;
       } else if (fieldType === 'network-security-question') {
         const err = {};
@@ -244,7 +244,7 @@ export const isSchemaEmpty = (schema, data) => {
     }
     if (!f.name) return;
     if (f.showIf && !f.showIf(data)) return;
-    if (f.disabled) return; 
+    if (f.disabled) return;
 
     const fieldType = f.subType || f.type;
 
@@ -269,8 +269,8 @@ export const isSchemaEmpty = (schema, data) => {
       const val = getFieldValue(data, f.name);
       hasVal = typeof val === 'object' && val !== null ? !!val.url : (val && val !== f.value);
     }
-    
-    if (hasVal) empty = false; 
+
+    if (hasVal) empty = false;
   };
 
   schema.forEach(processField);
@@ -291,9 +291,9 @@ export const calculateSchemaProgress = (schema, data) => {
     }
     if (!f.name) return;
     if (f.showIf && !f.showIf(data)) return;
-    
+
     const fieldType = f.subType || f.type;
-    
+
     total++;
     if (fieldType === 'network-question') {
       const qVal = getFieldValue(data, f.name);
@@ -337,7 +337,7 @@ export const calculateSchemaProgress = (schema, data) => {
 export const calculateGlobalProgress = (schemas, data) => {
   let globalTotal = 0;
   let globalFilled = 0;
-  
+
   Object.values(schemas).forEach(schema => {
     const { total, filled } = calculateSchemaProgress(schema, data);
     globalTotal += total;
@@ -353,7 +353,7 @@ export const calculateGlobalProgress = (schemas, data) => {
 export const saveNetworkSection = async (reportId, schema, currentData, payloadKey) => {
   console.warn(`[DIAGNOSTICS] Starting saveNetworkSection. reportId: ${reportId}, payloadKey: ${payloadKey}`);
   console.warn(`[DIAGNOSTICS] Schema length: ${schema ? schema.length : 0}`);
-  
+
   if (!schema || schema.length === 0) {
     console.warn("[DIAGNOSTICS] Schema is empty. Exiting.");
     return;
@@ -372,7 +372,7 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
     if (!f.name) return;
 
     let val = currentData[f.name];
-    
+
     // In case react-hook-form flattened the values (e.g., 'odoo_network_architecture_lines___1609.findings'),
     // we reconstruct the object if val is undefined.
     if (val === undefined) {
@@ -431,11 +431,11 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
     if (lineMatch) {
       const lineField = lineMatch[1];
       const id = parseInt(lineMatch[2], 10);
-      
+
       if (!payloadsByLineField[lineField]) {
         payloadsByLineField[lineField] = [];
       }
-      
+
       const linePayload = { id };
       if (f.fields) {
         f.fields.forEach(sub => {
@@ -458,7 +458,7 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
           }
         });
       }
-      
+
       payloadsByLineField[lineField].push(linePayload);
       return;
     }
@@ -468,11 +468,11 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
     if (customMatch) {
       const lineField = customMatch[1];
       const customArray = val || [];
-      
+
       if (!payloadsByLineField[lineField]) {
         payloadsByLineField[lineField] = [];
       }
-      
+
       if (Array.isArray(customArray)) {
         customArray.forEach(item => {
           if (item.questionTitle || item.name) {
@@ -516,10 +516,10 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
         let imgData = currentData[f.name]?.url || "";
         if (imgData.includes(',')) imgData = imgData.split(',')[1];
         signatures[f.name] = imgData;
-        
+
         const timestamp = currentData[f.name]?.timestamp;
         if (timestamp) {
-           signatures[`${f.name}Date`] = timestamp;
+          signatures[`${f.name}Date`] = timestamp;
         }
       } else if (f.name.toLowerCase().includes('signaturedate')) {
         signatures[f.name] = currentData[f.name] || "";
@@ -556,7 +556,7 @@ export const saveNetworkSection = async (reportId, schema, currentData, payloadK
   });
 
   console.warn(`[DIAGNOSTICS] Promises array size: ${promises.length}`);
-  
+
   if (promises.length === 0) {
     console.warn("[DIAGNOSTICS] No promises to dispatch. Check if currentData had matching fields.");
   }
