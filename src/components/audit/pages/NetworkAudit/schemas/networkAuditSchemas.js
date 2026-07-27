@@ -177,19 +177,43 @@ export const BACKUP_DEVICES_SCHEMA = [
   createCustomQuestions('backup_dev')
 ];
 
+const createNetworkSecurityQuestion = (name, label, remarks = '', header = 'Network Security Compliance') => ({
+  name,
+  label,
+  header,
+  remarks,
+  type: 'object',
+  subType: 'network-security-question',
+  fields: [
+    { name: 'image', label: 'Evidence Image', type: 'image-upload' }
+  ]
+});
+
 export const NETWORK_SECURITY_COMPLIANCE_SCHEMA = [
-  createNetworkQuestion('net_sec_1', 'Check if Eduquity owned or CISCO C1300 switches are installed at the center', 'Physically locate the switch and verify'),
-  createNetworkQuestion('net_sec_2', 'Check if CISCO switches are configured as per Eduquity policy', 'Check with the help of technical support or switch configuration team'),
-  createNetworkQuestion('net_sec_3', 'Check if Logs and Red Alerts are generated for all switches', 'Check with the help of technical support or switch configuration team'),
-  createNetworkQuestion('net_sec_4', 'Check if MAC binding is carried out for all systems available at the centre', 'Check with the help of technical support or switch configuration team'),
-  createNetworkQuestion('net_sec_5', 'Check if all unused switch ports are in shutdown mode', 'Check with the help of technical support or switch configuration team'),
-  createNetworkQuestion('net_sec_6', 'Check if system-to-system are pinging', 'System to system should not ping anywhere in network'),
-  createNetworkQuestion('net_sec_7', 'Check if WAN diagram is available at the center', 'WAN diagram should be available to check on how many devices internet is available'),
-  createNetworkQuestion('net_sec_8', 'Check if network racks are locked and sealed', 'Network rack must be properly locked and sealed'),
-  createNetworkQuestion('net_sec_9', 'Check if any additional or hidden devices/cables are connected to the exam network', 'Any additional device/cable should not be present in the exam network'),
-  createNetworkQuestion('net_sec_10', 'Check if any suspicious cable extends from exam lab/server room to outside the exam area', 'Check for any suspicious cable available in exam network'),
-  createNetworkQuestion('net_sec_11', 'Check if Syslog server is available and configured', 'Verify Syslog server configuration and log collection'),
-  createCustomQuestions('net_sec')
+  createNetworkSecurityQuestion('net_sec_1', 'Check if Eduquity owned or CISCO C1300 switches are installed at the center', 'Physically locate the switch and verify'),
+  createNetworkSecurityQuestion('net_sec_2', 'Check if CISCO switches are configured as per Eduquity policy', 'Check with the help of technical support or switch configuration team'),
+  createNetworkSecurityQuestion('net_sec_3', 'Check if Logs and Red Alerts are generated for all switches', 'Check with the help of technical support or switch configuration team'),
+  createNetworkSecurityQuestion('net_sec_4', 'Check if MAC binding is carried out for all systems available at the centre', 'Check with the help of technical support or switch configuration team'),
+  createNetworkSecurityQuestion('net_sec_5', 'Check if all unused switch ports are in shutdown mode', 'Check with the help of technical support or switch configuration team'),
+  createNetworkSecurityQuestion('net_sec_6', 'Check if system-to-system are pinging', 'System to system should not ping anywhere in network'),
+  createNetworkSecurityQuestion('net_sec_7', 'Check if WAN diagram is available at the center', 'WAN diagram should be available to check on how many devices internet is available'),
+  createNetworkSecurityQuestion('net_sec_8', 'Check if network racks are locked and sealed', 'Network rack must be properly locked and sealed'),
+  createNetworkSecurityQuestion('net_sec_9', 'Check if any additional or hidden devices/cables are connected to the exam network', 'Any additional device/cable should not be present in the exam network'),
+  createNetworkSecurityQuestion('net_sec_10', 'Check if any suspicious cable extends from exam lab/server room to outside the exam area', 'Check for any suspicious cable available in exam network'),
+  createNetworkSecurityQuestion('net_sec_11', 'Check if Syslog server is available and configured', 'Verify Syslog server configuration and log collection'),
+  {
+    name: 'customQuestions_net_sec',
+    label: 'Additional Custom Questions',
+    type: 'array',
+    subType: 'custom-questions',
+    itemLabel: 'Custom Question',
+    fields: [
+      { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
+      { name: 'header', label: 'Header', type: 'text', placeholder: 'Enter header...' },
+      { name: 'remarks', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
+      { name: 'image', label: 'Evidence Image', type: 'image-upload' }
+    ]
+  }
 ];
 
 export const NETWORK_PHOTO_EVIDENCE_SCHEMA = [

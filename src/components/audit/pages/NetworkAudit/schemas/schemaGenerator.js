@@ -70,8 +70,8 @@ export const generateNetworkSecuritySchema = (apiLines, lineField) => {
     return {
       name: `odoo_${snakeField}___${line.id}`,
       label: line.name,
-      header: line.header,
-      remarks: line.remarks || line.remark || line.remakes,
+      header: line.header || '',
+      remarks: line.remarks || line.remark || line.remakes || '',
       type: 'object',
       subType: 'network-security-question',
       fields: [
@@ -83,6 +83,22 @@ export const generateNetworkSecuritySchema = (apiLines, lineField) => {
       ]
     };
   });
+
+  if (lineField) {
+    questions.push({
+      name: `customQuestions___${snakeField}`,
+      label: 'Additional Custom Questions',
+      type: 'array',
+      subType: 'custom-questions',
+      itemLabel: 'Custom Question',
+      fields: [
+        { name: 'questionTitle', label: 'Custom Question Title', type: 'text', required: true, placeholder: 'Enter question' },
+        { name: 'header', label: 'Header', type: 'text', placeholder: 'Enter header...' },
+        { name: 'remarks', label: 'Remarks', type: 'textarea', placeholder: 'Enter remarks here...' },
+        { name: 'image', label: 'Evidence Image', type: 'image-upload' }
+      ]
+    });
+  }
 
   return questions;
 };
