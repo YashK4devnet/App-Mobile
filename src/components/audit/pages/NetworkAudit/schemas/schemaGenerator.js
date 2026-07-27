@@ -69,9 +69,9 @@ export const generateNetworkSecuritySchema = (apiLines, lineField) => {
   const questions = apiLines.map(line => {
     return {
       name: `odoo_${snakeField}___${line.id}`,
-      label: line.name,
-      header: line.header || '',
-      remarks: line.remarks || line.remark || line.remakes || '',
+      label: line.name || line.checklist || line.question || line.title || '',
+      header: line.header || line.category || line.head || line.header_name || line.section_name || line.section || 'Network Security Compliance',
+      remarks: line.remarks || line.remark || line.remakes || line.comment || line.description || line.evidence || line.findings || '',
       type: 'object',
       subType: 'network-security-question',
       fields: [

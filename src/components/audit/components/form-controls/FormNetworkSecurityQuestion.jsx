@@ -21,15 +21,13 @@ export function FormNetworkSecurityQuestion({
     onChange(name, { ...value, [field]: val });
   };
 
-  const displayHeader = header || value?.header || '';
-  const displayRemarks = remarks || value?.remarks || value?.remark || value?.comment || '';
+  const displayHeader = header || value?.header || 'Network Security Compliance';
+  const displayRemarks = remarks || value?.remarks || value?.remark || value?.comment || value?.description || '';
 
   return (
     <div className="space-y-4 p-5 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl">
       <div>
-        {displayHeader ? (
-          <div className="text-[11px] font-bold uppercase tracking-wider text-[#ff6b6b] mb-1">{displayHeader}</div>
-        ) : null}
+        <div className="text-[11px] font-bold uppercase tracking-wider text-[#ff6b6b] mb-1.5">{displayHeader}</div>
         <div className="flex gap-2">
           <span className="text-[11px] font-medium uppercase tracking-wider text-white/50 mt-0.5">Checklist:</span>
           <div className="flex-1">

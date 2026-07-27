@@ -88,8 +88,9 @@ function renderField(field, control, globalDisabled = false) {
         const wrapperClass = globalDisabled ? 'pointer-events-none opacity-80' : '';
 
         const renderComponent = () => {
+          const fieldType = field.subType || field.type;
 
-        switch (field.type) {
+          switch (fieldType) {
           case 'text':
           case 'phone':
           case 'pincode':
@@ -457,7 +458,10 @@ export default function FormRenderer({ schema, control, errors = {}, useAccordio
       );
     }
 
-    if (field.type === 'object') {
+    const effectiveType = field.subType || field.type;
+    const isCustomQuestion = ['network-security-question', 'network-question', 'power-question', 'power-photo-question'].includes(effectiveType);
+
+    if (field.type === 'object' && !isCustomQuestion) {
       return <ObjectSection key={`obj-${idx}`} field={field} control={control} renderItem={renderItem} />;
     }
 

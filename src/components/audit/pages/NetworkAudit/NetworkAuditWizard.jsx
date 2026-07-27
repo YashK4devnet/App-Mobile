@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { AuditContext } from '../../stores/AuditContext';
 import { useAuditWizard } from '../../hooks/useAuditWizard';
 import Header from '../../components/Header';
 import BottomNav from '../../components/BottomNav';
@@ -96,8 +97,12 @@ const SECTION_TO_PAYLOAD_KEY = {
 export default function NetworkAuditWizard() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { reportId } = useParams();
+  const { reports } = useContext(AuditContext) || { reports: [] };
+
   const initialVenue = location.state?.venue || null;
-  const odooData = location.state?.odooData || null; // Access payload from route state if passed
+  const contextOdooData = reports?.find(r => r.id?.toString() === reportId) || null;
+  const odooData = location.state?.odooData || contextOdooData || null;
 
   const [viewMode, setViewMode] = useState('index');
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
@@ -117,7 +122,7 @@ export default function NetworkAuditWizard() {
         'SystemConfiguration': generateNetworkQuestionsSchema(odooData.systemConfLines || odooData.system_conf_lines, 'system_conf_lines'),
         'NetworkConfiguration': generateNetworkQuestionsSchema(odooData.networkConfLines || odooData.network_conf_lines, 'network_conf_lines'),
         'BackupDevices': generateNetworkQuestionsSchema(odooData.backupDeviceLines || odooData.backup_device_lines, 'backup_device_lines'),
-        'NetworkSecurityCompliance': generateNetworkSecuritySchema(odooData.securityComplianceLines || odooData.security_compliance_lines, 'security_compliance_lines'),
+        'NetworkSecurityCompliance': generateNetworkSecuritySchema(odooData.securityComplianceLines || odooData.security_compliance_lines || odooData.security_compliance || odooData.securityCompliance, 'security_compliance_lines'),
         'PhotoEvidence': NETWORK_PHOTO_EVIDENCE_SCHEMA,
         'Observations': NETWORK_OBSERVATIONS_SCHEMA
       };
@@ -152,8 +157,7 @@ export default function NetworkAuditWizard() {
     handleNextClick,
     handlePrevClick,
     isReadOnly,
-    submittedSections,
-    reportId
+    submittedSections
   } = useAuditWizard({
     schemas: dynamicSchemas,
     steps: STEPS,
