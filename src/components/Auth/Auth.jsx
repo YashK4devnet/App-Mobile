@@ -11,89 +11,16 @@ const Auth = () => {
   const { login } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
-  /*  const [configLoading, setConfigLoading] = useState(false);
-  const [showConfig, setShowConfig] = useState(false);
-  const [isConfigured, setIsConfigured] = useState(false);
-  const [configError, setConfigError] = useState("");
-  const [configSuccess, setConfigSuccess] = useState("");
-
-  const [currentConfig, setCurrentConfig] = useState({
-    apiDomain: "",
-    dbName: "",
-  }); */
-
-  /*  useEffect(() => {
-    // Check if configuration exists in localStorage
-    const apiDomain = localStorage.getItem("apiDomain");
-    const dbName = localStorage.getItem("dbName");
-    if (apiDomain && dbName) {
-      setIsConfigured(true);
-      setCurrentConfig({ apiDomain, dbName });
-    }
-  }, []); */
-
-  /*  const handleConfiguration = async (e) => {
-    e.preventDefault();
-    setConfigError("");
-    setConfigSuccess("");
-    setConfigLoading(true);
-
-    const apiDomain = e.target.apiDomain.value.trim();
-    const dbName = e.target.dbName.value.trim();
-
-    if (!apiDomain || !dbName) {
-      setConfigError("Both API Domain and DB Name are required");
-      setConfigLoading(false);
-      return;
-    }
-
-    try {
-      // Optional: Add validation by making a test request to the API
-      const testResponse = await fetch(`${apiDomain}/api/test`, {
-        method: "GET",
-      });
-
-      if (!testResponse.ok) {
-        throw new Error("Invalid API domain");
-      }
-
-      // Store configuration in localStorage
-      localStorage.setItem("apiDomain", apiDomain);
-      localStorage.setItem("dbName", dbName);
-      setIsConfigured(true);
-      setConfigSuccess("Configuration successful! You can now login.");
-
-      // Automatically return to login after 2 seconds
-      setTimeout(() => {
-        setShowConfig(false);
-      }, 2000);
-    } catch (error) {
-      console.error("Configuration error:", error);
-      setConfigError("Failed to validate API domain. Please check the URL.");
-    } finally {
-      setConfigLoading(false);
-    }
-  }; */
 
   const onSubmit = async (data) => {
     setLoginError("");
-    /* if (!isConfigured) {
-      setLoginError(
-        "⚙️ Please configure API Domain and DB Name before logging in."
-      );
-      setLoading(false);
-      return;
-    } */
-
     setLoading(true);
-    /* const apiDomain = localStorage.getItem("apiDomain");
-    const dbName = localStorage.getItem("dbName"); */
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') : 'https://erp.eduquity.com';
       const dbName = import.meta.env.VITE_API_DB || "erp-eduquity-com";
 
-      const response = await fetch(`${apiUrl}/odoo_connects`, {
+      const response = await fetch(`${apiUrl}/odoo_connect`, {
         method: "GET",
         headers: {
           action: "login",
@@ -146,8 +73,7 @@ const Auth = () => {
       try {
         // Try parsing as JSON
         responseData = JSON.parse(responseText);
-      } catch (err) {
-        console.log(err);
+      } catch {
         // Not JSON → must be HTML
         if (responseText.includes("<html")) {
           const match = responseText.match(/<h2>(.*?)<\/h2>/i);
@@ -174,15 +100,26 @@ const Auth = () => {
         }
       }
 
+      // Normalize response status and verify auth success
+      const statusValue = String(responseData?.Status || responseData?.status || responseData?.message || "").trim().toLowerCase();
+      const hasApiKey = Boolean(responseData?.["api-key"] || responseData?.["api_key"]);
+      const isAuthSuccessful = statusValue === "auth successful" || (hasApiKey && (responseData?.UserID || responseData?.employee_id));
+
+      if (/already login/i.test(statusValue)) {
+        throw new Error(
+          "⚠️ You're already logged in on another device or session. Please log out there first or contact support."
+        );
+      }
+
       // If JSON and auth successful
-      if (responseData && responseData.Status === "auth successful") {
-        console.log("LOGIN API RESPONSE:", responseData); // <-- LOGGED HERE FOR DEBUGGING
+      if (responseData && isAuthSuccessful) {
+        const apiKey = responseData["api-key"] || responseData["api_key"] || "";
         const userData = {
-          name: responseData.User,
+          name: responseData.User || responseData.name || "User",
           email: data.email.trim(),
           password: data.password,
-          ["api-Key"]: responseData["api-key"],
-          Id: responseData.UserID,
+          ["api-Key"]: apiKey,
+          Id: responseData.UserID || responseData.id,
           employeeId: responseData.employee_id,
           employee_email: responseData.work_email,
           employee_phone: responseData.work_phone,
@@ -204,64 +141,16 @@ const Auth = () => {
           "employeeId",
           String(responseData.employee_id || "")
         );
-        localStorage.setItem("serverApiKey", responseData["api-key"]);
+        localStorage.setItem("serverApiKey", apiKey);
 
         login(userData);
         navigate("/dashboard");
         return;
       } else {
         throw new Error(
-          responseData?.message || "❌ Invalid login. Please try again."
+          responseData?.message || responseData?.error || "❌ Invalid login. Please try again."
         );
       }
-      /*   const responseData = {
-        Status: "auth successful",
-        User: "Test User",
-        "api-key": "dummy-key-123",
-        UserID: "12345",
-        employee_id: "E001",
-        work_email: "test@example.com",
-        work_phone: "9999999999",
-        employee_latitude: "12.9716",
-        employee_longitude: "77.5946",
-        department_id: "Dept01",
-        job_id: "Job01",
-        active_project: "Mock Project",
-        active_venue: "Mock Venue",
-      };
-
-      // same login flow
-      const userData = {
-        name: responseData.User,
-        email: data.email,
-        password: data.password,
-        ["api-Key"]: responseData["api-key"],
-        Id: responseData.UserID,
-        employeeId: responseData.employee_id,
-        employee_email: responseData.work_email,
-        employee_phone: responseData.work_phone,
-        employee_latitude: responseData.employee_latitude,
-        employee_longitude: responseData.employee_longitude,
-        employee_department: responseData.department_id,
-        employee_post: responseData.job_id,
-        employee_assigned_project: responseData?.active_project ?? "None",
-        employee_assigned_venue: responseData?.active_venue ?? "None",
-      };
-
-      localStorage.setItem("loginData", JSON.stringify(userData));
-      localStorage.setItem(
-        "employeeId",
-        String(responseData.employee_id || "")
-      );
-      localStorage.setItem("serverApiKey", responseData["api-key"]);
-
-      login(userData);
-      navigate("/dashboard");
-    } catch (error) {
-      setLoginError(error.message);
-    } finally {
-      setLoading(false);
-    } */
     } catch (error) {
       let message = error.message;
 
@@ -283,58 +172,6 @@ const Auth = () => {
 
   return (
     <div className={styles.authContainer}>
-      {/* {showConfig ? (
-        // Configuration Card
-        <div className={styles.loginCard}>
-          <h1 className={styles.title}>Configure</h1>
-          <form className={styles.form} onSubmit={handleConfiguration}>
-            <div className={styles.inputGroup}>
-              <input
-                type="text"
-                name="apiDomain"
-                placeholder="Enter API Domain"
-                className={styles.input}
-                defaultValue={currentConfig.apiDomain}
-                required
-              />
-            </div>
-            <div className={styles.inputGroup}>
-              <input
-                type="text"
-                name="dbName"
-                placeholder="Enter DB Name"
-                className={styles.input}
-                defaultValue={currentConfig.dbName}
-                required
-              />
-            </div>
-            {configError && <div className={styles.error}>{configError}</div>}
-            {configSuccess && (
-              <div className={styles.success}>{configSuccess}</div>
-            )}
-            <button
-              type="submit"
-              className={styles.loginButton}
-              disabled={configLoading}
-            >
-              {configLoading ? (
-                <div className={styles.spinner}></div>
-              ) : isConfigured ? (
-                "Update Configuration"
-              ) : (
-                "Configure"
-              )}
-            </button>
-            <button
-              type="button"
-              className={styles.backButton}
-              onClick={() => setShowConfig(false)}
-            >
-              Back to Login
-            </button>
-          </form>
-        </div>
-      ) : ( */}
       <div className={styles.loginCard}>
         <button className={styles.gearButton} onClick={() => {}}>
           ⚙️
@@ -372,7 +209,6 @@ const Auth = () => {
           <img src={logo} alt="Logo" className={styles.logo} />
         </div>
       </div>
-      {/* )} */}
     </div>
   );
 };
