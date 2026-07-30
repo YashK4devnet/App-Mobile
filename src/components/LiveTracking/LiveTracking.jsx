@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BackgroundGeolocation } from '@capacitor-community/background-geolocation';
+import { registerPlugin } from '@capacitor/core';
+const BackgroundGeolocation = registerPlugin('BackgroundGeolocation');
 import styles from './LiveTracking.module.css';
 
 const LiveTracking = () => {
