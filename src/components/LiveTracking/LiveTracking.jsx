@@ -36,7 +36,17 @@ const LiveTracking = () => {
 
       // 2. Configure our Custom Native Tracking Plugin
       const apiKey = localStorage.getItem("serverApiKey") || "";
-      const employeeId = localStorage.getItem("employeeId") || "";
+      
+      // The backend strictly expects the user_id for tracking, not partner_id
+      let trackingUserId = localStorage.getItem("employeeId") || "";
+      try {
+        const loginData = JSON.parse(localStorage.getItem("loginData") || "{}");
+        if (loginData.user_id || loginData.Id) {
+          trackingUserId = loginData.user_id || loginData.Id;
+        }
+      } catch(e) {
+        console.error("Failed to parse loginData for trackingUserId", e);
+      }
       
       let baseUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '') : `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}`;
       if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
@@ -45,7 +55,7 @@ const LiveTracking = () => {
       let endpointUrl = `${baseUrl}/api/employee/location/log`;
       endpointUrl = endpointUrl.replace(/\/api\/api\//g, '/api/');
       
-      await NativeTracking.setConfig({ apiKey, employeeId, endpointUrl });
+      await NativeTracking.setConfig({ apiKey, employeeId: trackingUserId, endpointUrl });
 
       // 3. Create the location watcher
       const id = await BackgroundGeolocation.addWatcher(
