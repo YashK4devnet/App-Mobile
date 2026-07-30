@@ -320,12 +320,16 @@ export const AppProvider = ({ children }) => {
               } else {
                 try {
                   const responseData = JSON.parse(responseText);
-                  if (responseData["api-key"]) {
-                    parsedData["api-Key"] = responseData["api-key"];
-                    parsedData.employeeId = responseData.employeeId;
-                    parsedData.userId = responseData.userId;
+                  const apiKey = responseData["api-key"] || responseData["api_key"];
+                  if (apiKey) {
+                    parsedData["api-Key"] = apiKey;
+                    parsedData["api-key"] = apiKey;
+                    parsedData.employeeId = responseData.employee_id || responseData.employeeId || responseData.partner_id || responseData.user_id || parsedData.employeeId;
+                    parsedData.userId = responseData.user_id || responseData.userId || responseData.UserID || parsedData.userId;
+                    parsedData.Id = responseData.UserID || responseData.user_id || responseData.id || parsedData.Id;
+                    parsedData.name = responseData.User || responseData.user || responseData.name || parsedData.name;
                     localStorage.setItem("loginData", JSON.stringify(parsedData));
-                    localStorage.setItem("serverApiKey", responseData["api-key"]);
+                    localStorage.setItem("serverApiKey", apiKey);
                   }
                 } catch (e) {
                   console.warn("Could not parse re-auth JSON response.", e);

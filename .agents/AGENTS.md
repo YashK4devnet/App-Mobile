@@ -70,3 +70,14 @@ This document provides persistent context for the App-Mobile React application, 
 - **Background Live Tracking Integration:** Added `@capacitor-community/background-geolocation` and implemented interval-based (5s) background tracking for attendance, leveraging an Android foreground service with custom `AndroidManifest.xml` permissions (`ACCESS_BACKGROUND_LOCATION`, `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_LOCATION`).
 - **Vite Environment Modes Architecture:** Implemented a robust multi-environment configuration utilizing `.env.staging`, `.env.development`, and `.env.production`. Added a custom `build:staging` script (`vite build --mode staging`) to allow Capacitor to build and sync local dev endpoint settings (like pointing to `192.168.x.x`) directly to the Android physical device testing environment without injecting dev flags into the production build.
 - **Global API Endpoint Refactoring:** Replaced all hardcoded `https://erp.eduquity.com` string literals and template hooks across the application with dynamic `import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'` variables, guaranteeing seamless switching between local networks and production without manual code edits.
+- **Development Environment Login Response Support & Reversion Guide:**
+  - Updated `Auth.jsx`, `AppContext.jsx`, and `isValidSession.js` to normalize the dev environment login API response (`{ "status": "success", "message": "Authentication successful", "user": "...", "user_id": ..., "partner_id": ..., "api-key": "..." }`) while remaining 100% backwards compatible with legacy/production Odoo responses (`{ "Status": "auth successful", "User": "...", "UserID": ..., "employee_id": ... }`).
+  - **Steps to Reverse (Revert to strict legacy Odoo response format):**
+    1. In `src/components/Auth/Auth.jsx`:
+       - Revert `isAuthSuccessful` check to: `const isAuthSuccessful = statusValue === "auth successful" || (hasApiKey && (responseData?.UserID || responseData?.employee_id));`.
+       - Revert `userData` mapping to strictly use `responseData.User` for name, `responseData.UserID` for Id, and `responseData.employee_id` for employeeId without `user_id`/`partner_id`/`user` fallbacks.
+    2. In `src/store/AppContext.jsx`:
+       - Revert re-auth response parsing in `loadStoredData()` to extract only `responseData.employeeId`, `responseData.userId`, and `responseData["api-key"]`.
+    3. In `src/utils/isValidSession.js`:
+       - Revert `apiKey` extraction to strictly check: `const apiKey = parsedData["api-key"];`.
+

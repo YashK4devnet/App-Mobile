@@ -126,7 +126,11 @@ const Auth = () => {
       // Normalize response status and verify auth success
       const statusValue = String(responseData?.Status || responseData?.status || responseData?.message || "").trim().toLowerCase();
       const hasApiKey = Boolean(responseData?.["api-key"] || responseData?.["api_key"]);
-      const isAuthSuccessful = statusValue === "auth successful" || (hasApiKey && (responseData?.UserID || responseData?.employee_id));
+      const isAuthSuccessful =
+        statusValue === "auth successful" ||
+        statusValue === "success" ||
+        statusValue === "authentication successful" ||
+        (hasApiKey && Boolean(responseData?.UserID || responseData?.user_id || responseData?.employee_id || responseData?.partner_id || responseData?.user || responseData?.User));
 
       if (/already login/i.test(statusValue)) {
         throw new Error(
@@ -137,20 +141,27 @@ const Auth = () => {
       // If JSON and auth successful
       if (responseData && isAuthSuccessful) {
         const apiKey = responseData["api-key"] || responseData["api_key"] || "";
+        const userId = responseData.UserID || responseData.user_id || responseData.id || responseData.uid;
+        const employeeId = responseData.employee_id || responseData.partner_id || responseData.user_id || userId;
+        const userName = responseData.User || responseData.user || responseData.name || "User";
+
         const userData = {
-          name: responseData.User || responseData.name || "User",
+          name: userName,
           email: data.email.trim(),
           password: data.password,
           ["api-Key"]: apiKey,
-          Id: responseData.UserID || responseData.id,
-          employeeId: responseData.employee_id,
-          employee_email: responseData.work_email,
-          employee_phone: responseData.work_phone,
+          ["api-key"]: apiKey,
+          Id: userId,
+          user_id: responseData.user_id || userId,
+          partner_id: responseData.partner_id,
+          employeeId: employeeId,
+          employee_email: responseData.work_email || responseData.employee_email,
+          employee_phone: responseData.work_phone || responseData.employee_phone,
           employee_latitude: responseData.employee_latitude,
           employee_longitude: responseData.employee_longitude,
           employee_department: responseData.department_id,
           employee_post: responseData.job_id,
-          employee_assigned_project: responseData?.active_project ?? "None",
+          employee_assigned_project: responseData?.active_project ?? responseData?.assigned_project ?? "None",
           employee_assigned_venue: responseData?.active_venue ?? "None",
           employee_code: responseData?.employee_code ?? "None",
           project_id: responseData.project_id,
@@ -162,7 +173,7 @@ const Auth = () => {
         localStorage.setItem("loginData", JSON.stringify(userData));
         localStorage.setItem(
           "employeeId",
-          String(responseData.employee_id || "")
+          String(employeeId || "")
         );
         localStorage.setItem("serverApiKey", apiKey);
 
