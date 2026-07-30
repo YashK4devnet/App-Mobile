@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { registerPlugin } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 const BackgroundGeolocation = registerPlugin('BackgroundGeolocation');
 import styles from './LiveTracking.module.css';
 
@@ -23,7 +24,16 @@ const LiveTracking = () => {
   const startTracking = async () => {
     setError(null);
     try {
-      // Create the watcher
+      // 1. Request notification permissions (required for Android 13+ Foreground Service)
+      let permStatus = await LocalNotifications.checkPermissions();
+      if (permStatus.display === 'prompt') {
+        permStatus = await LocalNotifications.requestPermissions();
+      }
+      if (permStatus.display !== 'granted') {
+        throw new Error("Notification permission is required for background tracking.");
+      }
+
+      // 2. Create the location watcher
       const id = await BackgroundGeolocation.addWatcher(
         {
           requestPermissions: true, // Request permissions if missing
