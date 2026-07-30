@@ -28,7 +28,7 @@ import java.util.TimeZone;
 public class NativeTrackingPlugin extends Plugin {
     public static String apiKey = "";
     public static String employeeId = "";
-    public static String baseUrl = "";
+    public static String endpointUrl = "";
 
     private long lastPostTime = 0;
     private static final long TRACKING_INTERVAL_MS = 5000;
@@ -43,7 +43,7 @@ public class NativeTrackingPlugin extends Plugin {
             lastPostTime = now;
 
             Location location = intent.getParcelableExtra("location");
-            if (location != null && !apiKey.isEmpty() && !baseUrl.isEmpty()) {
+            if (location != null && !apiKey.isEmpty() && !endpointUrl.isEmpty()) {
                 sendLocationToServer(location);
             }
         }
@@ -61,14 +61,15 @@ public class NativeTrackingPlugin extends Plugin {
     public void setConfig(PluginCall call) {
         apiKey = call.getString("apiKey", "");
         employeeId = String.valueOf(call.getInt("employeeId", call.getString("employeeId") != null ? Integer.parseInt(call.getString("employeeId")) : 0));
-        baseUrl = call.getString("baseUrl", "");
+        endpointUrl = call.getString("endpointUrl", "");
+        Log.d("NativeTracking", "Configured with endpoint: " + endpointUrl);
         call.resolve();
     }
 
     private void sendLocationToServer(Location location) {
         new Thread(() -> {
             try {
-                URL url = new URL(baseUrl + "/api/employee/location/log");
+                URL url = new URL(endpointUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
