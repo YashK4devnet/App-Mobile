@@ -157,6 +157,8 @@ export default function NetworkAuditWizard() {
     handleNextClick,
     handlePrevClick,
     isReadOnly,
+    reportState,
+    handleStartAudit,
     submittedSections
   } = useAuditWizard({
     schemas: dynamicSchemas,
@@ -247,7 +249,7 @@ export default function NetworkAuditWizard() {
           showBack={true} 
           onBackClick={() => navigate(-1)} 
         />
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden relative">
           <AuditIndex
             groups={auditGroups}
             onSectionSelect={(sectionId) => {
@@ -256,6 +258,16 @@ export default function NetworkAuditWizard() {
             }}
             progressPercent={progressPercent}
           />
+          {reportState === 'assign_user' && (
+            <div className="absolute bottom-6 left-5 right-5 z-20">
+              <button 
+                onClick={handleStartAudit}
+                className="w-full bg-[#4ecdc4] hover:bg-[#45b7b0] text-black font-bold py-4 rounded-2xl shadow-xl shadow-[#4ecdc4]/20 active:scale-95 transition-all"
+              >
+                Start Audit
+              </button>
+            </div>
+          )}
         </div>
         <BottomNav />
       </div>

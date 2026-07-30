@@ -97,8 +97,8 @@ export function useAuditWizard({
     ? `audit_draft_report_${reportId}_${typeId}` 
     : `audit_draft_venue_${venueId}_${typeId}`;
   
-  const reportState = location.state?.odooData?.state || 'draft';
-  const isReadOnly = reportState === 'waiting_for_approval' || reportState === 'approved' || reportState === 'reject';
+  const [reportState, setReportState] = useState(location.state?.odooData?.state || 'draft');
+  const isReadOnly = reportState === 'waiting_for_approval' || reportState === 'approved' || reportState === 'reject' || reportState === 'assign_user';
   const [isInitializing, setIsInitializing] = useState(true);
   
   // Evaluate default values before passing to useForm, as RHF expects a Promise if a function is passed.
@@ -164,14 +164,6 @@ export function useAuditWizard({
         }
       } finally {
         if (isSubscribed) {
-          // Auto-start audit if it's assigned
-          if (location.state?.odooData?.state === 'assign_user' && reportId && navigator.onLine) {
-            reportApiService.patchAuditSection(reportId, { state: 'in_progress' })
-              .catch(err => console.error("Failed to update status to in_progress", err));
-            if (location.state?.odooData) {
-              location.state.odooData.state = 'in_progress';
-            }
-          }
           setSubmittedSections(getInitialSubmittedSections());
           setIsInitializing(false);
         }
@@ -270,6 +262,31 @@ export function useAuditWizard({
     const sectionErrors = validateSchema(schema, currentData);
     if (Object.keys(sectionErrors).length > 0) return 'invalid';
     return isSchemaEmpty(schema, currentData) ? 'empty' : 'valid';
+  };
+
+  const handleStartAudit = async () => {
+    if (!navigator.onLine) {
+      toast.error('Cannot start audit offline. Please connect to the internet first.', {
+        style: { borderRadius: '10px', background: '#ef4444', color: '#fff' }
+      });
+      return false;
+    }
+
+    try {
+      await reportApiService.patchAuditSection(reportId, { state: 'in_progress' });
+      if (location.state?.odooData) {
+        location.state.odooData.state = 'in_progress';
+      }
+      setReportState('in_progress');
+      toast.success('Audit Started!', { duration: 2000, position: 'bottom-center' });
+      return true;
+    } catch (err) {
+      console.error("Failed to start audit:", err);
+      toast.error('Failed to start audit. Please try again.', {
+        style: { borderRadius: '10px', background: '#ef4444', color: '#fff' }
+      });
+      return false;
+    }
   };
 
   const handleSectionSelect = (sectionId) => {
@@ -418,6 +435,8 @@ export function useAuditWizard({
     handleNextClick,
     handlePrevClick,
     isReadOnly,
+    reportState,
+    handleStartAudit,
     submittedSections,
     reportId
   };

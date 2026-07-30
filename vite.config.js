@@ -1,45 +1,47 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import legacy from "@vitejs/plugin-legacy";
 import tailwindcss from "@tailwindcss/vite";
-import dotenv from "dotenv";
-import path from "path";
 
-// Load environment variables from the audit feature directory
-dotenv.config({ path: path.resolve(__dirname, "src/components/audit/.env") });
+export default defineConfig(({ command, mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  
+  // HARDCODED AS REQUESTED BY USER FOR LOCAL CORS BYPASS
+  const baseUrl = "http://192.168.29.67:4955";
 
-const ipAddress = process.env.AUDIT_API_IP || "";
-const cleanIp = ipAddress.replace(/\/$/, "");
-const proxyTarget = cleanIp 
-  ? (cleanIp.startsWith("http") ? cleanIp : `http://${cleanIp}`) 
-  : "http://localhost:8099";
-
-export default defineConfig({
-  define: {
-    "process.env.AUDIT_API_IP": JSON.stringify(process.env.AUDIT_API_IP),
-    "import.meta.env.VITE_API_URL": JSON.stringify(process.env.VITE_API_URL),
-    "process.env.AUDIT_API_DB": JSON.stringify(process.env.AUDIT_API_DB),
-  },
-  plugins: [
-    tailwindcss(),
-    react(),
-    legacy({
-      targets: ["defaults", "not IE 11"],
-    }),
-  ],
-  server: {
-    proxy: {
-      "/api": {
-        target: proxyTarget,
-        changeOrigin: true,
-        secure: false, // ignore self-signed SSL issues
-        rewrite: (path) => path.replace(/^\/api/, ""),
-      },
-      "/odoo_connect": {
-        target: proxyTarget.replace(/\/api$/, ""),
-        changeOrigin: true,
-        secure: false,
+  return {
+    define: {
+      "process.env.AUDIT_API_IP": JSON.stringify(env.AUDIT_API_IP),
+      "import.meta.env.VITE_API_URL": JSON.stringify(env.VITE_API_URL),
+      "process.env.AUDIT_API_DB": JSON.stringify(env.VITE_API_DB),
+      ...(command === 'serve' ? { "import.meta.env.VITE_API_BASE_URL": JSON.stringify("/api") } : {})
+    },
+    plugins: [
+      tailwindcss(),
+      react(),
+      legacy({
+        targets: ["defaults", "not IE 11"],
+      }),
+    ],
+    server: {
+      proxy: {
+        "/api/audits": {
+          target: baseUrl,
+          changeOrigin: true,
+          secure: false,
+        },
+        "/api": {
+          target: baseUrl,
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api/, ""),
+        },
+        "/odoo_connects": {
+          target: baseUrl,
+          changeOrigin: true,
+          secure: false,
+        },
       },
     },
-  },
+  };
 });

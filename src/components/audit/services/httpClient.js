@@ -13,18 +13,18 @@ const getBaseUrl = () => {
       if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
       if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
     }
-  // Web fallback if no env variable is found
+    // Web fallback if no env variable is found
+    return `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`;
+  }
+
+  // Try Vite env variables
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
+    if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  }
+
+  // Native production fallback
   return `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`;
-}
-
-// Try Vite env variables
-if (typeof import.meta !== 'undefined' && import.meta.env) {
-  if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
-  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-}
-
-// Native production fallback
-return `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`;
 };
 
 /**
@@ -33,8 +33,8 @@ return `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`;
  */
 export const auditHttpClient = async (endpoint, options = {}) => {
   const baseUrl = getBaseUrl();
-  const odooDb = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_DB) 
-    ? import.meta.env.VITE_API_DB 
+  const odooDb = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_DB)
+    ? import.meta.env.VITE_API_DB
     : 'erp-eduquity-com';
 
   let userEmail = '';
@@ -62,7 +62,6 @@ export const auditHttpClient = async (endpoint, options = {}) => {
   };
   if (serverApiKey) {
     defaultHeaders['api-key'] = serverApiKey;
-    defaultHeaders['api-Key'] = serverApiKey;
   }
 
   console.log(`🌐 [httpClient Debug] HTTP REQUEST -> ${method} ${url} | userEmail: ${userEmail} | serverApiKey: ${serverApiKey} | odooDb: ${odooDb} | headers: ${JSON.stringify(defaultHeaders)}`);
