@@ -48,6 +48,9 @@ const LiveTracking = () => {
         console.error("Failed to parse loginData for trackingUserId", e);
       }
       
+      // HARDCODED FOR TESTING: Force ID to 1 as requested by user
+      trackingUserId = 1;
+      
       let baseUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '') : `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}`;
       if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
       
