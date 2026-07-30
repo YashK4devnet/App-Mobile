@@ -26,3 +26,20 @@ body.audit-theme {
   padding: 0;
 }
 
+/* Global interaction styles: remove unwanted blue tap highlight and blue focus boxes */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus,
+a:focus {
+  outline: none;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgba(78, 205, 196, 0.6);
+  outline-offset: 2px;
+}
+
+

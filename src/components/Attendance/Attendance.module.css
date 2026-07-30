@@ -7,7 +7,7 @@
   background: #0f0f23;
   padding: 20px;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .attendanceContainer::before {
@@ -274,3 +274,11 @@
 .retryButton:hover {
   background: #45b7d1;
 }
+
+@media (max-width: 768px) {
+  .attendanceContainer {
+    padding-top: calc(75px + var(--android-statusbar-height, env(safe-area-inset-top, 0px)));
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  }
+}
+

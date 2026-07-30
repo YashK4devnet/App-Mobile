@@ -311,8 +311,12 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .cardContainer {
-    padding: 15px;
+    padding: calc(75px + var(--android-statusbar-height, env(safe-area-inset-top, 0px))) 15px calc(90px + env(safe-area-inset-bottom, 0px));
     min-height: calc(100vh - 120px);
+  }
+
+  .logoContainer {
+    margin-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
   }
 
   .profileCard {

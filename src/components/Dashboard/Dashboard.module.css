@@ -522,13 +522,13 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .logoContainer {
-    margin: -20px auto 70px auto;
+    margin: 20px auto calc(90px + env(safe-area-inset-bottom, 0px)) auto;
     padding: 15px;
     width: calc(100% - 40px); /* Account for mainContent padding */
     max-width: none;
   }
   .mainContent {
-    padding: 80px 20px 20px;
+    padding: calc(75px + var(--android-statusbar-height, env(safe-area-inset-top, 0px))) 20px calc(80px + env(safe-area-inset-bottom, 0px));
   }
 
   .welcomeSection {
@@ -629,12 +629,12 @@
 
 @media (max-width: 480px) {
   .logoContainer {
-    margin: -20px auto 70px auto;
+    margin: 10px auto calc(90px + env(safe-area-inset-bottom, 0px)) auto;
     padding: 12px;
     width: calc(100% - 32px); /* Account for mainContent padding */
   }
   .mainContent {
-    padding: 100px 16px 16px;
+    padding: calc(70px + var(--android-statusbar-height, env(safe-area-inset-top, 0px))) 16px calc(80px + env(safe-area-inset-bottom, 0px));
   }
 
   .welcomeSection {

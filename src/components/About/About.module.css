@@ -6,7 +6,7 @@
   background: #fff;
   padding: 20px;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .aboutContainer::before {
@@ -146,6 +146,10 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
+  .aboutContainer {
+    padding: calc(75px + var(--android-statusbar-height, env(safe-area-inset-top, 0px))) 16px calc(90px + env(safe-area-inset-bottom, 0px));
+  }
+
   .aboutCard {
     padding: 50px 40px;
     max-width: 400px;

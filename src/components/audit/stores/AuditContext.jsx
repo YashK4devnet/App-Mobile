@@ -32,31 +32,37 @@ export const AuditProvider = ({ children, userId, apiKey }) => {
   const fetchAuditData = useCallback(async (isRefreshing = false) => {
     if (!isRefreshing && reports.length === 0) setIsLoading(true);
     setError(null);
-    
+
     try {
       let effectiveUserId = userId;
-      if (!effectiveUserId) {
-        try {
-          const loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
-          effectiveUserId = loginData.Id || loginData.uid || loginData.user_id || loginData.id || loginData.UserID;
-        } catch (e) {
-          console.error('Failed to parse loginData for effectiveUserId', e);
+      let loginData = {};
+      try {
+        loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
+        if (!effectiveUserId) {
+          effectiveUserId = loginData.Id || loginData.UserID || loginData.uid || loginData.user_id || loginData.id || loginData.employeeId || loginData.employee_id;
         }
+      } catch (e) {
+        console.error('Failed to parse loginData for effectiveUserId', e);
       }
 
+      const serverApiKey = localStorage.getItem('serverApiKey') || loginData['api-Key'] || loginData['api-key'] || loginData['api_key'] || '';
+
+      console.log(`🔑 [AuditContext Debug] USER DETAILS -> effectiveUserId: ${effectiveUserId} | serverApiKey: ${serverApiKey} | email: ${loginData.email} | loginData: ${JSON.stringify(loginData)}`);
+
       if (!effectiveUserId) {
+        console.warn('⚠️ [AuditContext Debug] No effectiveUserId found, skipping fetch.');
         setIsLoading(false);
         return;
       }
 
       const url = `/audits/by-user/${effectiveUserId}`;
-      console.log('Fetching centralized audit data from:', url);
+      console.log('📡 [AuditContext Debug] Fetching centralized audit data from:', url);
       const data = await auditHttpClient(url);
-      
+
       if (data && data.status === 'success') {
         const fetchedReports = data.data || [];
         setReports(fetchedReports);
-        localStorage.setItem(`audit_reports_cache_${userId}`, JSON.stringify(fetchedReports));
+        localStorage.setItem(`audit_reports_cache_${effectiveUserId}`, JSON.stringify(fetchedReports));
         setConnectionError(false);
         setError(null);
       } else {
@@ -65,7 +71,7 @@ export const AuditProvider = ({ children, userId, apiKey }) => {
     } catch (err) {
       console.error('Failed to fetch audit data:', err);
       setConnectionError(true);
-      
+
       // We no longer set a blocking UI error here even if there are no reports.
       // This allows the dashboard to render an empty state gracefully instead of failing.
     } finally {
@@ -100,7 +106,7 @@ export const AuditProvider = ({ children, userId, apiKey }) => {
       if (venue) {
         let vId, vName, vLocation;
         let vData = {};
-        
+
         if (Array.isArray(venue)) {
           vId = venue[0]?.toString();
           vName = venue[1] || '';
@@ -132,15 +138,15 @@ export const AuditProvider = ({ children, userId, apiKey }) => {
   }, [reports]);
 
   return (
-    <AuditContext.Provider 
-      value={{ 
-        reports, 
-        venues, 
-        dashboardStats, 
-        isLoading, 
-        error, 
+    <AuditContext.Provider
+      value={{
+        reports,
+        venues,
+        dashboardStats,
+        isLoading,
+        error,
         connectionError,
-        refreshData 
+        refreshData
       }}
     >
       {children}

@@ -247,11 +247,14 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .pageBackground {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  }
+
   .incidentContainer {
     padding: 24px;
-
     max-width: none;
-    margin: 90px 24px 0;
+    margin: calc(75px + var(--android-statusbar-height, env(safe-area-inset-top, 0px))) 24px calc(90px + env(safe-area-inset-bottom, 0px));
   }
 
   .incidentIcon {

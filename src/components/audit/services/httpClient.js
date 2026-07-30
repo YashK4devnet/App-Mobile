@@ -13,29 +13,19 @@ const getBaseUrl = () => {
       if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
       if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
     }
-    // Web fallback if no env variable is found
-    return '/api';
-  }
-
-  // Try Vite env variables
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
-    if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-  }
-
-  // Try Node/React env variables
-  if (typeof process !== 'undefined' && process.env) {
-    if (process.env.REACT_APP_API_BASE_URL) return process.env.REACT_APP_API_BASE_URL;
-    if (process.env.AUDIT_API_IP) {
-      const cleanIp = process.env.AUDIT_API_IP.replace(/^(https?:\/\/)?/, '').replace(/\/$/, '');
-      return `http://${cleanIp}`;
-    }
-  }
-
-  // Native production fallback
+  // Web fallback if no env variable is found
   return 'https://erp.eduquity.com';
-};
+}
 
+// Try Vite env variables
+if (typeof import.meta !== 'undefined' && import.meta.env) {
+  if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+}
+
+// Native production fallback
+return 'https://erp.eduquity.com';
+};
 
 /**
  * A centralized API client strictly for the Audit Component.
@@ -54,7 +44,7 @@ export const auditHttpClient = async (endpoint, options = {}) => {
     const loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
     userEmail = loginData.email || loginData.work_email || '';
     if (!serverApiKey) {
-      serverApiKey = loginData['api-Key'] || loginData['api-key'] || '';
+      serverApiKey = loginData['api-Key'] || loginData['api-key'] || loginData['api_key'] || '';
     }
   } catch (e) {
     console.error('Failed to parse loginData in httpClient:', e);
@@ -65,14 +55,17 @@ export const auditHttpClient = async (endpoint, options = {}) => {
 
   const defaultHeaders = {
     'Content-Type': 'application/json',
-    'login': userEmail
+    'login': userEmail,
+    'db': odooDb,
+    'Odoo-DB': odooDb,
+    'X-Odoo-Database': odooDb
   };
-  if (odooDb) {
-    defaultHeaders['X-Odoo-Database'] = odooDb;
-  }
   if (serverApiKey) {
     defaultHeaders['api-key'] = serverApiKey;
+    defaultHeaders['api-Key'] = serverApiKey;
   }
+
+  console.log(`🌐 [httpClient Debug] HTTP REQUEST -> ${method} ${url} | userEmail: ${userEmail} | serverApiKey: ${serverApiKey} | odooDb: ${odooDb} | headers: ${JSON.stringify(defaultHeaders)}`);
 
   if (Capacitor.isNativePlatform()) {
     console.log(`[auditHttpClient] Native ${method} to ${url}`);

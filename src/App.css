@@ -23,10 +23,10 @@ body:not(.audit-theme) {
   -moz-osx-font-smoothing: grayscale;
   background-color: #0f0f23;
   overflow-x: hidden;
+  overflow-y: auto;
 
   /* Add safe area padding only to body */
   padding-right: var(--safe-area-inset-right);
-  padding-bottom: var(--safe-area-inset-bottom);
   padding-left: var(--safe-area-inset-left);
 }
 
