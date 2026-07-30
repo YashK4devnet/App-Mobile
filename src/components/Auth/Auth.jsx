@@ -17,10 +17,33 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') : 'https://erp.eduquity.com';
+      // 1. Check for bypass flag
+      if (import.meta.env.VITE_BYPASS_LOGIN === 'true') {
+        console.warn("⚠️ BYPASSING LOGIN API FOR LOCAL DEV ⚠️");
+        const mockUserData = {
+          name: "Local Dev",
+          email: data.email.trim(),
+          password: data.password,
+          ["api-Key"]: "mock-api-key-123",
+          Id: "999",
+          employeeId: "999",
+          employee_email: data.email.trim(),
+          employee_assigned_project: "Test Project",
+          employee_assigned_venue: "Test Venue",
+        };
+        localStorage.setItem("loginData", JSON.stringify(mockUserData));
+        localStorage.setItem("employeeId", "999");
+        localStorage.setItem("serverApiKey", "mock-api-key-123");
+        login(mockUserData);
+        navigate("/dashboard");
+        return;
+      }
+
+      const apiUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/api$/, '') : `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`;
+      const loginEndpoint = import.meta.env.VITE_LOGIN_ENDPOINT || '/odoo_connect';
       const dbName = import.meta.env.VITE_API_DB || "erp-eduquity-com";
 
-      const response = await fetch(`${apiUrl}/odoo_connect`, {
+      const response = await fetch(`${apiUrl}${loginEndpoint}`, {
         method: "GET",
         headers: {
           action: "login",

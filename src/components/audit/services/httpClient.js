@@ -14,7 +14,7 @@ const getBaseUrl = () => {
       if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
     }
   // Web fallback if no env variable is found
-  return 'https://erp.eduquity.com';
+  return `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`;
 }
 
 // Try Vite env variables
@@ -24,7 +24,7 @@ if (typeof import.meta !== 'undefined' && import.meta.env) {
 }
 
 // Native production fallback
-return 'https://erp.eduquity.com';
+return `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`;
 };
 
 /**

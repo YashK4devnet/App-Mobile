@@ -1,6 +1,6 @@
 export const getUnsealingChecklist = async (userLoginData) => {
   try {
-    const response = await fetch(`https://erp.eduquity.com/fetch_checklist`, {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/fetch_checklist`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

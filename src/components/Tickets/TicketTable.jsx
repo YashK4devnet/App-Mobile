@@ -249,7 +249,7 @@ const TicketTable = () => {
       setApiError("");
 
       const response = await fetch(
-        `https://erp.eduquity.com/get_user_tickets`,
+        `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/get_user_tickets`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -375,7 +375,7 @@ const TicketTable = () => {
         const apiDomain = localStorage.getItem("apiDomain"); */
 
         const [ticketTypesRes, categoriesRes] = await Promise.all([
-          fetch(`https://erp.eduquity.com/get_ticket_types`, {
+          fetch(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/get_ticket_types`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -385,7 +385,7 @@ const TicketTable = () => {
               db: "erp-eduquity-com",
             },
           }),
-          fetch(`https://erp.eduquity.com/fetch_categories`, {
+          fetch(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/fetch_categories`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -495,7 +495,7 @@ const TicketTable = () => {
       };
 
       const response = await fetch(
-        `https://erp.eduquity.com/send_request?model=helpdesk.ticket&db=erp-eduquity-com`,
+        `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/send_request?model=helpdesk.ticket&db=erp-eduquity-com`,
         {
           method: "POST",
           headers: {
@@ -609,7 +609,7 @@ const TicketTable = () => {
       };
 
       const response = await fetch(
-        `https://erp.eduquity.com/send_request?model=helpdesk.ticket&db=erp-eduquity-com`,
+        `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/send_request?model=helpdesk.ticket&db=erp-eduquity-com`,
         {
           method: "POST",
           headers: {
@@ -824,7 +824,7 @@ const TicketTable = () => {
                     };
 
                     const response = await fetch(
-                      `https://erp.eduquity.com/send_request?model=helpdesk.ticket&db=erp-eduquity-com`,
+                      `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/send_request?model=helpdesk.ticket&db=erp-eduquity-com`,
                       {
                         method: "POST",
                         headers: {

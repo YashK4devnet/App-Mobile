@@ -1,7 +1,7 @@
 export const createChecklist = async (userLoginData, payload) => {
   try {
     const response = await fetch(
-      `https://erp.eduquity.com/send_request?model=venue.unsealing.check.list`,
+      `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/send_request?model=venue.unsealing.check.list`,
       {
         method: "POST",
         headers: {

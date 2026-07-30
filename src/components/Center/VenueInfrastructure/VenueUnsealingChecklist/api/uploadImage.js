@@ -1,6 +1,6 @@
 export const uploadImage = async (userLoginData, payload, Id) => {
   try {
-    const response = await fetch(`https://erp.eduquity.com/upload_image`, {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/upload_image`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

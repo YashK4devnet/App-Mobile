@@ -93,7 +93,7 @@ const CheckIn = () => {
 
     try {
       const response = await fetch(
-        "https://erp.eduquity.com/fetch_last_activity",
+        `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/fetch_last_activity`,
         {
           method: "GET",
           headers: {

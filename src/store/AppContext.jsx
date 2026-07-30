@@ -23,7 +23,7 @@ const getAssignedCoordinates = async () => {
 
     // ✅ Step 2: API call
     const response = await fetch(
-      `https://erp.eduquity.com/active_data?model=hr.employee&Id=${id}`,
+      `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/active_data?model=hr.employee&Id=${id}`,
       {
         headers: {
           login: loginData.email,
@@ -282,7 +282,7 @@ export const AppProvider = ({ children }) => {
 
           // Check server access / re-auth
           try {
-            const response = await fetch(`https://erp.eduquity.com/odoo_connect`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/odoo_connect`, {
               method: "GET",
               headers: {
                 action: "login",
@@ -393,7 +393,7 @@ export const AppProvider = ({ children }) => {
       };
 
       const response = await fetch(
-        `https://erp.eduquity.com/send_request?model=hr.employee&Id=${userId}`,
+        `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/send_request?model=hr.employee&Id=${userId}`,
         {
           method: "PUT",
           headers: {
@@ -551,7 +551,7 @@ export const AppProvider = ({ children }) => {
 
       // ✅ Step 5: Send check-in request to server
       const response = await fetch(
-        `https://erp.eduquity.com/send_request?model=hr.attendance`,
+        `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/send_request?model=hr.attendance`,
         {
           method: "POST",
           headers: {
@@ -776,7 +776,7 @@ export const AppProvider = ({ children }) => {
 
       // ✅ Step 7: Send PUT request to update attendance record
       const response = await fetch(
-        `https://erp.eduquity.com/send_request?model=hr.attendance&Id=${checkInId}`,
+        `${import.meta.env.VITE_API_BASE_URL || `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`}/send_request?model=hr.attendance&Id=${checkInId}`,
         {
           method: "PUT",
           headers: {
