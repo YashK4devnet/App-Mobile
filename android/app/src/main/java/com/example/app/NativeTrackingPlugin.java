@@ -31,7 +31,7 @@ public class NativeTrackingPlugin extends Plugin {
     public static String endpointUrl = "";
 
     private long lastPostTime = 0;
-    private static final long TRACKING_INTERVAL_MS = 5000;
+    private static long TRACKING_INTERVAL_MS = 5000;
 
     private BroadcastReceiver locationReceiver = new BroadcastReceiver() {
         @Override
@@ -62,7 +62,12 @@ public class NativeTrackingPlugin extends Plugin {
         apiKey = call.getString("apiKey", "");
         employeeId = String.valueOf(call.getInt("employeeId", call.getString("employeeId") != null ? Integer.parseInt(call.getString("employeeId")) : 0));
         endpointUrl = call.getString("endpointUrl", "");
-        Log.d("NativeTracking", "Configured with endpoint: " + endpointUrl);
+        
+        // Dynamically accept interval from frontend, default to 5000ms
+        int dynamicInterval = call.getInt("interval", 5000);
+        TRACKING_INTERVAL_MS = dynamicInterval;
+        
+        Log.d("NativeTracking", "Configured! Endpoint: " + endpointUrl + " | Interval: " + TRACKING_INTERVAL_MS + "ms | Employee: " + employeeId);
         call.resolve();
     }
 
@@ -78,10 +83,12 @@ public class NativeTrackingPlugin extends Plugin {
 
                 JSONObject json = new JSONObject();
                 json.put("employee_id", Integer.parseInt(employeeId));
-                json.put("latitude", String.valueOf(location.getLatitude()));
-                json.put("longitude", String.valueOf(location.getLongitude()));
                 
-                // date format: yyyy-mm-dd
+                // Keep as Double (Numbers) instead of Strings, as required by backend schema
+                json.put("latitude", location.getLatitude());
+                json.put("longitude", location.getLongitude());
+                
+                // date format: yyyy-MM-dd
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
                 dateFormat.setTimeZone(TimeZone.getDefault());
                 json.put("date", dateFormat.format(new Date(location.getTime())));
@@ -91,13 +98,20 @@ public class NativeTrackingPlugin extends Plugin {
                 timeFormat.setTimeZone(TimeZone.getDefault());
                 json.put("time", timeFormat.format(new Date(location.getTime())));
 
+                Log.d("NativeTracking", "Sending POST to: " + endpointUrl);
+                Log.d("NativeTracking", "Payload: " + json.toString());
+
                 try (OutputStream os = conn.getOutputStream()) {
                     byte[] input = json.toString().getBytes("utf-8");
                     os.write(input, 0, input.length);
                 }
 
                 int responseCode = conn.getResponseCode();
-                Log.d("NativeTracking", "Location sent, response: " + responseCode);
+                Log.d("NativeTracking", "Response Code: " + responseCode);
+                
+                if (responseCode == 404) {
+                    Log.e("NativeTracking", "404 Not Found. Please verify the endpoint URL exactly matches Odoo.");
+                }
                 conn.disconnect();
             } catch (Exception e) {
                 Log.e("NativeTracking", "Error sending location", e);
