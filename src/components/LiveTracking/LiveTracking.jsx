@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { registerPlugin } from '@capacitor/core';
+import { registerPlugin, CapacitorHttp } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 const BackgroundGeolocation = registerPlugin('BackgroundGeolocation');
 import styles from './LiveTracking.module.css';
@@ -84,13 +84,25 @@ const LiveTracking = () => {
     console.log('🛑 Background tracking stopped.');
   };
 
-  const mockApiCall = (lat, lng) => {
-    console.log(`📡 [MOCK API] Sending location to server -> lat: ${lat}, lng: ${lng}`);
-    // fetch('https://your-api.com/update_location', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ lat, lng, timestamp: new Date().toISOString() })
-    // });
+  const mockApiCall = async (lat, lng) => {
+    const timestamp = new Date().toLocaleTimeString();
+    console.log(`📡 [MOCK API] Location update -> lat: ${lat}, lng: ${lng} | Time: ${timestamp}`);
+    
+    // We MUST use CapacitorHttp here instead of standard 'fetch'.
+    // Standard fetch() is blocked by Android WebView after 5 minutes in the background.
+    // CapacitorHttp pushes the network request down to the native Android Java layer,
+    // bypassing the WebView suspension completely!
+    
+    try {
+      await CapacitorHttp.post({
+        url: 'http://192.168.29.67:4955/update_location_mock',
+        headers: { 'Content-Type': 'application/json' },
+        data: { lat, lng, timestamp: new Date().toISOString() }
+      });
+      console.log(`✅ [MOCK API] Native HTTP Post Successful at ${timestamp}`);
+    } catch (e) {
+      console.error(`❌ [MOCK API] Native HTTP Post Failed at ${timestamp}`, e);
+    }
   };
 
   return (
