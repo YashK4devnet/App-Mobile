@@ -8,6 +8,7 @@ import com.getcapacitor.BridgeActivity;
 public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        registerPlugin(NativeTrackingPlugin.class);
         super.onCreate(savedInstanceState);
 
         // ✅ Enable WebView remote debugging (for Chrome DevTools)

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { registerPlugin, CapacitorHttp } from '@capacitor/core';
+import { registerPlugin } from '@capacitor/core';
+const NativeTracking = registerPlugin('NativeTracking');
 import { LocalNotifications } from '@capacitor/local-notifications';
 const BackgroundGeolocation = registerPlugin('BackgroundGeolocation');
 import styles from './LiveTracking.module.css';
@@ -33,7 +34,15 @@ const LiveTracking = () => {
         throw new Error("Notification permission is required for background tracking.");
       }
 
-      // 2. Create the location watcher
+      // 2. Configure our Custom Native Tracking Plugin
+      const apiKey = localStorage.getItem("serverApiKey") || "";
+      const employeeId = localStorage.getItem("employeeId") || "";
+      let baseUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/api$/, '') : `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}`;
+      if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+      
+      await NativeTracking.setConfig({ apiKey, employeeId, baseUrl });
+
+      // 3. Create the location watcher
       const id = await BackgroundGeolocation.addWatcher(
         {
           requestPermissions: true, // Request permissions if missing
@@ -55,13 +64,6 @@ const LiveTracking = () => {
           if (location) {
             console.log('📍 [Background] New location received:', location);
             setLastLocation({ lat: location.latitude, lng: location.longitude });
-
-            // Enforce the 5-second interval before sending to the server
-            const now = Date.now();
-            if (now - lastApiCallTime.current >= TRACKING_INTERVAL_MS) {
-              lastApiCallTime.current = now;
-              mockApiCall(location.latitude, location.longitude);
-            }
           }
         }
       );
@@ -84,26 +86,7 @@ const LiveTracking = () => {
     console.log('🛑 Background tracking stopped.');
   };
 
-  const mockApiCall = async (lat, lng) => {
-    const timestamp = new Date().toLocaleTimeString();
-    console.log(`📡 [MOCK API] Location update -> lat: ${lat}, lng: ${lng} | Time: ${timestamp}`);
-    
-    // We MUST use CapacitorHttp here instead of standard 'fetch'.
-    // Standard fetch() is blocked by Android WebView after 5 minutes in the background.
-    // CapacitorHttp pushes the network request down to the native Android Java layer,
-    // bypassing the WebView suspension completely!
-    
-    try {
-      await CapacitorHttp.post({
-        url: 'http://192.168.29.67:4955/update_location_mock',
-        headers: { 'Content-Type': 'application/json' },
-        data: { lat, lng, timestamp: new Date().toISOString() }
-      });
-      console.log(`✅ [MOCK API] Native HTTP Post Successful at ${timestamp}`);
-    } catch (e) {
-      console.error(`❌ [MOCK API] Native HTTP Post Failed at ${timestamp}`, e);
-    }
-  };
+
 
   return (
     <div className={styles.trackingContainer}>
