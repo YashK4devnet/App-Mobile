@@ -132,9 +132,9 @@ export const ADMINISTRATIVE_DETAILS_SCHEMA = [
   { name: 'separateScanningPrintingArea', label: 'Separate Area for Scanning/Printing?', type: 'yes-no' },
 
   { name: 'numberOfPrinters', label: 'Number of Printers Available', type: 'number', placeholder: 'e.g. 2', required: true },
-  { name: 'printerType', label: 'Type of Printers', type: 'select', options: [{ label: 'Laser', value: 'laser' }, { label: 'DeskJet', value: 'deskjet' }] },
+  { name: 'printerType', label: 'Type of Printers', type: 'select', options: [{ label: 'Laser', value: 'laser' }, { label: 'DeskJet', value: 'deskjet' }, { label: 'Mixed', value: 'mixed' }] },
   { name: 'numberOfScanners', label: 'Number of Scanners Available', type: 'number', placeholder: 'e.g. 2', required: true },
-  { name: 'scannerType', label: 'Type of Scanners', type: 'select', options: [{ label: 'FlatBed', value: 'flatbed' }, { label: 'Feeder', value: 'feeder' }] },
+  { name: 'scannerType', label: 'Type of Scanners', type: 'select', options: [{ label: 'FlatBed', value: 'flatbed' }, { label: 'Feeder', value: 'feeder' }, { label: 'Mixed', value: 'mixed' }] },
 
 
   { type: 'heading', label: 'Campus & Safety' },

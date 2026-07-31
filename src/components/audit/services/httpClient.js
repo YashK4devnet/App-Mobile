@@ -10,21 +10,21 @@ const getBaseUrl = () => {
 
     // For production web, try to use full environment URL if available
     if (typeof import.meta !== 'undefined' && import.meta.env) {
-      if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
-      if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+      const url = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL;
+      if (url) return url.endsWith('/api') ? url : `${url.replace(/\/$/, '')}/api`;
     }
     // Web fallback if no env variable is found
-    return `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`;
+    return `${(import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com').replace(/\/$/, '')}/api`;
   }
 
   // Try Vite env variables
   if (typeof import.meta !== 'undefined' && import.meta.env) {
-    if (import.meta.env.VITE_API_BASE_URL) return import.meta.env.VITE_API_BASE_URL;
-    if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+    const url = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL;
+    if (url) return url.endsWith('/api') ? url : `${url.replace(/\/$/, '')}/api`;
   }
 
   // Native production fallback
-  return `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`;
+  return `${(import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com').replace(/\/$/, '')}/api`;
 };
 
 /**

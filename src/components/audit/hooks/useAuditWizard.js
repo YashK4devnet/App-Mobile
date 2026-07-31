@@ -98,7 +98,8 @@ export function useAuditWizard({
     : `audit_draft_venue_${venueId}_${typeId}`;
   
   const [reportState, setReportState] = useState(location.state?.odooData?.state || 'draft');
-  const isReadOnly = reportState === 'waiting_for_approval' || reportState === 'approved' || reportState === 'reject' || reportState === 'assign_user';
+  const isAuditNotStarted = reportState === 'draft' || reportState === 'assign_user';
+  const isReadOnly = reportState === 'waiting_for_approval' || reportState === 'approved' || reportState === 'reject';
   const [isInitializing, setIsInitializing] = useState(true);
   
   // Evaluate default values before passing to useForm, as RHF expects a Promise if a function is passed.
@@ -438,6 +439,7 @@ export function useAuditWizard({
     reportState,
     handleStartAudit,
     submittedSections,
-    reportId
+    reportId,
+    isAuditNotStarted
   };
 }

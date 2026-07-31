@@ -6,8 +6,8 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   
-  // HARDCODED AS REQUESTED BY USER FOR LOCAL CORS BYPASS
-  const baseUrl = "http://192.168.29.67:4955";
+  // Dynamically load base URL from .env file to support Pinggy/WFH without hardcoding
+  const baseUrl = env.VITE_API_BASE_URL || "https://erp.eduquity.com";
 
   return {
     define: {

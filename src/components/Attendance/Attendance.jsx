@@ -2,7 +2,6 @@ import Navbar from "../Navbar/Navbar";
 import styles from "./Attendance.module.css";
 import { useAppContext } from "../../store/AppContext";
 import { useEffect, useState } from "react";
-import LiveTracking from "../LiveTracking/LiveTracking";
 
 import { Geolocation } from "@capacitor/geolocation";
 import { Capacitor } from "@capacitor/core";
@@ -287,8 +286,6 @@ const CheckIn = () => {
           )}
         </div>
         
-        {/* Render the new LiveTracking component for testing */}
-        <LiveTracking />
       </div>
     </>
   );

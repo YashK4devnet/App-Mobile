@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
 import { getAccurateTime } from "../services/timeService";
+import { liveTrackingService } from "../services/liveTrackingService";
 
 const getAssignedCoordinates = async () => {
   try {
@@ -93,6 +94,10 @@ const getAssignedCoordinates = async () => {
       }
       if (data.active_venue !== loginData.employee_assigned_venue) {
         loginData.employee_assigned_venue = data.active_venue;
+        needsUpdate = true;
+      }
+      if (data.skip_location !== undefined) {
+        loginData.skip_location = data.skip_location;
         needsUpdate = true;
       }
       if (needsUpdate) {
@@ -513,8 +518,18 @@ export const AppProvider = ({ children }) => {
         );
       }
 
+      // ✅ Step 1.5: Check skip_location
+      const loginDataRaw = localStorage.getItem("loginData");
+      let skipLocation = false;
+      if (loginDataRaw) {
+        try {
+          const parsed = JSON.parse(loginDataRaw);
+          skipLocation = parsed.skip_location === true || String(parsed.skip_location).toLowerCase() === 'true';
+        } catch(e) {}
+      }
+
       // ✅ Step 2: Verify location if coordinates are provided
-      if (coordinates) {
+      if (coordinates && !skipLocation) {
         const { latitude, longitude } = coordinates;
         if (!(await isWithinAllowedLocation(latitude, longitude))) {
           const distance = calculateDistance(
@@ -655,6 +670,13 @@ export const AppProvider = ({ children }) => {
       });
 
       console.log("✅ Check-in completed successfully");
+      
+      // ✅ Step 9: Start live location tracking
+      try {
+        await liveTrackingService.startTracking();
+      } catch (err) {
+        console.error("Failed to start live tracking post-checkin:", err);
+      }
     } catch (error) {
       console.error("❌ Error during check-in:", error);
 
@@ -687,8 +709,18 @@ export const AppProvider = ({ children }) => {
         );
       }
 
+      // ✅ Step 1.5: Check skip_location
+      const loginDataRaw = localStorage.getItem("loginData");
+      let skipLocation = false;
+      if (loginDataRaw) {
+        try {
+          const parsed = JSON.parse(loginDataRaw);
+          skipLocation = parsed.skip_location === true || String(parsed.skip_location).toLowerCase() === 'true';
+        } catch(e) {}
+      }
+
       // ✅ Step 2: Verify location if coordinates are provided
-      if (coordinates) {
+      if (coordinates && !skipLocation) {
         const { latitude, longitude } = coordinates;
         if (!(await isWithinAllowedLocation(latitude, longitude))) {
           const distance = calculateDistance(
@@ -736,6 +768,11 @@ export const AppProvider = ({ children }) => {
           console.log(
             "✅ Local check-out completed due to missing check-in ID"
           );
+          
+          try {
+            await liveTrackingService.stopTracking();
+          } catch(err) {}
+          
           return; // Exit early
         } else {
           throw new Error("You are not currently checked in.");
@@ -867,9 +904,14 @@ export const AppProvider = ({ children }) => {
         },
       });
 
-      // ✅ Step 10: Clean up check-in ID
+      // ✅ Step 10: Clean up check-in ID and Stop live location tracking
       localStorage.removeItem("checkInId");
       console.log("✅ Check-out completed successfully");
+      try {
+        await liveTrackingService.stopTracking();
+      } catch (err) {
+        console.error("Failed to stop live tracking post-checkout:", err);
+      }
     } catch (error) {
       console.error("❌ Error during check-out:", error);
 

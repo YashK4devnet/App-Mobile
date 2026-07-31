@@ -1,110 +1,39 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { registerPlugin } from '@capacitor/core';
-const NativeTracking = registerPlugin('NativeTracking');
-import { LocalNotifications } from '@capacitor/local-notifications';
-const BackgroundGeolocation = registerPlugin('BackgroundGeolocation');
+import React, { useState, useEffect } from 'react';
+import { liveTrackingService } from '../../services/liveTrackingService';
 import styles from './LiveTracking.module.css';
 
 const LiveTracking = () => {
-  const [isTracking, setIsTracking] = useState(false);
-  const [watcherId, setWatcherId] = useState(null);
-  const [lastLocation, setLastLocation] = useState(null);
+  const [isTracking, setIsTracking] = useState(liveTrackingService.getState().isTracking);
+  const [lastLocation, setLastLocation] = useState(liveTrackingService.getState().lastLocation);
   const [error, setError] = useState(null);
-  const lastApiCallTime = useRef(0);
-  const TRACKING_INTERVAL_MS = 5000; // 5 seconds
 
-  // Clean up on unmount
   useEffect(() => {
-    return () => {
-      if (watcherId) {
-        BackgroundGeolocation.removeWatcher({ id: watcherId });
-      }
-    };
-  }, [watcherId]);
+    // Subscribe to tracking service state changes
+    const unsubscribe = liveTrackingService.subscribe((state) => {
+      setIsTracking(state.isTracking);
+      setLastLocation(state.lastLocation);
+      if (state.error) setError(state.error);
+    });
+
+    return unsubscribe;
+  }, []);
 
   const startTracking = async () => {
     setError(null);
     try {
-      // 1. Request notification permissions (required for Android 13+ Foreground Service)
-      let permStatus = await LocalNotifications.checkPermissions();
-      if (permStatus.display === 'prompt') {
-        permStatus = await LocalNotifications.requestPermissions();
-      }
-      if (permStatus.display !== 'granted') {
-        throw new Error("Notification permission is required for background tracking.");
-      }
-
-      // 2. Configure our Custom Native Tracking Plugin
-      const apiKey = localStorage.getItem("serverApiKey") || "";
-      
-      // The backend strictly expects the user_id for tracking, not partner_id
-      let trackingUserId = localStorage.getItem("employeeId") || "";
-      try {
-        const loginData = JSON.parse(localStorage.getItem("loginData") || "{}");
-        if (loginData.user_id || loginData.Id) {
-          trackingUserId = loginData.user_id || loginData.Id;
-        }
-      } catch(e) {
-        console.error("Failed to parse loginData for trackingUserId", e);
-      }
-      
-      // HARDCODED FOR TESTING: Force ID to 1 as requested by user
-      trackingUserId = 1;
-      
-      let baseUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '') : `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}`;
-      if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
-      
-      // Ensure we don't accidentally duplicate /api if the user's base URL already includes it
-      let endpointUrl = `${baseUrl}/api/employee/location/log`;
-      endpointUrl = endpointUrl.replace(/\/api\/api\//g, '/api/');
-      
-      await NativeTracking.setConfig({ apiKey, employeeId: trackingUserId, endpointUrl });
-
-      // 3. Create the location watcher
-      const id = await BackgroundGeolocation.addWatcher(
-        {
-          requestPermissions: true, // Request permissions if missing
-          stale: false, // Don't use stale cached locations
-          distanceFilter: 0, // 0 = send updates regardless of distance moved
-          backgroundMessage: "Tracking your location for attendance.",
-          backgroundTitle: "Live Tracking Active",
-        },
-        function callback(location, error) {
-          if (error) {
-            if (error.code === 'NOT_AUTHORIZED') {
-              console.error('Location permissions not granted');
-            } else {
-              console.error('Background geolocation error:', error);
-            }
-            return;
-          }
-
-          if (location) {
-            console.log('📍 [Background] New location received:', location);
-            setLastLocation({ lat: location.latitude, lng: location.longitude });
-          }
-        }
-      );
-
-      setWatcherId(id);
-      setIsTracking(true);
-      console.log('✅ Background tracking started with watcher ID:', id);
+      await liveTrackingService.startTracking();
     } catch (err) {
-      console.error('Failed to start tracking:', err);
       setError(err.message || 'Failed to start tracking');
     }
   };
 
   const stopTracking = async () => {
-    if (watcherId) {
-      await BackgroundGeolocation.removeWatcher({ id: watcherId });
-      setWatcherId(null);
+    try {
+      await liveTrackingService.stopTracking();
+    } catch (err) {
+      setError(err.message || 'Failed to stop tracking');
     }
-    setIsTracking(false);
-    console.log('🛑 Background tracking stopped.');
   };
-
-
 
   return (
     <div className={styles.trackingContainer}>

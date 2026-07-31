@@ -17,27 +17,7 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      // 1. Check for bypass flag
-      if (import.meta.env.VITE_BYPASS_LOGIN === 'true') {
-        console.warn("⚠️ BYPASSING LOGIN API FOR LOCAL DEV ⚠️");
-        const mockUserData = {
-          name: "Local Dev",
-          email: data.email.trim(),
-          password: data.password,
-          ["api-Key"]: "mock-api-key-123",
-          Id: "999",
-          employeeId: "999",
-          employee_email: data.email.trim(),
-          employee_assigned_project: "Test Project",
-          employee_assigned_venue: "Test Venue",
-        };
-        localStorage.setItem("loginData", JSON.stringify(mockUserData));
-        localStorage.setItem("employeeId", "999");
-        localStorage.setItem("serverApiKey", "mock-api-key-123");
-        login(mockUserData);
-        navigate("/dashboard");
-        return;
-      }
+
 
       const apiUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/api$/, '') : `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`;
       const loginEndpoint = import.meta.env.VITE_LOGIN_ENDPOINT || '/odoo_connect';
@@ -52,6 +32,7 @@ const Auth = () => {
           db: dbName,
           "Content-Type": "application/json",
           "User-Agent": "Mozilla/5.0 (Mobile; login-page)",
+          "X-Pinggy-No-Screen": "true",
         },
       });
 
@@ -164,6 +145,7 @@ const Auth = () => {
           employee_assigned_project: responseData?.active_project ?? responseData?.assigned_project ?? "None",
           employee_assigned_venue: responseData?.active_venue ?? "None",
           employee_code: responseData?.employee_code ?? "None",
+          skip_location: responseData?.skip_location ?? false,
           project_id: responseData.project_id,
           venue_id: responseData.venue_id,
           city_id: responseData.city_id,

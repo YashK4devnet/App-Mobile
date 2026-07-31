@@ -159,7 +159,8 @@ export default function NetworkAuditWizard() {
     isReadOnly,
     reportState,
     handleStartAudit,
-    submittedSections
+    submittedSections,
+    isAuditNotStarted
   } = useAuditWizard({
     schemas: dynamicSchemas,
     steps: STEPS,
@@ -258,7 +259,7 @@ export default function NetworkAuditWizard() {
             }}
             progressPercent={progressPercent}
           />
-          {reportState === 'assign_user' && (
+          {isAuditNotStarted && (
             <div className="absolute bottom-6 left-5 right-5 z-20">
               <button 
                 onClick={handleStartAudit}
@@ -321,6 +322,14 @@ export default function NetworkAuditWizard() {
               <p className="text-rose-200/70 text-[12px] mt-0.5">This report has been finalized and cannot be edited.</p>
             </div>
           </div>
+        ) : isAuditNotStarted ? (
+          <div className="mx-5 mt-4 px-4 py-3 bg-blue-500/10 border border-blue-500/25 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
+            <ExclamationCircleIcon className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-blue-200 text-[13px] font-semibold leading-tight">Audit Not Started</p>
+              <p className="text-blue-200/70 text-[12px] mt-0.5">Please click "Start Audit" to begin editing this report.</p>
+            </div>
+          </div>
         ) : submittedSections.includes(currentSubsection) ? (
           <div className="mx-5 mt-4 px-4 py-3 bg-amber-500/10 border border-amber-500/25 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
             <ExclamationCircleIcon className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
@@ -361,7 +370,7 @@ export default function NetworkAuditWizard() {
               errors={errors}
               useAccordions={true}
               watch={watch}
-              globalDisabled={isReadOnly || submittedSections.includes(currentSubsection)}
+              globalDisabled={isReadOnly || isAuditNotStarted || submittedSections.includes(currentSubsection)}
             />
           </div>
         </div>
@@ -388,6 +397,13 @@ export default function NetworkAuditWizard() {
                 className="flex-1 bg-white/20 hover:bg-white/30 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
               >
                 {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Exit' : 'Next'}
+              </button>
+            ) : isAuditNotStarted ? (
+              <button
+                onClick={handleStartAudit}
+                className="flex-1 bg-[#4ecdc4] hover:bg-[#45b7b0] text-black text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-lg shadow-[#4ecdc4]/20"
+              >
+                Start Audit
               </button>
             ) : submittedSections.includes(currentSubsection) ? (
               currentSubsection === STEPS[STEPS.length - 1]?.id ? (

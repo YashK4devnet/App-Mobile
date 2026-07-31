@@ -90,3 +90,23 @@ This document provides persistent context for the App-Mobile React application, 
   - Added a strict, non-rewriting proxy rule for `/api/audits` in `vite.config.js` to prevent Vite from erroneously stripping the `/api` prefix, as the Odoo backend strictly requires it for audit routes (fixing 404 Not Found errors on local backend testing).
   - Fixed a header duplication bug in `httpClient.js` where both `api-key` and `api-Key` were being injected simultaneously. This caused browsers to merge them into a comma-separated string (e.g., `key1, key1`), resulting in backend validation failures.
   - Added `VITE_API_DB=odoo1234` to local `.env` files to prevent the app from defaulting to the production database and rejecting valid local API keys.
+
+- **Vite Proxy Dynamic Base URL Setup:**
+  - Removed the hardcoded `192.168.x.x` proxy address inside `vite.config.js`. 
+  - The proxy now reads dynamically from `env.VITE_API_BASE_URL` with a fallback to the production URL, allowing Pinggy tunnels and local network IP setups to work interchangeably during WFH scenarios.
+- **Audit "Not Started" State Decoupling:**
+  - Decoupled `isAuditNotStarted` (triggered by `draft` or `assign_user`) from the strict `isReadOnly` state in `useAuditWizard`.
+  - Upgraded Venue, Network, and Power audit wizards to dynamically show a blue "Audit Not Started" banner instead of the red "Read-Only" banner on brand-new reports.
+  - Injected a glowing "Start Audit" CTA into the action footer to replace the "Next" button when a user bypasses the index and navigates straight to the form of an unstarted audit.
+- **Global Background Tracking Automation (`liveTrackingService.js`):**
+  - Refactored all background geolocation tracking out of `LiveTracking.jsx` into a headless singleton service (`src/services/liveTrackingService.js`).
+  - `Auth.jsx` now correctly parses and persists `employee_id` and the `skip_location` boolean flag from the Odoo backend login response.
+  - Upgraded `AppContext.jsx` to dynamically parse `skip_location`. If `true`, the strict `isWithinAllowedLocation` geofence logic is entirely skipped, allowing check-in/out from any distance.
+  - Automated `liveTrackingService.startTracking()` to trigger on a successful `checkIn` and `liveTrackingService.stopTracking()` on `checkOut`, managing the foreground Android native service autonomously based on attendance state without requiring the test UI to be mounted.
+- **Venue Audit Printers & Scanners Expansion:**
+  - Added the `Mixed` (`mixed`) option to the `printerType` and `scannerType` dropdowns inside the Administrative Details section of `auditSchemas.js` to match backend expectations.
+- **Production Preparation Cleanup:**
+  - Removed all hardcoded `test/test` offline development auth bypasses from `Auth.jsx` to ensure strict production authentication.
+  - Removed the `X-Pinggy-No-Screen` development proxy header from `httpClient.js`.
+  - Updated `liveTrackingService.js` to strictly enforce a `15-minute` (900000ms) interval between background location posts.
+  - Removed the `LiveTracking.jsx` test UI component from the `Attendance.jsx` screen, returning it to a production-ready check-in/out interface.
