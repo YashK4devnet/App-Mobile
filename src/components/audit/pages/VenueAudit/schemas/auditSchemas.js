@@ -362,6 +362,6 @@ export const CONCLUSION_SCHEMA = [
   { type: 'heading', label: 'Signatures & Seals' },
   { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature', required: true },
   { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature', required: true },
-  { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature', required: true },
+  { name: 'electricianSignature', label: "Centre/Venue IT's Signature", type: 'signature', required: true },
   { name: 'centerSeal', label: 'Center Seal', type: 'image-upload', required: true }
 ];

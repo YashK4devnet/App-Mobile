@@ -63,7 +63,7 @@ export const NETWORK_PERSONNEL_INFO_SCHEMA = [
   { type: 'heading', label: 'Signatures & Verification', className: 'text-white/50 border-white/10 mt-6' },
   { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature', required: true },
   { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature', required: true },
-  { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature', required: true },
+  { name: 'electricianSignature', label: "Centre/Venue IT's Signature", type: 'signature', required: true },
   { name: 'centerSeal', label: 'Center Seal', type: 'image-upload', required: true }
 ];
 
@@ -266,6 +266,6 @@ export const NETWORK_OBSERVATIONS_SCHEMA = [
 export const NETWORK_SIGNATURES_SCHEMA = [
   { name: 'auditorSignature', label: 'Auditor Signature', type: 'signature' },
   { name: 'venueManagerSignature', label: 'Venue Manager Signature', type: 'signature' },
-  { name: 'electricianSignature', label: 'Electrician Signature', type: 'signature' },
+  { name: 'electricianSignature', label: "Centre/Venue IT's Signature", type: 'signature' },
   { name: 'centerSeal', label: 'Center Seal', type: 'image-upload' }
 ];

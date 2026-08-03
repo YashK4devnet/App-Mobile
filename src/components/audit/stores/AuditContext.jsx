@@ -30,7 +30,7 @@ export const AuditProvider = ({ children, userId, apiKey }) => {
   const [connectionError, setConnectionError] = useState(false);
 
   const fetchAuditData = useCallback(async (isRefreshing = false) => {
-    if (!isRefreshing && reports.length === 0) setIsLoading(true);
+    if (!isRefreshing) setIsLoading(true);
     setError(null);
 
     try {
@@ -77,7 +77,7 @@ export const AuditProvider = ({ children, userId, apiKey }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [userId, reports.length]);
+  }, [userId]);
 
   useEffect(() => {
     fetchAuditData();
