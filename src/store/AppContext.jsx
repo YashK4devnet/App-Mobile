@@ -101,6 +101,7 @@ const getAssignedCoordinates = async () => {
         needsUpdate = true;
       }
       if (needsUpdate) {
+        console.log("💾 [ACTIVE_DATA UPDATED LOGIN DATA]:", JSON.stringify(loginData));
         localStorage.setItem("loginData", JSON.stringify(loginData));
       }
 
@@ -325,6 +326,7 @@ export const AppProvider = ({ children }) => {
               } else {
                 try {
                   const responseData = JSON.parse(responseText);
+                  console.log("📡 [RE-AUTH ODOO_CONNECT API RESPONSE]:", JSON.stringify(responseData));
                   const apiKey = responseData["api-key"] || responseData["api_key"];
                   if (apiKey) {
                     parsedData["api-Key"] = apiKey;
@@ -333,6 +335,10 @@ export const AppProvider = ({ children }) => {
                     parsedData.userId = responseData.user_id || responseData.userId || responseData.UserID || parsedData.userId;
                     parsedData.Id = responseData.UserID || responseData.user_id || responseData.id || parsedData.Id;
                     parsedData.name = responseData.User || responseData.user || responseData.name || parsedData.name;
+                    if (responseData.skip_location !== undefined) {
+                      parsedData.skip_location = responseData.skip_location;
+                    }
+                    console.log("💾 [RE-AUTH STORING LOGIN DATA]:", JSON.stringify(parsedData));
                     localStorage.setItem("loginData", JSON.stringify(parsedData));
                     localStorage.setItem("serverApiKey", apiKey);
                   }
@@ -521,12 +527,15 @@ export const AppProvider = ({ children }) => {
       // ✅ Step 1.5: Check skip_location
       const loginDataRaw = localStorage.getItem("loginData");
       let skipLocation = false;
+      let rawSkipLocationVal = null;
       if (loginDataRaw) {
         try {
           const parsed = JSON.parse(loginDataRaw);
-          skipLocation = parsed.skip_location === true || String(parsed.skip_location).toLowerCase() === 'true';
+          rawSkipLocationVal = parsed.skip_location;
+          skipLocation = parsed.skip_location === true || String(parsed.skip_location).toLowerCase() === 'true' || parsed.skip_location === 1 || parsed.skip_location === '1';
         } catch(e) {}
       }
+      console.log(`🚩 [CHECK-IN] Resolving skipLocation: ${skipLocation} (raw in localStorage: ${JSON.stringify(rawSkipLocationVal)})`);
 
       // ✅ Step 2: Verify location if coordinates are provided
       if (coordinates && !skipLocation) {
@@ -712,12 +721,15 @@ export const AppProvider = ({ children }) => {
       // ✅ Step 1.5: Check skip_location
       const loginDataRaw = localStorage.getItem("loginData");
       let skipLocation = false;
+      let rawSkipLocationVal = null;
       if (loginDataRaw) {
         try {
           const parsed = JSON.parse(loginDataRaw);
-          skipLocation = parsed.skip_location === true || String(parsed.skip_location).toLowerCase() === 'true';
+          rawSkipLocationVal = parsed.skip_location;
+          skipLocation = parsed.skip_location === true || String(parsed.skip_location).toLowerCase() === 'true' || parsed.skip_location === 1 || parsed.skip_location === '1';
         } catch(e) {}
       }
+      console.log(`🚩 [CHECK-OUT] Resolving skipLocation: ${skipLocation} (raw in localStorage: ${JSON.stringify(rawSkipLocationVal)})`);
 
       // ✅ Step 2: Verify location if coordinates are provided
       if (coordinates && !skipLocation) {
