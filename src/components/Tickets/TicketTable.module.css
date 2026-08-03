@@ -1,10 +1,9 @@
 /* Dashboard Container */
 .dashboardContainer {
   max-width: 1400px;
-
-  padding: 50px;
+  padding: 16px 16px 100px;
   background: rgba(15, 15, 35, 0.95);
-  min-height: 100vh;
+  min-height: calc(100vh - 65px);
 }
 
 /* Check-in Required Message */

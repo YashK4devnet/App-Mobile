@@ -20,54 +20,65 @@
 }
 
 .mainContent {
-  padding: 100px 32px 32px;
+  padding: 20px 32px 100px;
   max-width: 1400px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
 }
 
-/* Welcome Section */
+/* Welcome Section (Left Aligned & Unboxed) */
 .welcomeSection {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  padding: 32px;
-  backdrop-filter: blur(20px);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-bottom: 24px;
+  padding: 4px 0 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 12px;
+  text-align: left;
 }
 
 .welcomeContent h1 {
   color: #ffffff;
-  font-size: 32px;
-  font-weight: 300;
-  letter-spacing: 2px;
-  margin: 0 0 8px 0;
-  text-transform: uppercase;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  margin: 0 0 6px 0;
+  text-transform: none;
+}
+
+.welcomeUserHighlight {
+  background: linear-gradient(135deg, #ffffff 30%, #4ECDC4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
 }
 
 .welcomeSubtitle {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 16px;
-  font-weight: 300;
-  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
   margin: 0;
 }
 
-.currentTime {
-  text-align: right;
+.currentTimeLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 4px;
 }
 
 .timeDisplay {
-  color: #4ecdc4;
-  font-size: 28px;
-  font-weight: 300;
-  letter-spacing: 2px;
-  margin-bottom: 8px;
-  font-family: "Courier New", monospace;
+  color: #4ECDC4;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  margin-bottom: 0;
+  font-family: inherit;
 }
 
 .statusIndicator {
@@ -75,11 +86,14 @@
   align-items: center;
   gap: 8px;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 14px;
-  font-weight: 300;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  justify-content: flex-end;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  justify-content: flex-start;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
 }
 
 .statusDot {
@@ -440,62 +454,63 @@
 
 .quickActionCard {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px 20px;
   backdrop-filter: blur(20px);
   text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
   overflow: hidden;
-  display: block;
-}
-
-.quickActionCard::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
-  transition: left 0.5s ease;
-  z-index: -1;
-  opacity: 0.1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
 }
 
 .quickActionCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 32px rgba(78, 205, 196, 0.2);
-  border-color: rgba(78, 205, 196, 0.3);
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(78, 205, 196, 0.35);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 15px rgba(78, 205, 196, 0.12);
 }
 
-.quickActionCard:hover::before {
-  left: 0;
+.quickActionIconBadge {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(78, 205, 196, 0.08);
+  border: 1px solid rgba(78, 205, 196, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  transition: all 0.3s ease;
 }
 
-.quickActionIcon {
-  font-size: 32px;
-  margin-bottom: 16px;
-  display: block;
+.quickActionCard:hover .quickActionIconBadge {
+  background: rgba(78, 205, 196, 0.18);
+  border-color: rgba(78, 205, 196, 0.5);
+  transform: scale(1.05);
 }
 
 .quickActionCard h3 {
   color: #ffffff;
-  font-size: 16px;
-  font-weight: 300;
-  letter-spacing: 1px;
-  margin: 0 0 8px 0;
-  text-transform: uppercase;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  margin: 0 0 4px 0;
+  text-transform: none;
 }
 
 .quickActionCard p {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 14px;
-  font-weight: 300;
-  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.2px;
   margin: 0;
 }
+
 .logoContainer {
   background: #fff;
   border-radius: 16px;
@@ -634,7 +649,7 @@
     width: calc(100% - 32px); /* Account for mainContent padding */
   }
   .mainContent {
-    padding: calc(70px + var(--android-statusbar-height, env(safe-area-inset-top, 0px))) 16px calc(80px + env(safe-area-inset-bottom, 0px));
+    padding: 16px 16px calc(90px + env(safe-area-inset-bottom, 0px));
   }
 
   .welcomeSection {

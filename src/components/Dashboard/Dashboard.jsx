@@ -254,12 +254,14 @@ const Dashboard = () => {
     <div className={styles.dashboardContainer}>
       <Navbar />
       <main className={styles.mainContent}>
-        {/* Welcome Section */}
+        {/* Welcome Section (Left Aligned & Unboxed) */}
         <div className={styles.welcomeSection}>
           <div className={styles.welcomeContent}>
             <h1 className={styles.welcomeTitle}>
               {getGreeting()},{" "}
-              {user?.name || user?.email?.split("@")[0] || "User"}!
+              <span className={styles.welcomeUserHighlight}>
+                {user?.name || user?.email?.split("@")[0] || "User"}!
+              </span>
             </h1>
             <p className={styles.welcomeSubtitle}>
               {currentTime.toLocaleDateString("en-GB", {
@@ -270,7 +272,7 @@ const Dashboard = () => {
               })}
             </p>
           </div>
-          <div className={styles.currentTime}>
+          <div className={styles.currentTimeLeft}>
             <div className={styles.timeDisplay}>
               {currentTime.toLocaleTimeString("en-GB", {
                 hour12: false,
@@ -281,10 +283,11 @@ const Dashboard = () => {
             </div>
             <div className={styles.statusIndicator}>
               <span
-                className={`${styles.statusDot} ${isCheckedIn ? styles.checkedIn : styles.checkedOut
-                  }`}
+                className={`${styles.statusDot} ${
+                  isCheckedIn ? styles.checkedIn : styles.checkedOut
+                }`}
               ></span>
-              {isCheckedIn ? "Checked In" : "Checked Out"}
+              <span>{isCheckedIn ? "Checked In" : "Checked Out"}</span>
             </div>
           </div>
         </div>
@@ -460,70 +463,66 @@ const Dashboard = () => {
         <div className={styles.quickActionsSection}>
           <h2 className={styles.sectionTitle}>Quick Actions</h2>
           <div className={styles.quickActionsGrid}>
-            <a
+            <div
               className={styles.quickActionCard}
               onClick={() => handleQuickLinks("/attendance")}
             >
-              <div className={styles.quickActionIcon}>🕐</div>
+              <div className={styles.quickActionIconBadge}>
+                <ClockIcon className="w-5 h-5 text-[#4ECDC4]" />
+              </div>
               <h3>Check In/Out</h3>
-              <p>Mark your attendance</p>
-            </a>
-            <a className={styles.quickActionCard}>
-              <div className={styles.quickActionIcon}>📝</div>
-              <h3>Manual Entry</h3>
-              <p>Coming Soon</p>
-            </a>
-            <a className={styles.quickActionCard}>
-              <div className={styles.quickActionIcon}>💰</div>
-              <h3>Add Expense</h3>
-              <p>Coming Soon</p>
-            </a>
-            <a className={styles.quickActionCard}>
-              <div className={styles.quickActionIcon}>📊</div>
-              <h3>View Reports</h3>
-              <p>Coming Soon</p>
-            </a>
-            <a
+              <p>Mark your daily attendance</p>
+            </div>
+            <div
               className={styles.quickActionCard}
               onClick={() => handleQuickLinks("/center")}
             >
-              <div className={styles.quickActionIcon}>📝</div>
+              <div className={styles.quickActionIconBadge}>
+                <BuildingIcon className="w-5 h-5 text-[#4ECDC4]" />
+              </div>
               <h3>Center Management</h3>
-              <p>Manage your center activity</p>
-            </a>
-            <a
+              <p>Manage venue & exam activity</p>
+            </div>
+            <div
               className={styles.quickActionCard}
               onClick={() => handleQuickLinks("/audit")}
             >
-              <div className={styles.quickActionIcon}>✍️</div>
-              <h3>Venue Audit</h3>
-              <p>Manage your audit activity</p>
-            </a>
-            {/* <button
-              className={`${styles.quickActionCard} ${styles.refreshCard}`}
-              onClick={handleRefresh}
-            >
-              <div
-                className={`${styles.quickActionIcon} ${styles.refreshIcon}`}
-              >
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polyline points="23 4 23 10 17 10"></polyline>
-                  <polyline points="1 20 1 14 7 14"></polyline>
-                  <path d="m20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
-                </svg>
+              <div className={styles.quickActionIconBadge}>
+                <ClipboardCheckIcon className="w-5 h-5 text-[#4ECDC4]" />
               </div>
-              <h3>Refresh</h3>
-              <p>Refresh The App</p>
-            </button> */}
+              <h3>Venue Audit</h3>
+              <p>Perform field audit reports</p>
+            </div>
+            <div
+              className={styles.quickActionCard}
+              onClick={() => handleQuickLinks("/attendance")}
+            >
+              <div className={styles.quickActionIconBadge}>
+                <ManualEditIcon className="w-5 h-5 text-[#4ECDC4]" />
+              </div>
+              <h3>Manual Entry</h3>
+              <p>Submit manual attendance</p>
+            </div>
+            <div
+              className={styles.quickActionCard}
+              onClick={() => handleQuickLinks("/attendance")}
+            >
+              <div className={styles.quickActionIconBadge}>
+                <DocumentReportIcon className="w-5 h-5 text-[#4ECDC4]" />
+              </div>
+              <h3>View Reports</h3>
+              <p>Check history & logs</p>
+            </div>
+            <div
+              className={styles.quickActionCard}
+              onClick={() => handleQuickLinks("/tickets")}
+            >
+              <div className={styles.quickActionIconBadge}>
+                <TicketIcon className="w-5 h-5 text-[#4ECDC4]" />
+              </div>
+              <h3>Support Tickets</h3>
+              <p>Manage helpdesk tickets</p>
+            </div>
           </div>
         </div>
       </main>

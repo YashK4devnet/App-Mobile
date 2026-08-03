@@ -3,8 +3,8 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  min-height: calc(100vh - 88px);
-  padding: 20px;
+  min-height: calc(100vh - 65px);
+  padding: 16px 16px 100px;
 }
 
 .attendanceCard {
@@ -19,7 +19,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  margin-top: 20px;
+  margin-top: 0;
 }
 
 .attendanceCard:hover {

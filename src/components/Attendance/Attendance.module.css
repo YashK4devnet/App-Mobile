@@ -1,11 +1,11 @@
 /* Main container with dark theme matching auth */
 .attendanceContainer {
-  min-height: 100vh;
+  min-height: calc(100vh - 65px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   background: #0f0f23;
-  padding: 20px;
+  padding: 20px 16px 100px;
   position: relative;
   overflow-x: hidden;
 }

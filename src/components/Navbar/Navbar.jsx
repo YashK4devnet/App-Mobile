@@ -3,41 +3,37 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { StatusBar } from "@capacitor/status-bar";
 import { useAppContext } from "../../store/AppContext";
 import styles from "./Navbar.module.css";
+import {
+  HomeIcon,
+  ClockIcon,
+  ManualEditIcon,
+  HistoryIcon,
+  AlertIcon,
+  TicketIcon,
+  UserIcon,
+  LogoutIcon,
+  ChevronDownIcon,
+  SparklesIcon,
+  InfoIcon,
+} from "./NavbarIcons";
 
 const Navbar = () => {
-  const [isLogoutDropdownOpen, setIsLogoutDropdownOpen] = useState(false);
-  const [isAttendanceDropdownOpen, setIsAttendanceDropdownOpen] =
-    useState(false);
+  const [isAttendanceDropdownOpen, setIsAttendanceDropdownOpen] = useState(false);
   const [isMenuDropdownOpen, setIsMenuDropdownOpen] = useState(false);
   const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  /* const [isFullscreen, setIsFullscreen] = useState(false);
-
-  useEffect(() => {
-    const checkFullscreen = () => {
-      const isFS =
-        window.matchMedia("(display-mode: fullscreen)").matches ||
-        window.matchMedia("(display-mode: standalone)").matches ||
-        window.navigator.standalone === true;
-      setIsFullscreen(isFS);
-    };
-
-    checkFullscreen();
-    window.addEventListener("resize", checkFullscreen);
-
-    return () => window.removeEventListener("resize", checkFullscreen);
-  }, []); */
 
   const { logout, user } = useAppContext();
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Force WebView to draw under status bar
-    StatusBar.setOverlaysWebView({ overlay: true });
+    try {
+      StatusBar.setOverlaysWebView({ overlay: true });
+    } catch (e) {
+      // Ignore if not in Capacitor native context
+    }
 
-    // Approximate status bar height (in px).
-    // Most modern Android devices use 24px, but you can tweak if needed.
     const statusBarHeight = 24;
     document.documentElement.style.setProperty(
       "--android-statusbar-height",
@@ -53,7 +49,6 @@ const Navbar = () => {
 
   const initiateLogout = () => {
     setShowLogoutConfirmation(true);
-    setIsLogoutDropdownOpen(false); // Close the dropdown when showing confirmation
   };
 
   const confirmLogout = async (confirmed) => {
@@ -73,52 +68,53 @@ const Navbar = () => {
     }
   };
 
-  const navigationItems = [
-    /* { path: "/expenses", label: "Expenses", icon: "💰" }, */
-  ];
-
   const getHeaderText = () => {
-    const pathMap = {
-      "/dashboard": "Dashboard",
-      "/attendance": "Attendance",
-      "/manual-attendance": "Manual Attendance",
-      "/attendance-history": "History",
-      "/expenses": "Expenses",
-      "/profile": "Profile",
-      "/incidents": "Incidents",
-      "/tickets": "Tickets",
-      "/about": "About",
-      "/center": "Center",
-      "/center/open-close": "Center Open-Close",
-      "/center/venue-infrastructure": "Venue Infrastructure",
-      "/center/venue-infrastructure/readiness-checklist": "Readiness Checklist",
-      "/center/venue-infrastructure/sealing-checklist": "Sealing Checklist",
-      "/center/venue-infrastructure/shift-wise-checklist":
-        "Shift-Wise Checklist",
-      "/center/venue-infrastructure/unsealing-checklist": "Unsealing Checklist",
-    };
-    return pathMap[location.pathname] || "Dashboard";
+    const path = location.pathname;
+    if (path === "/dashboard" || path === "/") return "Dashboard";
+    if (path === "/attendance") return "Attendance";
+    if (path === "/manual-attendance") return "Manual Attendance";
+    if (path === "/attendance-history") return "Attendance History";
+    if (path === "/expenses") return "Expenses";
+    if (path === "/profile") return "User Profile";
+    if (path === "/incidents") return "Incidents";
+    if (path === "/tickets") return "Support Tickets";
+    if (path === "/about") return "About System";
+    return "Management System";
   };
 
   const mobileNavItems = [
-    { path: "/dashboard", label: "Home", icon: "🏠" },
-    { path: "/attendance", label: "Attendance", icon: "⏰" },
-    /* { path: "/expenses", label: "Expenses", icon: "💰" }, */
-    { path: "/incidents", label: "Incidents", icon: "🚨" },
-    { path: "/profile", label: "Profile", icon: "👤" },
+    { id: "home", path: "/dashboard", label: "Home", icon: HomeIcon },
+    { id: "attendance", path: "/attendance", label: "Attendance", icon: ClockIcon },
+    { id: "incidents", path: "/incidents", label: "Incidents", icon: AlertIcon },
+    { id: "profile", path: "/profile", label: "Profile", icon: UserIcon },
   ];
+
+  const getActiveMobileIndex = () => {
+    const path = location.pathname;
+    if (path === "/dashboard" || path === "/") return 0;
+    if (path.startsWith("/attendance") || path === "/manual-attendance" || path === "/attendance-history") return 1;
+    if (path.startsWith("/incidents") || path.startsWith("/tickets")) return 2;
+    if (path.startsWith("/profile")) return 3;
+    return 0;
+  };
+
+  const activeMobileIndex = getActiveMobileIndex();
 
   return (
     <>
+      {/* Logout Confirmation Modal */}
       {showLogoutConfirmation && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
+            <div className={styles.modalHeaderIcon}>
+              <LogoutIcon className="w-8 h-8 text-[#FF6B6B]" />
+            </div>
             <h3>Confirm Logout</h3>
-            <p>Do you really want to logout?</p>
+            <p>Are you sure you want to end your session ({user?.name || "User"})?</p>
             {isLoggingOut ? (
               <div className={styles.loadingSpinner}>
                 <div className={styles.spinner}></div>
-                <p>Logging out...</p>
+                <p>Signing out securely...</p>
               </div>
             ) : (
               <div className={styles.modalButtons}>
@@ -126,13 +122,13 @@ const Navbar = () => {
                   className={styles.cancelButton}
                   onClick={() => confirmLogout(false)}
                 >
-                  No
+                  Cancel
                 </button>
                 <button
                   className={styles.confirmButton}
                   onClick={() => confirmLogout(true)}
                 >
-                  Yes
+                  Logout
                 </button>
               </div>
             )}
@@ -140,13 +136,18 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Desktop & Mobile Navbar */}
-      <nav className={styles.navbar}>
-        {/* Desktop Logo Section */}
+      {/* Top Glassmorphic Navbar Header */}
+      <header className={styles.navbar}>
+        {/* Brand & Page Title Section */}
         <div className={styles.logoSection}>
           <div className={styles.brandContainer}>
-            <div className={styles.brandIcon}>⚡</div>
-            <h1 className={styles.title}>{getHeaderText()}</h1>
+            <div className={styles.brandIcon}>
+              <SparklesIcon className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <span className={styles.brandBadge}>EDUQUITY</span>
+              <h1 className={styles.title}>{getHeaderText()}</h1>
+            </div>
           </div>
         </div>
 
@@ -160,16 +161,17 @@ const Navbar = () => {
               }`}
               onClick={() => handleNavigation("/dashboard")}
             >
-              <span className={styles.navIcon}>🏠</span>
-              Dashboard
+              <HomeIcon className={styles.navIcon} />
+              <span>Dashboard</span>
             </button>
 
             {/* Attendance Dropdown */}
             <div className={styles.dropdownContainer}>
               <button
                 className={`${styles.navLink} ${
-                  location.pathname === "/attendance" ||
-                  location.pathname === "/manual-attendance"
+                  location.pathname.startsWith("/attendance") ||
+                  location.pathname === "/manual-attendance" ||
+                  location.pathname === "/attendance-history"
                     ? styles.activeNavLink
                     : ""
                 }`}
@@ -177,15 +179,13 @@ const Navbar = () => {
                   setIsAttendanceDropdownOpen(!isAttendanceDropdownOpen)
                 }
               >
-                <span className={styles.navIcon}>⏰</span>
-                Attendance
-                <span
+                <ClockIcon className={styles.navIcon} />
+                <span>Attendance</span>
+                <ChevronDownIcon
                   className={`${styles.arrow} ${
                     isAttendanceDropdownOpen ? styles.arrowUp : ""
                   }`}
-                >
-                  ▼
-                </span>
+                />
               </button>
 
               {isAttendanceDropdownOpen && (
@@ -194,54 +194,62 @@ const Navbar = () => {
                     className={styles.dropdownItem}
                     onClick={() => handleNavigation("/attendance")}
                   >
-                    <span>⏰</span>
-                    Regular Attendance
+                    <ClockIcon className="w-4 h-4 text-[#4ECDC4]" />
+                    <span>Regular Attendance</span>
                   </button>
                   <button
                     className={styles.dropdownItem}
                     onClick={() => handleNavigation("/manual-attendance")}
                   >
-                    <span>✏️</span>
-                    Manual Attendance
+                    <ManualEditIcon className="w-4 h-4 text-[#4ECDC4]" />
+                    <span>Manual Attendance</span>
                   </button>
                   <button
                     className={styles.dropdownItem}
                     onClick={() => handleNavigation("/attendance-history")}
                   >
-                    <span>📊</span>
-                    History
+                    <HistoryIcon className="w-4 h-4 text-[#4ECDC4]" />
+                    <span>Attendance History</span>
                   </button>
                 </div>
               )}
             </div>
 
-            {/* Menu Dropdown */}
+            {/* Incidents & Tickets Dropdown */}
             <div className={styles.dropdownContainer}>
               <button
                 className={`${styles.navLink} ${
-                  location.pathname === "/incidents" ? styles.activeNavLink : ""
+                  location.pathname.startsWith("/incidents") ||
+                  location.pathname.startsWith("/tickets")
+                    ? styles.activeNavLink
+                    : ""
                 }`}
                 onClick={() => setIsMenuDropdownOpen(!isMenuDropdownOpen)}
               >
-                <span className={styles.navIcon}>📋</span>
-                Incidents
-                <span
+                <AlertIcon className={styles.navIcon} />
+                <span>Incidents</span>
+                <ChevronDownIcon
                   className={`${styles.arrow} ${
                     isMenuDropdownOpen ? styles.arrowUp : ""
                   }`}
-                >
-                  ▼
-                </span>
+                />
               </button>
 
               {isMenuDropdownOpen && (
                 <div className={styles.dropdown}>
                   <button
                     className={styles.dropdownItem}
+                    onClick={() => handleNavigation("/incidents")}
+                  >
+                    <AlertIcon className="w-4 h-4 text-[#4ECDC4]" />
+                    <span>Incidents Overview</span>
+                  </button>
+                  <button
+                    className={styles.dropdownItem}
                     onClick={() => handleNavigation("/tickets")}
                   >
-                    <span>🚨</span>
-                    Tickets
+                    <TicketIcon className="w-4 h-4 text-[#4ECDC4]" />
+                    <span>Support Tickets</span>
                   </button>
                 </div>
               )}
@@ -254,115 +262,80 @@ const Navbar = () => {
               }`}
               onClick={() => handleNavigation("/profile")}
             >
-              <span className={styles.navIcon}>👤</span>
-              Profile
+              <UserIcon className={styles.navIcon} />
+              <span>Profile</span>
             </button>
-
-            {/* Other Navigation Items */}
-            {navigationItems.map((item) => (
-              <button
-                key={item.path}
-                className={`${styles.navLink} ${
-                  location.pathname === item.path ? styles.activeNavLink : ""
-                }`}
-                onClick={() => handleNavigation(item.path)}
-              >
-                <span className={styles.navIcon}>{item.icon}</span>
-                {item.label}
-              </button>
-            ))}
           </div>
 
-          {/* User Profile Dropdown */}
-          <div className={styles.dropdownContainer}>
+          {/* Info Icon + Explicit Logout Button in Desktop Header */}
+          <div className={styles.headerActions}>
             <button
-              className={styles.userButton}
-              onClick={() => setIsLogoutDropdownOpen(!isLogoutDropdownOpen)}
+              className={styles.infoHeaderBtn}
+              onClick={() => handleNavigation("/about")}
+              title="About System"
             >
-              <div className={styles.userAvatar}>
-                {user?.name?.charAt(0)?.toUpperCase() || "U"}
-              </div>
-              <span className={styles.userName}>{user?.name || "User"}</span>
-              <span
-                className={`${styles.arrow} ${
-                  isLogoutDropdownOpen ? styles.arrowUp : ""
-                }`}
-              >
-                ▼
-              </span>
+              <InfoIcon className="w-4.5 h-4.5 text-white/80" />
             </button>
-
-            {isLogoutDropdownOpen && (
-              <div className={styles.dropdown}>
-                <button
-                  className={styles.dropdownItem}
-                  onClick={() => handleNavigation("/about")}
-                >
-                  <span>ℹ️</span>
-                  About
-                </button>
-                <button
-                  className={styles.dropdownItem}
-                  onClick={initiateLogout}
-                >
-                  <span>🚪</span>
-                  Logout
-                </button>
-              </div>
-            )}
+            <button
+              className={styles.logoutHeaderBtn}
+              onClick={initiateLogout}
+              title="Logout"
+            >
+              <LogoutIcon className="w-4 h-4 text-[#FF6B6B]" />
+              <span>Logout</span>
+            </button>
           </div>
         </div>
 
-        {/* Mobile Header */}
-        <div className={styles.mobileHeader}>
-          <div className={styles.mobileBrand}>
-            <div className={styles.brandIcon}>⚡</div>
-            <h1 className={styles.mobileTitle}>{getHeaderText()}</h1>
+        {/* Mobile Header Right Section with Info + Logout Buttons */}
+        <div className={styles.mobileHeaderRight}>
+          <button
+            className={styles.mobileInfoHeaderBtn}
+            onClick={() => handleNavigation("/about")}
+            aria-label="About System"
+          >
+            <InfoIcon className="w-5 h-5 text-white/80" />
+          </button>
+          <button
+            className={styles.mobileLogoutHeaderBtn}
+            onClick={initiateLogout}
+            aria-label="Logout"
+          >
+            <LogoutIcon className="w-5 h-5 text-[#FF6B6B]" />
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Bottom Navigation Bar (4 clean tabs with non-clipping sliding pill) */}
+      <nav className={styles.mobileBottomNav}>
+        <div className={styles.mobileBottomNavContainer}>
+          {/* Sliding Glass Pill Background */}
+          <div
+            className={styles.slidingPill}
+            style={{ transform: `translateX(${activeMobileIndex * 100}%)` }}
+          >
+            <div className={styles.slidingPillInner} />
           </div>
-          <div className={styles.dropdownContainer}>
-            <button
-              className={styles.mobileLogoutBtn}
-              onClick={() => setIsLogoutDropdownOpen(!isLogoutDropdownOpen)}
-            >
-              🚪
-            </button>
-            {isLogoutDropdownOpen && (
-              <div className={`${styles.dropdown} ${styles.mobileDropdown}`}>
-                <button
-                  className={styles.dropdownItem}
-                  onClick={() => handleNavigation("/about")}
-                >
-                  <span>ℹ️</span>
-                  About
-                </button>
-                <button
-                  className={styles.dropdownItem}
-                  onClick={initiateLogout}
-                >
-                  <span>🚪</span>
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
+
+          {mobileNavItems.map((item, index) => {
+            const IconComponent = item.icon;
+            const isActive = activeMobileIndex === index;
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleNavigation(item.path)}
+                className={`${styles.mobileNavItem} ${
+                  isActive ? styles.activeMobileNavItem : ""
+                }`}
+              >
+                <IconComponent className={styles.mobileNavIcon} />
+                <span className={styles.mobileNavLabel}>{item.label}</span>
+              </button>
+            );
+          })}
         </div>
       </nav>
-
-      {/* Mobile Bottom Navigation */}
-      <div className={styles.mobileBottomNav}>
-        {mobileNavItems.map((item) => (
-          <button
-            key={item.path}
-            className={`${styles.mobileNavItem} ${
-              location.pathname === item.path ? styles.activeMobileNavItem : ""
-            }`}
-            onClick={() => handleNavigation(item.path)}
-          >
-            <span className={styles.mobileNavIcon}>{item.icon}</span>
-            <span className={styles.mobileNavLabel}>{item.label}</span>
-          </button>
-        ))}
-      </div>
     </>
   );
 };
