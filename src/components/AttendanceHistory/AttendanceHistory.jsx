@@ -12,10 +12,16 @@ const AttendanceHistory = () => {
     const fetchAttendance = async () => {
       setLoading(true); // ⏳ Start loading
       try {
+        const loginDataRaw = localStorage.getItem("loginData");
+        const loginData = loginDataRaw ? JSON.parse(loginDataRaw) : {};
+        const employeeId = Number(localStorage.getItem("employeeId") || loginData.employeeId || loginData.employee_id || loginData.Id || 0);
+        const apiKey = localStorage.getItem("serverApiKey") || loginData["api-Key"] || loginData["api-key"] || "";
+        const dbName = import.meta.env.VITE_API_DB || "erp-eduquity-com";
+
         const response = await axios.post("/api/attendance/history", {
           model: "hr.attendance",
-          db: "eduquity",
-          domain: [["employee_id", "=", 6966]],
+          db: dbName,
+          domain: employeeId ? [["employee_id", "=", employeeId]] : [],
           fields: [
             "id",
             "check_in",
@@ -25,9 +31,9 @@ const AttendanceHistory = () => {
           ],
           order: "id desc",
           limit: 50,
-          login: "a.sairam@eduquity.com",
-          password: "asiram@123",
-          apiKey: "edbc12f1-bb12-49c0-bc2b-1d4119309dd2",
+          login: loginData.email || "",
+          password: loginData.password || "",
+          apiKey: apiKey,
         });
 
         const formattedData = response.data.records.map((record) => {

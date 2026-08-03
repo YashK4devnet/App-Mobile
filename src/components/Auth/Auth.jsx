@@ -19,11 +19,12 @@ const Auth = () => {
     try {
 
 
-      const apiUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/api$/, '') : `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}/`;
-      const loginEndpoint = import.meta.env.VITE_LOGIN_ENDPOINT || '/odoo_connect';
+      const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com';
+      const baseUrl = rawBaseUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
+      const loginEndpoint = (import.meta.env.VITE_LOGIN_ENDPOINT || '/odoo_connect').replace(/^\/+/, '');
       const dbName = import.meta.env.VITE_API_DB || "erp-eduquity-com";
 
-      const response = await fetch(`${apiUrl}${loginEndpoint}`, {
+      const response = await fetch(`${baseUrl}/${loginEndpoint}`, {
         method: "GET",
         headers: {
           action: "login",
@@ -32,7 +33,6 @@ const Auth = () => {
           db: dbName,
           "Content-Type": "application/json",
           "User-Agent": "Mozilla/5.0 (Mobile; login-page)",
-          "X-Pinggy-No-Screen": "true",
         },
       });
 
