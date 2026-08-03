@@ -27,56 +27,71 @@
   z-index: 1;
 }
 
-/* Welcome Section (Left Aligned & Unboxed) */
+/* Welcome Section (Unboxed Layout) */
 .welcomeSection {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
+  align-items: stretch;
   margin-bottom: 24px;
   padding: 4px 0 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  gap: 12px;
-  text-align: left;
+  gap: 6px;
 }
 
-.welcomeContent h1 {
+.welcomeHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.greetingText {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+.userNameTitle {
   color: #ffffff;
-  font-size: 26px;
-  font-weight: 500;
+  font-size: 28px;
+  font-weight: 600;
   letter-spacing: 0.3px;
-  margin: 0 0 6px 0;
-  text-transform: none;
-}
-
-.welcomeUserHighlight {
+  margin: 2px 0 4px 0;
+  text-align: left;
+  width: 100%;
   background: linear-gradient(135deg, #ffffff 30%, #4ECDC4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-weight: 600;
+  line-height: 1.25;
+}
+
+.welcomeDateRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+  flex-wrap: wrap;
 }
 
 .welcomeSubtitle {
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13.5px;
   font-weight: 400;
   letter-spacing: 0.3px;
   margin: 0;
 }
 
-.currentTimeLeft {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 4px;
+.welcomeDotSeparator {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
 }
 
 .timeDisplay {
   color: #4ECDC4;
-  font-size: 24px;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
   margin-bottom: 0;
   font-family: inherit;
 }
@@ -85,14 +100,13 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12.5px;
   font-weight: 400;
   letter-spacing: 0.5px;
-  justify-content: flex-start;
   padding: 4px 12px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
 }
 
@@ -479,8 +493,6 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: rgba(78, 205, 196, 0.08);
-  border: 1px solid rgba(78, 205, 196, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -488,9 +500,25 @@
   transition: all 0.3s ease;
 }
 
-.quickActionCard:hover .quickActionIconBadge {
-  background: rgba(78, 205, 196, 0.18);
+.tealBadge {
+  background: rgba(78, 205, 196, 0.1);
+  border: 1px solid rgba(78, 205, 196, 0.28);
+}
+
+.coralBadge {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.28);
+}
+
+.quickActionCard:hover .tealBadge {
+  background: rgba(78, 205, 196, 0.2);
   border-color: rgba(78, 205, 196, 0.5);
+  transform: scale(1.05);
+}
+
+.quickActionCard:hover .coralBadge {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: rgba(255, 107, 107, 0.5);
   transform: scale(1.05);
 }
 

@@ -54,20 +54,24 @@ const Profile = () => {
       <Navbar />
       <div className={styles.cardContainer}>
         <div className={styles.profileCard}>
-          <div className={styles.cardHeader}>
-            <div className={styles.imageContainer}>
+          {/* Top Right Status Badge */}
+          <div
+            className={`${styles.topRightStatusBadge} ${
+              isCheckedIn ? styles.active : styles.inactive
+            }`}
+          >
+            <span className={styles.statusDot}></span>
+            <span>{isCheckedIn ? "Active" : "Inactive"}</span>
+          </div>
+
+          {/* Unified Profile Header (No Separate Image Card) */}
+          <div className={styles.profileHeaderSection}>
+            <div className={styles.imageWrapper}>
               <img
-                className={styles.cardImage}
+                className={styles.avatarCircle}
                 src={profileImage}
                 alt="Profile"
               />
-              <div
-                className={`${styles.statusBadge} ${
-                  isCheckedIn ? styles.active : styles.inactive
-                }`}
-              >
-                {isCheckedIn ? "Active" : "Inactive"}
-              </div>
             </div>
             <div className={styles.headerInfo}>
               <h2 className={styles.name}>{userData.name}</h2>

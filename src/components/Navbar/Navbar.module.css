@@ -1,10 +1,10 @@
 /* Glassmorphic Taller Navbar matching Audit Aesthetics */
 .navbar {
-  padding: 16px 28px;
+  padding: 22px 28px;
   padding-top: max(
-    16px,
-    calc(16px + env(safe-area-inset-top, 0px)),
-    calc(16px + var(--android-statusbar-height, 0px))
+    22px,
+    calc(22px + env(safe-area-inset-top, 0px)),
+    calc(22px + var(--android-statusbar-height, 0px))
   );
   padding-left: max(28px, calc(28px + env(safe-area-inset-left, 0px)));
   padding-right: max(28px, calc(28px + env(safe-area-inset-right, 0px)));
@@ -34,22 +34,24 @@
 }
 
 .brandIcon {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, rgba(78, 205, 196, 0.3), rgba(15, 15, 35, 0.9));
-  border: 1px solid rgba(78, 205, 196, 0.4);
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.35), rgba(78, 205, 196, 0.25));
+  border: 1px solid rgba(255, 107, 107, 0.4);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 15px rgba(78, 205, 196, 0.2);
+  box-shadow: 0 0 18px rgba(255, 107, 107, 0.25);
 }
 
 .brandBadge {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 2px;
-  color: #4ECDC4;
+  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   text-transform: uppercase;
   display: block;
   line-height: 1;
@@ -58,7 +60,7 @@
 
 .title {
   color: #ffffff;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 500;
   letter-spacing: 0.5px;
   margin: 0;
@@ -208,6 +210,13 @@
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.25);
   color: #ffffff;
+}
+
+.activeInfoHeaderBtn {
+  background: rgba(78, 205, 196, 0.15) !important;
+  border-color: rgba(78, 205, 196, 0.4) !important;
+  color: #4ECDC4 !important;
+  box-shadow: 0 0 10px rgba(78, 205, 196, 0.2);
 }
 
 .logoutHeaderBtn {

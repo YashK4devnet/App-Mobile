@@ -47,6 +47,14 @@ const Navbar = () => {
     setIsMenuDropdownOpen(false);
   };
 
+  const toggleInfoPage = () => {
+    if (location.pathname === "/about") {
+      navigate(-1);
+    } else {
+      navigate("/about");
+    }
+  };
+
   const initiateLogout = () => {
     setShowLogoutConfirmation(true);
   };
@@ -270,9 +278,11 @@ const Navbar = () => {
           {/* Info Icon + Explicit Logout Button in Desktop Header */}
           <div className={styles.headerActions}>
             <button
-              className={styles.infoHeaderBtn}
-              onClick={() => handleNavigation("/about")}
-              title="About System"
+              className={`${styles.infoHeaderBtn} ${
+                location.pathname === "/about" ? styles.activeInfoHeaderBtn : ""
+              }`}
+              onClick={toggleInfoPage}
+              title={location.pathname === "/about" ? "Close Info" : "About System"}
             >
               <InfoIcon className="w-4.5 h-4.5 text-white/80" />
             </button>
@@ -290,9 +300,11 @@ const Navbar = () => {
         {/* Mobile Header Right Section with Info + Logout Buttons */}
         <div className={styles.mobileHeaderRight}>
           <button
-            className={styles.mobileInfoHeaderBtn}
-            onClick={() => handleNavigation("/about")}
-            aria-label="About System"
+            className={`${styles.mobileInfoHeaderBtn} ${
+              location.pathname === "/about" ? styles.activeInfoHeaderBtn : ""
+            }`}
+            onClick={toggleInfoPage}
+            aria-label={location.pathname === "/about" ? "Close Info" : "About System"}
           >
             <InfoIcon className="w-5 h-5 text-white/80" />
           </button>

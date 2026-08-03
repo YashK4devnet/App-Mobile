@@ -4,6 +4,14 @@ import { useAppContext } from "../../store/AppContext";
 import styles from "./Dashboard.module.css";
 import logo from "../../assets/Eduquity25.jpg";
 import { useNavigate } from "react-router-dom";
+import {
+  ClockIcon,
+  ManualEditIcon,
+  TicketIcon,
+  ClipboardCheckIcon,
+  BuildingIcon,
+  DocumentReportIcon,
+} from "../Navbar/NavbarIcons";
 
 const Dashboard = () => {
   const { user, isCheckedIn, currentCheckInTime } = useAppContext();
@@ -254,33 +262,13 @@ const Dashboard = () => {
     <div className={styles.dashboardContainer}>
       <Navbar />
       <main className={styles.mainContent}>
-        {/* Welcome Section (Left Aligned & Unboxed) */}
+        {/* Welcome Section */}
         <div className={styles.welcomeSection}>
-          <div className={styles.welcomeContent}>
-            <h1 className={styles.welcomeTitle}>
-              {getGreeting()},{" "}
-              <span className={styles.welcomeUserHighlight}>
-                {user?.name || user?.email?.split("@")[0] || "User"}!
-              </span>
-            </h1>
-            <p className={styles.welcomeSubtitle}>
-              {currentTime.toLocaleDateString("en-GB", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </p>
-          </div>
-          <div className={styles.currentTimeLeft}>
-            <div className={styles.timeDisplay}>
-              {currentTime.toLocaleTimeString("en-GB", {
-                hour12: false,
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-              })}
-            </div>
+          {/* Row 1: Greeting on left + Status Badge on top right */}
+          <div className={styles.welcomeHeaderRow}>
+            <span className={styles.greetingText}>
+              {getGreeting()},
+            </span>
             <div className={styles.statusIndicator}>
               <span
                 className={`${styles.statusDot} ${
@@ -289,6 +277,32 @@ const Dashboard = () => {
               ></span>
               <span>{isCheckedIn ? "Checked In" : "Checked Out"}</span>
             </div>
+          </div>
+
+          {/* Row 2: User Name on its own line below */}
+          <h1 className={styles.userNameTitle}>
+            {user?.name || user?.email?.split("@")[0] || "User"}!
+          </h1>
+
+          {/* Row 3: Date & Time left-aligned below */}
+          <div className={styles.welcomeDateRow}>
+            <p className={styles.welcomeSubtitle}>
+              {currentTime.toLocaleDateString("en-GB", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+            <span className={styles.welcomeDotSeparator}>•</span>
+            <span className={styles.timeDisplay}>
+              {currentTime.toLocaleTimeString("en-GB", {
+                hour12: false,
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            </span>
           </div>
         </div>
 
@@ -467,61 +481,57 @@ const Dashboard = () => {
               className={styles.quickActionCard}
               onClick={() => handleQuickLinks("/attendance")}
             >
-              <div className={styles.quickActionIconBadge}>
+              <div className={`${styles.quickActionIconBadge} ${styles.tealBadge}`}>
                 <ClockIcon className="w-5 h-5 text-[#4ECDC4]" />
               </div>
               <h3>Check In/Out</h3>
-              <p>Mark your daily attendance</p>
+              <p>Mark your attendance</p>
             </div>
+
+            <div className={styles.quickActionCard}>
+              <div className={`${styles.quickActionIconBadge} ${styles.coralBadge}`}>
+                <ManualEditIcon className="w-5 h-5 text-[#FF6B6B]" />
+              </div>
+              <h3>Manual Entry</h3>
+              <p>Coming Soon</p>
+            </div>
+
+            <div className={styles.quickActionCard}>
+              <div className={`${styles.quickActionIconBadge} ${styles.coralBadge}`}>
+                <TicketIcon className="w-5 h-5 text-[#FF6B6B]" />
+              </div>
+              <h3>Add Expense</h3>
+              <p>Coming Soon</p>
+            </div>
+
+            <div className={styles.quickActionCard}>
+              <div className={`${styles.quickActionIconBadge} ${styles.tealBadge}`}>
+                <DocumentReportIcon className="w-5 h-5 text-[#4ECDC4]" />
+              </div>
+              <h3>View Reports</h3>
+              <p>Coming Soon</p>
+            </div>
+
             <div
               className={styles.quickActionCard}
               onClick={() => handleQuickLinks("/center")}
             >
-              <div className={styles.quickActionIconBadge}>
+              <div className={`${styles.quickActionIconBadge} ${styles.tealBadge}`}>
                 <BuildingIcon className="w-5 h-5 text-[#4ECDC4]" />
               </div>
               <h3>Center Management</h3>
-              <p>Manage venue & exam activity</p>
+              <p>Manage your center activity</p>
             </div>
+
             <div
               className={styles.quickActionCard}
               onClick={() => handleQuickLinks("/audit")}
             >
-              <div className={styles.quickActionIconBadge}>
-                <ClipboardCheckIcon className="w-5 h-5 text-[#4ECDC4]" />
+              <div className={`${styles.quickActionIconBadge} ${styles.coralBadge}`}>
+                <ClipboardCheckIcon className="w-5 h-5 text-[#FF6B6B]" />
               </div>
               <h3>Venue Audit</h3>
-              <p>Perform field audit reports</p>
-            </div>
-            <div
-              className={styles.quickActionCard}
-              onClick={() => handleQuickLinks("/attendance")}
-            >
-              <div className={styles.quickActionIconBadge}>
-                <ManualEditIcon className="w-5 h-5 text-[#4ECDC4]" />
-              </div>
-              <h3>Manual Entry</h3>
-              <p>Submit manual attendance</p>
-            </div>
-            <div
-              className={styles.quickActionCard}
-              onClick={() => handleQuickLinks("/attendance")}
-            >
-              <div className={styles.quickActionIconBadge}>
-                <DocumentReportIcon className="w-5 h-5 text-[#4ECDC4]" />
-              </div>
-              <h3>View Reports</h3>
-              <p>Check history & logs</p>
-            </div>
-            <div
-              className={styles.quickActionCard}
-              onClick={() => handleQuickLinks("/tickets")}
-            >
-              <div className={styles.quickActionIconBadge}>
-                <TicketIcon className="w-5 h-5 text-[#4ECDC4]" />
-              </div>
-              <h3>Support Tickets</h3>
-              <p>Manage helpdesk tickets</p>
+              <p>Manage your audit activity</p>
             </div>
           </div>
         </div>

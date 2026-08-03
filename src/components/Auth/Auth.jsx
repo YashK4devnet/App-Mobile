@@ -4,6 +4,7 @@ import { useAppContext } from "../../store/AppContext";
 import styles from "./Auth.module.css";
 import logo from "../../assets/Eduquity25.jpg";
 import { useState } from "react";
+import { SparklesIcon } from "../Navbar/NavbarIcons";
 
 const Auth = () => {
   const { register, handleSubmit } = useForm();
@@ -17,8 +18,6 @@ const Auth = () => {
     setLoading(true);
 
     try {
-
-
       const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com';
       const baseUrl = rawBaseUrl.replace(/\/api\/?$/, '').replace(/\/+$/, '');
       const loginEndpoint = (import.meta.env.VITE_LOGIN_ENDPOINT || '/odoo_connect').replace(/^\/+/, '');
@@ -193,12 +192,22 @@ const Auth = () => {
   return (
     <div className={styles.authContainer}>
       <div className={styles.loginCard}>
-        <button className={styles.gearButton} onClick={() => {}}>
-          ⚙️
-        </button>
-        <h1 className={styles.title}>Login</h1>
+        {/* Brand Header Badge */}
+        <div className={styles.brandHeader}>
+          <div className={styles.brandIcon}>
+            <SparklesIcon className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <span className={styles.brandBadge}>EDUQUITY</span>
+            <h1 className={styles.title}>Sign In</h1>
+          </div>
+        </div>
+
+        <p className={styles.subtitle}>Welcome back! Enter your account details to access your dashboard.</p>
+
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <div className={styles.inputGroup}>
+            <label className={styles.label}>Email / Username</label>
             <input
               type="text"
               {...register("email", { required: true })}
@@ -208,6 +217,7 @@ const Auth = () => {
             />
           </div>
           <div className={styles.inputGroup}>
+            <label className={styles.label}>Password</label>
             <input
               type="password"
               {...register("password", { required: true })}
@@ -216,15 +226,26 @@ const Auth = () => {
               required
             />
           </div>
+
           {loginError && <div className={styles.error}>{loginError}</div>}
+
           <button
             type="submit"
             className={styles.loginButton}
             disabled={loading}
           >
-            {loading ? <div className={styles.spinner}></div> : "Log-in"}
+            {loading ? (
+              <div className={styles.buttonLoading}>
+                <div className={styles.spinner}></div>
+                <span>Signing in...</span>
+              </div>
+            ) : (
+              "Log-in"
+            )}
           </button>
         </form>
+
+        {/* Original Logo Kept in Place */}
         <div className={styles.logoContainer}>
           <img src={logo} alt="Logo" className={styles.logo} />
         </div>
