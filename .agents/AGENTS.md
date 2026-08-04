@@ -123,8 +123,8 @@ This document provides persistent context for the App-Mobile React application, 
   - Implemented a native offline queue in `NativeTrackingPlugin.java` using Android `SharedPreferences`. When network connectivity drops or timeouts occur, location payloads (`latitude`, `longitude`, `date`, `time`, `employee_id`) are saved locally (up to 200 logs). Upon network restoration, the queue is automatically flushed and synced to Odoo sequentially.
   - Created native `stopTracking()` plugin method in `NativeTrackingPlugin.java` to clear `apiKey` and `employeeId` on check-out, ensuring orphan background watchers cannot execute location HTTP posts after check-out.
   - Created monochrome vector notification icon `ic_notification_location.xml` in `android/app/src/main/res/drawable/` and configured `icon: "ic_notification_location"` in `liveTrackingService.js`.
-- **Matte Black & Orange Theme Modernization (Auth, Dashboard, Navbar, Profile & Attendance):**
-  - Redesigned visual aesthetics across `Auth`, `Dashboard`, `Navbar`, `Profile`, and `Attendance` components (`#08080a` obsidian background, `#ff7700` warm orange highlights, dark frosted glass cards `rgba(14, 14, 18, 0.88)`).
+- **Matte Black & Orange Theme Modernization (Auth, Dashboard, Navbar, Profile, Attendance & Incident):**
+  - Redesigned visual aesthetics across `Auth`, `Dashboard`, `Navbar`, `Profile`, `Attendance`, and `Incident` components (`#08080a` obsidian background, `#ff7700` warm orange highlights, dark frosted glass cards `rgba(14, 14, 18, 0.88)`).
   - Eliminated all heavy neon/orange glows (`box-shadow`) from icons, badges, buttons, active nav pills, and cards for a clean, matte, high-end design.
 
 

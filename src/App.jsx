@@ -84,7 +84,6 @@ function AppRoutes() {
         path="/incidents"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Navbar />
             <Incident />
           </ProtectedRoute>
         }
