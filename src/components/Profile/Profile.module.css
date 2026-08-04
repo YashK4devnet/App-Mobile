@@ -1,4 +1,4 @@
-/* Glassmorphic Dark Profile Styles Matching Application Theme */
+/* Premium Dark Black & Orange Profile Styles (Matte Finish - No Icon Glow) */
 .cardContainer {
   display: flex;
   flex-direction: column;
@@ -6,28 +6,45 @@
   align-items: center;
   min-height: calc(100vh - 70px);
   padding: 24px 20px 100px;
-  background: #0f0f23;
+  background: #08080a;
+  position: relative;
+  overflow-x: hidden;
   user-select: none;
 }
 
+/* Subtle Ambient Background */
+.cardContainer::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255, 119, 0, 0.06) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .profileCard {
-  background: rgba(15, 15, 35, 0.85);
+  background: rgba(14, 14, 18, 0.88);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 119, 0, 0.2);
   border-radius: 24px;
   padding: 0;
   width: 100%;
   max-width: 850px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8);
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .profileCard:hover {
-  border-color: rgba(78, 205, 196, 0.3);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 20px rgba(78, 205, 196, 0.1);
+  border-color: rgba(255, 119, 0, 0.35);
+  box-shadow: 0 25px 55px rgba(0, 0, 0, 0.85);
 }
 
 /* Top Right Status Badge */
@@ -41,23 +58,21 @@
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.5px;
   z-index: 10;
 }
 
 .topRightStatusBadge.active {
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.4);
-  color: #10b981;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+  background: rgba(255, 119, 0, 0.12);
+  border: 1px solid rgba(255, 119, 0, 0.35);
+  color: #ff7700;
 }
 
 .topRightStatusBadge.inactive {
-  background: rgba(255, 107, 107, 0.12);
-  border: 1px solid rgba(255, 107, 107, 0.4);
-  color: #FF6B6B;
-  box-shadow: 0 0 15px rgba(255, 107, 107, 0.15);
+  background: rgba(255, 85, 85, 0.12);
+  border: 1px solid rgba(255, 85, 85, 0.35);
+  color: #ff6b6b;
 }
 
 .statusDot {
@@ -67,16 +82,14 @@
 }
 
 .topRightStatusBadge.active .statusDot {
-  background: #10b981;
-  box-shadow: 0 0 8px #10b981;
+  background: #ff7700;
 }
 
 .topRightStatusBadge.inactive .statusDot {
-  background: #FF6B6B;
-  box-shadow: 0 0 8px #FF6B6B;
+  background: #ff6b6b;
 }
 
-/* Unified Header Section (No separate card border/background) */
+/* Header Section */
 .profileHeaderSection {
   display: flex;
   align-items: center;
@@ -94,8 +107,8 @@
   height: 115px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid rgba(78, 205, 196, 0.4);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 20px rgba(78, 205, 196, 0.2);
+  border: 3px solid rgba(255, 119, 0, 0.4);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
   transition: transform 0.3s ease;
 }
 
@@ -110,20 +123,20 @@
 
 .name {
   font-size: 28px;
-  font-weight: 600;
+  font-weight: 700;
   color: #ffffff;
   margin: 0 0 4px 0;
   letter-spacing: 0.3px;
-  background: linear-gradient(135deg, #ffffff 30%, #4ECDC4 100%);
+  background: linear-gradient(135deg, #ffffff 30%, #ff8800 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .position {
   font-size: 15px;
-  color: #4ECDC4;
+  color: #ff8800;
   margin: 0 0 3px 0;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.3px;
 }
 
@@ -150,11 +163,11 @@
 
 .sectionTitle {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: #ffffff;
   margin: 0 0 6px 0;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 119, 0, 0.15);
   letter-spacing: 0.5px;
   position: relative;
 }
@@ -166,7 +179,7 @@
   left: 0;
   width: 36px;
   height: 2px;
-  background: #4ECDC4;
+  background: #ff7700;
   border-radius: 2px;
 }
 
@@ -183,8 +196,8 @@
 }
 
 .infoItem:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(78, 205, 196, 0.35);
+  background: rgba(255, 119, 0, 0.04);
+  border-color: rgba(255, 119, 0, 0.3);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -205,7 +218,7 @@
 
 /* Active status styling */
 .activeStatus {
-  color: #4ECDC4 !important;
+  color: #ff7700 !important;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -214,13 +227,13 @@
 
 .activeStatus::before {
   content: "●";
-  color: #10b981;
+  color: #ff7700;
   font-size: 12px;
 }
 
 /* Inactive status styling */
 .inactiveStatus {
-  color: #FF6B6B !important;
+  color: #ff6b6b !important;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -229,13 +242,14 @@
 
 .inactiveStatus::before {
   content: "●";
-  color: #FF6B6B;
+  color: #ff6b6b;
   font-size: 12px;
 }
 
 /* Logo Container */
 .logoContainer {
   background: #ffffff;
+  border: 1px solid rgba(255, 119, 0, 0.2);
   border-radius: 16px;
   padding: 18px 24px;
   margin-top: 28px;
@@ -246,6 +260,7 @@
   max-width: 850px;
   margin-bottom: 90px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1;
 }
 
 .logo {

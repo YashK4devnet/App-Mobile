@@ -306,52 +306,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Current Status Card */}
-        {isCheckedIn && (
-          <div className={styles.currentStatusCard}>
-            <div className={styles.statusHeader}>
-              <h3>Current Session</h3>
-              <span className={styles.liveIndicator}>🔴 LIVE</span>
-            </div>
-            <div className={styles.statusDetails}>
-              <div className={styles.statusItem}>
-                <span className={styles.statusLabel}>Checked in at:</span>
-                <span className={styles.statusValue}>{currentCheckInTime}</span>
-              </div>
-              <div className={styles.statusItem}>
-                <span className={styles.statusLabel}>Duration:</span>
-                <span className={styles.statusValue}>
-                  {(() => {
-                    if (!currentCheckInTime) return "0h 0m";
-
-                    // Get the timestamp from localStorage for accurate calculation
-                    try {
-                      const checkInStatus =
-                        localStorage.getItem("checkInStatus");
-                      if (checkInStatus) {
-                        const parsedStatus = JSON.parse(checkInStatus);
-                        if (parsedStatus.timestamp) {
-                          const checkInTime = new Date(parsedStatus.timestamp);
-                          const diff = currentTime - checkInTime;
-                          const hours = Math.floor(diff / (1000 * 60 * 60));
-                          const minutes = Math.floor(
-                            (diff % (1000 * 60 * 60)) / (1000 * 60)
-                          );
-                          return `${hours}h ${minutes}m`;
-                        }
-                      }
-                    } catch (error) {
-                      console.error("Error calculating duration:", error);
-                    }
-
-                    return "0h 0m";
-                  })()}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Metrics Grid */}
         {/* <div className={styles.metricsGrid}>
           <div className={styles.metricCard}>

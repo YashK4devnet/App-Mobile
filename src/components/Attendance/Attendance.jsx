@@ -2,6 +2,8 @@ import Navbar from "../Navbar/Navbar";
 import styles from "./Attendance.module.css";
 import { useAppContext } from "../../store/AppContext";
 import { useEffect, useState } from "react";
+import logo from "../../assets/Eduquity25.jpg";
+import { ClockIcon } from "../Navbar/NavbarIcons";
 
 import { Geolocation } from "@capacitor/geolocation";
 import { Capacitor } from "@capacitor/core";
@@ -61,6 +63,7 @@ const CheckIn = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentCheckInTime, setCurrentCheckInTime] = useState("");
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   // loading screen state
   const [loading, setLoading] = useState(true);
@@ -74,13 +77,21 @@ const CheckIn = () => {
     syncCheckOutFromServer,
   } = useAppContext();
 
-  const userLoginData = JSON.parse(localStorage.getItem("loginData"));
+  const userLoginData = JSON.parse(localStorage.getItem("loginData") || "{}");
+
+  // Update current time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (successMessage) {
       const timer = setTimeout(() => {
         setSuccessMessage("");
-      }, 2000);
+      }, 2500);
       return () => clearTimeout(timer);
     }
   }, [successMessage]);
@@ -146,7 +157,7 @@ const CheckIn = () => {
         // Sync with context
         if (lastActivity === "Check-In") {
           const apiCheckInId = data.records[0].att_id;
-          const checkInId = JSON.parse(localStorage.getItem("checkInId"));
+          const checkInId = JSON.parse(localStorage.getItem("checkInId") || "null");
           if (apiCheckInId !== checkInId) {
             localStorage.setItem("checkInId", JSON.stringify(apiCheckInId));
           }
@@ -213,7 +224,7 @@ const CheckIn = () => {
         {loading && (
           <div className={styles.loadingOverlay}>
             <div className={styles.loader}></div>
-            <p className={styles.loadingText}>Loading attendance status...</p>
+            <p className={styles.loadingText}>Fetching attendance status...</p>
           </div>
         )}
 
@@ -222,6 +233,37 @@ const CheckIn = () => {
             loading ? styles.blurredCard : ""
           }`}
         >
+          {/* Card Header */}
+          <div className={styles.cardHeader}>
+            <div className={styles.headerIconBadge}>
+              <ClockIcon className="w-6 h-6 text-[#ff7700]" />
+            </div>
+            <div>
+              <h2 className={styles.cardTitle}>Attendance Marking</h2>
+              <p className={styles.cardSubtitle}>Mark your daily check-in / check-out</p>
+            </div>
+          </div>
+
+          {/* Status & Digital Clock Row */}
+          <div className={styles.statusRow}>
+            <div className={styles.statusIndicator}>
+              <span
+                className={`${styles.statusDot} ${
+                  isCheckedIn ? styles.checkedIn : styles.checkedOut
+                }`}
+              ></span>
+              <span>{isCheckedIn ? "Checked In" : "Checked Out"}</span>
+            </div>
+            <div className={styles.timeDisplay}>
+              {currentTime.toLocaleTimeString("en-GB", {
+                hour12: false,
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            </div>
+          </div>
+
           {/* Retry case */}
           {apiError && !loading && (
             <div className={styles.retryContainer}>
@@ -241,16 +283,20 @@ const CheckIn = () => {
               <div className={styles.buttonContainer}>
                 <button
                   className={
-                    isCheckedIn ? styles.checkInButton : styles.checkInButton2
+                    isCheckedIn ? styles.checkOutButton : styles.checkInButton
                   }
                   onClick={handleToggle}
                   disabled={isLoading}
                 >
-                  {isLoading
-                    ? "Processing..."
-                    : isCheckedIn
-                    ? "Check-Out"
-                    : "Check-In"}
+                  {isLoading ? (
+                    <span className={styles.buttonLoading}>
+                      <span className={styles.spinner}></span> Processing...
+                    </span>
+                  ) : isCheckedIn ? (
+                    "Check-Out"
+                  ) : (
+                    "Check-In"
+                  )}
                 </button>
               </div>
 
@@ -266,26 +312,33 @@ const CheckIn = () => {
               )}
             </>
           )}
+
+          {/* Active Session Info Grid */}
           {isCheckedIn && (
             <div className={styles.checkInContainers}>
+              <h3 className={styles.sessionTitle}>Active Session Details</h3>
               <div className={styles.userData}>
                 <div className={styles.userField}>
-                  <strong>Email</strong>
-                  {userLoginData?.email || ""}
+                  <span className={styles.fieldLabel}>Email</span>
+                  <span className={styles.fieldValue}>{userLoginData?.email || "N/A"}</span>
                 </div>
                 <div className={styles.userField}>
-                  <strong>Check-In Time</strong>
-                  {currentCheckInTime || ""}
+                  <span className={styles.fieldLabel}>Check-In Time</span>
+                  <span className={styles.fieldValue}>{currentCheckInTime || "N/A"}</span>
                 </div>
                 <div className={styles.userField}>
-                  <strong>Status</strong>
-                  {"Checked In"}
+                  <span className={styles.fieldLabel}>Status</span>
+                  <span className={styles.activeStatusValue}>Checked In</span>
                 </div>
               </div>
             </div>
           )}
         </div>
-        
+
+        {/* Eduquity Brand Logo */}
+        <div className={styles.logoContainer}>
+          <img src={logo} alt="Logo" className={styles.logo} />
+        </div>
       </div>
     </>
   );
