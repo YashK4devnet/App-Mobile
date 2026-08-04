@@ -47,8 +47,6 @@ export const AuditProvider = ({ children, userId, apiKey }) => {
 
       const serverApiKey = localStorage.getItem('serverApiKey') || loginData['api-Key'] || loginData['api-key'] || loginData['api_key'] || '';
 
-      console.log(`🔑 [AuditContext Debug] USER DETAILS -> effectiveUserId: ${effectiveUserId} | serverApiKey: ${serverApiKey} | email: ${loginData.email} | loginData: ${JSON.stringify(loginData)}`);
-
       if (!effectiveUserId) {
         console.warn('⚠️ [AuditContext Debug] No effectiveUserId found, skipping fetch.');
         setIsLoading(false);

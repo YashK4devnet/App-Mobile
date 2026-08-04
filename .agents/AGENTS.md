@@ -128,5 +128,7 @@ This document provides persistent context for the App-Mobile React application, 
   - Configured Tailwind v4 `@theme` design tokens in `index.css` for `--color-obsidian-bg`, `--color-obsidian-card`, and `--color-brand-orange`.
   - Updated all Audit layouts, headers, bottom navigation (`BottomNav.jsx`), accordion lists (`SubsectionAccordion.jsx`), progress bars, filter pills, and form controls (`FormYesNoSelector`, `FormQualitySelector`, `FormRating10Scale`, `FormSignature`, etc.) from legacy deep blue (`#0F0F23`) and teal (`#4ECDC4`) to Matte Black & Warm Orange.
   - Eliminated all heavy neon/orange glows (`box-shadow`) from icons, badges, buttons, active nav pills, and cards for a clean, matte, high-end design.
+- **Sensitive Console Log Cleanup (Production Readiness):**
+  - Removed all `console.log` and native `Log.d` statements dumping raw authentication API responses, user credentials, `serverApiKey` headers, full `loginData` objects, and raw location payloads (`Auth.jsx`, `AppContext.jsx`, `AuditContext.jsx`, `httpClient.js`, `NativeTrackingPlugin.java`).
 
 

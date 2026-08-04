@@ -64,8 +64,6 @@ export const auditHttpClient = async (endpoint, options = {}) => {
     defaultHeaders['api-key'] = serverApiKey;
   }
 
-  console.log(`🌐 [httpClient Debug] HTTP REQUEST -> ${method} ${url} | userEmail: ${userEmail} | serverApiKey: ${serverApiKey} | odooDb: ${odooDb} | headers: ${JSON.stringify(defaultHeaders)}`);
-
   if (Capacitor.isNativePlatform()) {
     console.log(`[auditHttpClient] Native ${method} to ${url}`);
 

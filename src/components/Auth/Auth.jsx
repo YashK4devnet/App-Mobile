@@ -151,10 +151,6 @@ const Auth = () => {
           state_id: responseData.state_id,
         };
 
-        // 📡 Print raw API response and stored user data for logcat inspection
-        console.log("📡 [ODOO_CONNECT API RESPONSE]:", JSON.stringify(responseData));
-        console.log("💾 [STORING LOGIN DATA]:", JSON.stringify(userData));
-
         localStorage.setItem("loginData", JSON.stringify(userData));
         localStorage.setItem(
           "employeeId",

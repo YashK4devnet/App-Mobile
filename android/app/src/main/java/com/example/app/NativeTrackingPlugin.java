@@ -110,7 +110,6 @@ public class NativeTrackingPlugin extends Plugin {
                 json.put("time", timeFormat.format(new Date(location.getTime())));
 
                 Log.d("NativeTracking", "Sending POST to: " + endpointUrl);
-                Log.d("NativeTracking", "Payload: " + json.toString());
 
                 boolean success = sendSingleJsonPayload(json);
                 if (success) {
