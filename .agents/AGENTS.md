@@ -122,9 +122,11 @@ This document provides persistent context for the App-Mobile React application, 
   - Added auto-restart logic in `AppContext.jsx` so background location tracking (`liveTrackingService.startTracking()`) automatically revives on app launch or server sync whenever an active check-in session is detected.
   - Implemented a native offline queue in `NativeTrackingPlugin.java` using Android `SharedPreferences`. When network connectivity drops or timeouts occur, location payloads (`latitude`, `longitude`, `date`, `time`, `employee_id`) are saved locally (up to 200 logs). Upon network restoration, the queue is automatically flushed and synced to Odoo sequentially.
   - Created native `stopTracking()` plugin method in `NativeTrackingPlugin.java` to clear `apiKey` and `employeeId` on check-out, ensuring orphan background watchers cannot execute location HTTP posts after check-out.
-  - Created monochrome vector notification icon `ic_notification_location.xml` in `android/app/src/main/res/drawable/` and configured `icon: "ic_notification_location"` in `liveTrackingService.js`.
-- **Matte Black & Orange Theme Modernization (Auth, Dashboard, Navbar, Profile, Attendance & Incident):**
-  - Redesigned visual aesthetics across `Auth`, `Dashboard`, `Navbar`, `Profile`, `Attendance`, and `Incident` components (`#08080a` obsidian background, `#ff7700` warm orange highlights, dark frosted glass cards `rgba(14, 14, 18, 0.88)`).
+  - Created monochrome vector notification icon `ic_notification_location.xml` in `android/app/src/main/res/drawable/` and configured `capacitor_background_geolocation_notification_icon` (`drawable/ic_notification_location`) & `capacitor_background_geolocation_notification_color` (`#ff7700`) in `android/app/src/main/res/values/strings.xml`.
+- **Matte Black & Orange Theme Modernization (Auth, Dashboard, Navbar, Profile, Attendance, Incident & Audit):**
+  - Redesigned visual aesthetics across `Auth`, `Dashboard`, `Navbar`, `Profile`, `Attendance`, `Incident`, and all **`Audit`** components (`#08080a` obsidian background, `#ff7700` warm orange highlights, dark frosted glass cards `rgba(14, 14, 18, 0.88)`).
+  - Configured Tailwind v4 `@theme` design tokens in `index.css` for `--color-obsidian-bg`, `--color-obsidian-card`, and `--color-brand-orange`.
+  - Updated all Audit layouts, headers, bottom navigation (`BottomNav.jsx`), accordion lists (`SubsectionAccordion.jsx`), progress bars, filter pills, and form controls (`FormYesNoSelector`, `FormQualitySelector`, `FormRating10Scale`, `FormSignature`, etc.) from legacy deep blue (`#0F0F23`) and teal (`#4ECDC4`) to Matte Black & Warm Orange.
   - Eliminated all heavy neon/orange glows (`box-shadow`) from icons, badges, buttons, active nav pills, and cards for a clean, matte, high-end design.
 
 

@@ -62,9 +62,8 @@ const Incident = () => {
             </p>
 
             <button
-              className={`${styles.ticketsButton} ${
-                isActive ? styles.activeButton : ""
-              }`}
+              className={`${styles.ticketsButton} ${isActive ? styles.activeButton : ""
+                }`}
               onClick={handleTicketsClick}
             >
               <TicketIcon className="w-5 h-5 text-white" />

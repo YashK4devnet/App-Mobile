@@ -16,7 +16,7 @@ export default function DashboardHeader({ totalAssigned, userName = "Yash" }) {
       </div>
       <button
         onClick={() => navigate('/audit/reports')}
-        className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-[12px] font-bold active:scale-95 transition-all whitespace-nowrap"
+        className="px-4 py-2 bg-[#ff7700] hover:bg-[#e66b00] text-white rounded-xl text-[12px] font-bold active:scale-95 transition-all whitespace-nowrap shadow-md cursor-pointer"
       >
         View All
       </button>

@@ -229,9 +229,8 @@ const CheckIn = () => {
         )}
 
         <div
-          className={`${styles.attendanceCard} ${
-            loading ? styles.blurredCard : ""
-          }`}
+          className={`${styles.attendanceCard} ${loading ? styles.blurredCard : ""
+            }`}
         >
           {/* Card Header */}
           <div className={styles.cardHeader}>
@@ -248,9 +247,8 @@ const CheckIn = () => {
           <div className={styles.statusRow}>
             <div className={styles.statusIndicator}>
               <span
-                className={`${styles.statusDot} ${
-                  isCheckedIn ? styles.checkedIn : styles.checkedOut
-                }`}
+                className={`${styles.statusDot} ${isCheckedIn ? styles.checkedIn : styles.checkedOut
+                  }`}
               ></span>
               <span>{isCheckedIn ? "Checked In" : "Checked Out"}</span>
             </div>

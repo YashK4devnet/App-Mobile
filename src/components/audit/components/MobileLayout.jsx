@@ -11,23 +11,23 @@ export default function MobileLayout({ header, bottomNav, fab, children }) {
   const isHome = !isReports && !isSettings;
 
   return (
-    <div className="audit-theme h-screen w-screen bg-[#0F0F23] flex justify-center items-center font-sans antialiased text-white overflow-hidden relative">
+    <div className="audit-theme h-screen w-screen bg-[#08080a] flex justify-center items-center font-sans antialiased text-white overflow-hidden relative">
       
       {/* --- Gradient Background Layers (Hardware Accelerated Crossfade) --- */}
       
-      {/* 1. Home Gradient: Teal / Cyan dominant */}
+      {/* 1. Home Gradient: Warm Orange subtle glow */}
       <div 
-        className={`absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(78,205,196,0.15)_0%,transparent_50%),radial-gradient(circle_at_20%_80%,rgba(69,183,209,0.1)_0%,transparent_50%)] pointer-events-none transition-opacity duration-700 ease-in-out ${isHome ? 'opacity-100' : 'opacity-0'}`}
+        className={`absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,119,0,0.08)_0%,transparent_50%),radial-gradient(circle_at_20%_80%,rgba(255,119,0,0.04)_0%,transparent_50%)] pointer-events-none transition-opacity duration-700 ease-in-out ${isHome ? 'opacity-100' : 'opacity-0'}`}
       />
       
-      {/* 2. Reports Gradient: Coral / Teal dominant */}
+      {/* 2. Reports Gradient: Subtle warm ambient glow */}
       <div 
-        className={`absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,107,107,0.15)_0%,transparent_50%),radial-gradient(circle_at_80%_80%,rgba(78,205,196,0.1)_0%,transparent_50%)] pointer-events-none transition-opacity duration-700 ease-in-out ${isReports ? 'opacity-100' : 'opacity-0'}`}
+        className={`absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,119,0,0.07)_0%,transparent_50%),radial-gradient(circle_at_80%_80%,rgba(255,119,0,0.04)_0%,transparent_50%)] pointer-events-none transition-opacity duration-700 ease-in-out ${isReports ? 'opacity-100' : 'opacity-0'}`}
       />
 
-      {/* 3. Settings Gradient: Cyan / Coral dominant */}
+      {/* 3. Settings Gradient: Subtle top glow */}
       <div 
-        className={`absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(69,183,209,0.15)_0%,transparent_50%),radial-gradient(circle_at_50%_90%,rgba(255,107,107,0.1)_0%,transparent_50%)] pointer-events-none transition-opacity duration-700 ease-in-out ${isSettings ? 'opacity-100' : 'opacity-0'}`}
+        className={`absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(255,119,0,0.08)_0%,transparent_50%),radial-gradient(circle_at_50%_90%,rgba(255,119,0,0.03)_0%,transparent_50%)] pointer-events-none transition-opacity duration-700 ease-in-out ${isSettings ? 'opacity-100' : 'opacity-0'}`}
       />
 
       {/* Content Container */}

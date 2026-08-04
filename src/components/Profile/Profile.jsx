@@ -56,9 +56,8 @@ const Profile = () => {
         <div className={styles.profileCard}>
           {/* Top Right Status Badge */}
           <div
-            className={`${styles.topRightStatusBadge} ${
-              isCheckedIn ? styles.active : styles.inactive
-            }`}
+            className={`${styles.topRightStatusBadge} ${isCheckedIn ? styles.active : styles.inactive
+              }`}
           >
             <span className={styles.statusDot}></span>
             <span>{isCheckedIn ? "Active" : "Inactive"}</span>
@@ -130,9 +129,8 @@ const Profile = () => {
               <div className={styles.infoItem}>
                 <span className={styles.label}>Status:</span>
                 <span
-                  className={`${styles.value} ${
-                    isCheckedIn ? styles.activeStatus : styles.inactiveStatus
-                  }`}
+                  className={`${styles.value} ${isCheckedIn ? styles.activeStatus : styles.inactiveStatus
+                    }`}
                 >
                   {isCheckedIn ? "Active (Checked In)" : "Inactive"}
                 </span>

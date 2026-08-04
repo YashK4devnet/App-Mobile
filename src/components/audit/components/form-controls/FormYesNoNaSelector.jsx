@@ -18,7 +18,7 @@ export function FormYesNoNaSelector({
           const isActive = value === opt;
           let activeClass = '';
           if (isActive) {
-            if (opt === 'yes') activeClass = 'bg-[#4ecdc4] border-[#4ecdc4] text-[#0F0F23] shadow-sm';
+            if (opt === 'yes') activeClass = 'bg-[#ff7700] border-[#ff7700] text-white shadow-sm';
             else if (opt === 'no') activeClass = 'bg-[#ff6b6b] border-[#ff6b6b] text-white shadow-sm';
             else activeClass = 'bg-white/20 border-white/20 text-white shadow-sm';
           } else {

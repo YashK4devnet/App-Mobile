@@ -159,7 +159,7 @@ export function FormSignature({
       >
         {isPending ? (
           <div className="relative aspect-video w-full bg-black/20 flex flex-col items-center justify-center border border-white/10 rounded-xl">
-             <div className="w-6 h-6 border-2 border-[#4ecdc4] border-t-transparent rounded-full animate-spin mb-2"></div>
+             <div className="w-6 h-6 border-2 border-[#ff7700] border-t-transparent rounded-full animate-spin mb-2"></div>
              <p className="text-[12px] text-white/50">Loading signature...</p>
           </div>
         ) : hasImage ? (
@@ -222,14 +222,14 @@ export function FormSignature({
               <button
                 type="button"
                 onClick={() => setActiveTab('draw')}
-                className={`flex-1 py-2 text-[12px] font-medium transition-colors cursor-pointer ${activeTab === 'draw' ? 'text-[#ff6b6b] border-b-2 border-[#ff6b6b] bg-white/10' : 'text-white/50 hover:bg-white/10'}`}
+                className={`flex-1 py-2 text-[12px] font-medium transition-colors cursor-pointer ${activeTab === 'draw' ? 'text-[#ff7700] border-b-2 border-[#ff7700] bg-white/10' : 'text-white/50 hover:bg-white/10'}`}
               >
                 Draw Signature
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('upload')}
-                className={`flex-1 py-2 text-[12px] font-medium transition-colors cursor-pointer ${activeTab === 'upload' ? 'text-[#ff6b6b] border-b-2 border-[#ff6b6b] bg-white/10' : 'text-white/50 hover:bg-white/10'}`}
+                className={`flex-1 py-2 text-[12px] font-medium transition-colors cursor-pointer ${activeTab === 'upload' ? 'text-[#ff7700] border-b-2 border-[#ff7700] bg-white/10' : 'text-white/50 hover:bg-white/10'}`}
               >
                 Upload / Camera
               </button>
@@ -256,7 +256,7 @@ export function FormSignature({
                     <button
                       type="button"
                       onClick={saveSignature}
-                      className="bg-[#4ecdc4] hover:bg-[#4ecdc4]/80 text-[#0F0F23] px-4 py-1.5 rounded-lg text-[11px] font-medium shadow-sm transition-colors cursor-pointer"
+                      className="bg-[#ff7700] hover:bg-[#e66b00] text-white px-4 py-1.5 rounded-lg text-[11px] font-medium shadow-sm transition-colors cursor-pointer"
                     >
                       Apply
                     </button>
@@ -267,7 +267,7 @@ export function FormSignature({
 
             {activeTab === 'upload' && (
               <div className="flex flex-col items-center justify-center py-8 px-4 text-center bg-transparent">
-                <div className="w-12 h-12 bg-[#ff6b6b]/10 border border-white/10 rounded-full flex items-center justify-center mb-3 text-[#ff6b6b] shadow-sm">
+                <div className="w-12 h-12 bg-[#ff7700]/10 border border-[#ff7700]/20 rounded-full flex items-center justify-center mb-3 text-[#ff7700] shadow-sm">
                   <CameraIcon className="w-6 h-6" />
                 </div>
                 <p className="text-[13px] font-medium text-white/90 mb-3">Upload signature or seal</p>
@@ -275,7 +275,7 @@ export function FormSignature({
                   <button
                     type="button"
                     onClick={triggerCamera}
-                    className="bg-[#ff6b6b] hover:bg-[#ff6b6b]/80 text-white px-4 py-2 rounded-xl text-[12px] font-medium transition-colors shadow-sm active:scale-95 cursor-pointer"
+                    className="bg-[#ff7700] hover:bg-[#e66b00] text-white px-4 py-2 rounded-xl text-[12px] font-medium transition-colors shadow-sm active:scale-95 cursor-pointer"
                   >
                     Take Photo
                   </button>
@@ -304,7 +304,7 @@ export function FormSignature({
             onChange={(e) => {
               onChange(name, { url: imgUrl, timestamp: e.target.value });
             }}
-            className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-1.5 text-[13px] text-white focus:border-[#4ecdc4] outline-none"
+            className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-1.5 text-[13px] text-white focus:border-[#ff7700] outline-none"
           />
         </div>
       )}

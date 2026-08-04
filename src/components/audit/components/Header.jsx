@@ -28,7 +28,7 @@ export default function Header({
 
   return (
     <header
-      className="flex items-center px-5 py-4 bg-[#0F0F23]/80 backdrop-blur-xl border-b border-white/10 sticky top-0 z-10 shrink-0 select-none"
+      className="flex items-center px-5 py-4 bg-[#08080a]/90 backdrop-blur-xl border-b border-white/10 sticky top-0 z-10 shrink-0 select-none"
       style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1rem)' }}
     >
       <button

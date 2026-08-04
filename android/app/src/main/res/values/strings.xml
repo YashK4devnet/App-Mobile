@@ -4,4 +4,6 @@
     <string name="title_activity_main">Eduquity OP</string>
     <string name="package_name">com.example.app</string>
     <string name="custom_url_scheme">com.example.app</string>
+    <string name="capacitor_background_geolocation_notification_icon">drawable/ic_notification_location</string>
+    <string name="capacitor_background_geolocation_notification_color">#ff7700</string>
 </resources>

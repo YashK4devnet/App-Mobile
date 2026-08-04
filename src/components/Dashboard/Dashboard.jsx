@@ -271,9 +271,8 @@ const Dashboard = () => {
             </span>
             <div className={styles.statusIndicator}>
               <span
-                className={`${styles.statusDot} ${
-                  isCheckedIn ? styles.checkedIn : styles.checkedOut
-                }`}
+                className={`${styles.statusDot} ${isCheckedIn ? styles.checkedIn : styles.checkedOut
+                  }`}
               ></span>
               <span>{isCheckedIn ? "Checked In" : "Checked Out"}</span>
             </div>

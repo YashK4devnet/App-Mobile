@@ -36,9 +36,20 @@ a:focus {
   outline: none;
 }
 
+@theme {
+  --color-obsidian-bg: #08080a;
+  --color-obsidian-card: rgba(14, 14, 18, 0.88);
+  --color-obsidian-card-solid: #0e0e12;
+  --color-obsidian-border: rgba(255, 255, 255, 0.08);
+  --color-obsidian-input: #14141a;
+  --color-brand-orange: #ff7700;
+  --color-brand-orange-hover: #e66b00;
+  --color-brand-orange-subtle: rgba(255, 119, 0, 0.12);
+}
+
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid rgba(78, 205, 196, 0.6);
+  outline: 2px solid rgba(255, 119, 0, 0.6);
   outline-offset: 2px;
 }
 

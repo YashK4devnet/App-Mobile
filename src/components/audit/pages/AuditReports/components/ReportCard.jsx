@@ -21,7 +21,7 @@ export default React.memo(function ReportCard({ report, onClick }) {
       className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 cursor-pointer hover:bg-white/10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] animate-fade-in group relative overflow-hidden"
     >
       {/* Decorative gradient orb */}
-      <div className="absolute -top-10 -right-10 w-24 h-24 bg-white/5 rounded-full blur-2xl group-hover:bg-[#4ecdc4]/10 transition-colors" />
+      <div className="absolute -top-10 -right-10 w-24 h-24 bg-white/5 rounded-full blur-2xl group-hover:bg-[#ff7700]/10 transition-colors" />
 
       <div className="flex justify-between items-start mb-3">
         <div>
@@ -61,11 +61,11 @@ export default React.memo(function ReportCard({ report, onClick }) {
         <div className="mt-4 pt-3 border-t border-white/10">
           <div className="flex justify-between items-center mb-1 text-[11px] font-medium">
             <span className="text-white/60">Progress</span>
-            <span className="text-[#4ecdc4]">{report.progress}%</span>
+            <span className="text-[#ff7700]">{report.progress}%</span>
           </div>
           <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
             <div
-              className="bg-[#4ecdc4] h-1.5 rounded-full transition-all duration-1000 ease-out"
+              className="bg-[#ff7700] h-1.5 rounded-full transition-all duration-1000 ease-out"
               style={{ width: `${report.progress}%` }}
             />
           </div>

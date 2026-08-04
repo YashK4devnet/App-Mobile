@@ -61,14 +61,14 @@ export default function InProgressReportsList({ reports }) {
                   {report.venue?.name || 'Venue ' + (report.venue || '')}
                 </p>
               </div>
-              <span className="px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold bg-blue-500/20 text-blue-400 rounded-md">
+              <span className="px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold bg-[#ff7700]/20 text-[#ff7700] border border-[#ff7700]/30 rounded-md">
                 In Progress
               </span>
             </div>
 
             <div className="flex flex-col gap-1 mt-1">
               <div className="flex justify-between items-center text-[11px]">
-                <span className="text-blue-400 font-bold capitalize">
+                <span className="text-[#ff7700] font-bold capitalize">
                   {report.reportType ? `${report.reportType.replace(/_audit/i, '')} Audit Report` : 'Audit Report'}
                 </span>
               </div>

@@ -19,10 +19,10 @@ export default function AuditIndex({
       <button
         key={section.id}
         onClick={() => onSectionSelect(section.id)}
-        className="w-full bg-white/5 backdrop-blur-xl border border-white/10 hover:border-[#4ecdc4] hover:bg-white/10 hover:shadow-[0_4px_20px_rgba(78,205,196,0.2)] active:scale-[0.98] transition-all duration-300 rounded-3xl p-4 flex items-center cursor-pointer group"
+        className="w-full bg-white/5 backdrop-blur-xl border border-white/10 hover:border-[#ff7700]/60 hover:bg-white/10 hover:shadow-[0_4px_20px_rgba(255,119,0,0.15)] active:scale-[0.98] transition-all duration-300 rounded-3xl p-4 flex items-center cursor-pointer group"
       >
-        <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#4ecdc4]/20">
-          {Icon && <Icon className="w-6 h-6 text-[#4ecdc4]" />}
+        <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#ff7700]/20">
+          {Icon && <Icon className="w-6 h-6 text-[#ff7700]" />}
         </div>
         
         <div className="ml-4 text-left flex-1">
@@ -36,11 +36,11 @@ export default function AuditIndex({
 
         <div className="shrink-0 ml-3 flex items-center justify-center">
           {isCompleted ? (
-            <div className="w-6 h-6 bg-[#4ecdc4] rounded-full flex items-center justify-center">
-              <CheckIcon className="w-4 h-4 text-[#0F0F23]" />
+            <div className="w-6 h-6 bg-[#ff7700] rounded-full flex items-center justify-center">
+              <CheckIcon className="w-4 h-4 text-[#08080a]" />
             </div>
           ) : (
-            <ChevronRightIcon className="w-5 h-5 text-white/30 group-hover:text-[#4ecdc4] transition-colors" />
+            <ChevronRightIcon className="w-5 h-5 text-white/30 group-hover:text-[#ff7700] transition-colors" />
           )}
         </div>
       </button>
@@ -58,11 +58,11 @@ export default function AuditIndex({
               {completedSections} of {totalSections} completed
             </p>
           </div>
-          <span className="text-sm font-light text-[#4ecdc4]">{progressPercent}%</span>
+          <span className="text-sm font-light text-[#ff7700]">{progressPercent}%</span>
         </div>
         <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-[#4ecdc4] to-[#45b7d1] transition-all duration-500 ease-out rounded-full" 
+            className="h-full bg-gradient-to-r from-[#ff7700] to-[#ff9933] transition-all duration-500 ease-out rounded-full" 
             style={{ width: `${progressPercent}%` }} 
           />
         </div>

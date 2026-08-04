@@ -24,7 +24,7 @@ export function FormYesNoSelector({
           onClick={() => onChange(name, 'yes')}
           className={`flex-1 py-2.5 px-4 text-[13px] font-medium rounded-xl border transition-all active:scale-[0.98] cursor-pointer ${
             value === 'yes'
-              ? 'bg-[#4ecdc4] border-[#4ecdc4] text-[#0F0F23] shadow-sm shadow-[#4ecdc4]/20'
+              ? 'bg-[#ff7700] border-[#ff7700] text-white shadow-sm shadow-[#ff7700]/20'
               : 'bg-white/5 backdrop-blur-md border-white/20 text-white hover:bg-white/10'
           }`}
         >

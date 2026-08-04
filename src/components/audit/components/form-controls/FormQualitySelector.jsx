@@ -18,7 +18,7 @@ export function FormQualitySelector({
           const isActive = value === quality;
           let activeClass = '';
           if (isActive) {
-            if (quality === 'good') activeClass = 'bg-[#4ecdc4] border-[#4ecdc4] text-[#0F0F23] shadow-sm';
+            if (quality === 'good') activeClass = 'bg-[#ff7700] border-[#ff7700] text-white shadow-sm';
             else if (quality === 'moderate') activeClass = 'bg-yellow-500 border-yellow-500 text-white shadow-sm shadow-yellow-500/20';
             else activeClass = 'bg-[#ff6b6b] border-[#ff6b6b] text-white shadow-sm';
           } else {

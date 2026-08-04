@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 
 const FILTER_STYLES = {
   "All": {
-    bg: "bg-[#4ecdc4]/20",
-    border: "border-[#4ecdc4]/50",
-    activeText: "text-[#4ecdc4]",
+    bg: "bg-[#ff7700]/20",
+    border: "border-[#ff7700]/50",
+    activeText: "text-[#ff7700]",
   },
   "Assigned": {
     bg: "bg-blue-500/20",

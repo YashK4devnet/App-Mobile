@@ -17,7 +17,7 @@ export function FormRating10Scale({
       <div className="flex justify-between items-center mb-2">
         <Label text={label} required={required} />
         {value && (
-          <span className="text-[12px] font-medium text-[#ff6b6b] bg-white/10 px-2 rounded">
+          <span className="text-[12px] font-bold text-[#ff7700] bg-[#ff7700]/10 border border-[#ff7700]/20 px-2 rounded">
             {value}/10
           </span>
         )}
@@ -31,7 +31,7 @@ export function FormRating10Scale({
             onClick={() => onChange(name, num)}
             className={`py-2 text-[14px] font-medium rounded-lg border transition-all active:scale-[0.95] cursor-pointer ${
               parseInt(value) === num
-                ? 'bg-[#ff6b6b] border-[#ff6b6b] text-white shadow-sm'
+                ? 'bg-[#ff7700] border-[#ff7700] text-white shadow-sm'
                 : 'bg-white/5 backdrop-blur-md border-white/20 text-white hover:bg-white/10'
             }`}
           >
