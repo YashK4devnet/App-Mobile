@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.util.Log;
 
@@ -14,6 +15,7 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.OutputStream;
@@ -30,8 +32,12 @@ public class NativeTrackingPlugin extends Plugin {
     public static String employeeId = "";
     public static String endpointUrl = "";
 
-    private long lastPostTime = 0;
+    private static long lastPostTime = 0;
     private static long TRACKING_INTERVAL_MS = 5000;
+
+    private static final String PREFS_NAME = "NativeTrackingPrefs";
+    private static final String KEY_OFFLINE_QUEUE = "offline_location_queue";
+    private static final int MAX_QUEUE_SIZE = 200;
 
     private BroadcastReceiver locationReceiver = new BroadcastReceiver() {
         @Override
@@ -51,6 +57,9 @@ public class NativeTrackingPlugin extends Plugin {
 
     @Override
     public void load() {
+        try {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(locationReceiver);
+        } catch (Exception e) {}
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(
                 locationReceiver,
                 new IntentFilter("com.equimaps.capacitor_background_geolocation.broadcast")
@@ -71,16 +80,18 @@ public class NativeTrackingPlugin extends Plugin {
         call.resolve();
     }
 
+    @PluginMethod
+    public void stopTracking(PluginCall call) {
+        apiKey = "";
+        employeeId = "";
+        Log.d("NativeTracking", "Native tracking config cleared on checkout!");
+        call.resolve();
+    }
+
     private void sendLocationToServer(Location location) {
+        final Context context = getContext();
         new Thread(() -> {
             try {
-                URL url = new URL(endpointUrl);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setRequestProperty("api-key", apiKey);
-                conn.setDoOutput(true);
-
                 JSONObject json = new JSONObject();
                 json.put("employee_id", Integer.parseInt(employeeId));
                 
@@ -101,21 +112,108 @@ public class NativeTrackingPlugin extends Plugin {
                 Log.d("NativeTracking", "Sending POST to: " + endpointUrl);
                 Log.d("NativeTracking", "Payload: " + json.toString());
 
-                try (OutputStream os = conn.getOutputStream()) {
-                    byte[] input = json.toString().getBytes("utf-8");
-                    os.write(input, 0, input.length);
+                boolean success = sendSingleJsonPayload(json);
+                if (success) {
+                    Log.d("NativeTracking", "✅ Current location posted successfully!");
+                    // Connection is active -> Sync any offline records that were queued earlier
+                    flushOfflineQueue(context);
+                } else {
+                    Log.w("NativeTracking", "⚠️ POST failed or offline. Saving location payload to offline queue...");
+                    enqueueOfflineLocation(context, json);
                 }
-
-                int responseCode = conn.getResponseCode();
-                Log.d("NativeTracking", "Response Code: " + responseCode);
-                
-                if (responseCode == 404) {
-                    Log.e("NativeTracking", "404 Not Found. Please verify the endpoint URL exactly matches Odoo.");
-                }
-                conn.disconnect();
             } catch (Exception e) {
-                Log.e("NativeTracking", "Error sending location", e);
+                Log.e("NativeTracking", "Error processing location update", e);
             }
         }).start();
+    }
+
+    private boolean sendSingleJsonPayload(JSONObject json) {
+        HttpURLConnection conn = null;
+        try {
+            URL url = new URL(endpointUrl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("api-key", apiKey);
+            conn.setConnectTimeout(12000); // 12 seconds connection timeout
+            conn.setReadTimeout(12000);    // 12 seconds read timeout
+            conn.setDoOutput(true);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = json.toString().getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = conn.getResponseCode();
+            Log.d("NativeTracking", "POST Response Code: " + responseCode + " for payload: " + json.toString());
+
+            if (responseCode >= 200 && responseCode < 300) {
+                return true;
+            } else {
+                Log.w("NativeTracking", "Non-2xx HTTP status code received: " + responseCode);
+                return false;
+            }
+        } catch (Exception e) {
+            Log.e("NativeTracking", "HTTP POST failed: " + e.getMessage());
+            return false;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+    }
+
+    private synchronized void enqueueOfflineLocation(Context context, JSONObject json) {
+        if (context == null) return;
+        try {
+            SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            String queueStr = prefs.getString(KEY_OFFLINE_QUEUE, "[]");
+            JSONArray queue = new JSONArray(queueStr);
+
+            // Cap queue size to prevent memory bloat
+            while (queue.length() >= MAX_QUEUE_SIZE) {
+                queue.remove(0); // Drop oldest entry
+            }
+
+            queue.put(json);
+            prefs.edit().putString(KEY_OFFLINE_QUEUE, queue.toString()).apply();
+            Log.d("NativeTracking", "💾 Saved offline location record. Total queued items: " + queue.length());
+        } catch (Exception e) {
+            Log.e("NativeTracking", "Error writing to offline location queue", e);
+        }
+    }
+
+    private synchronized void flushOfflineQueue(Context context) {
+        if (context == null || apiKey.isEmpty() || endpointUrl.isEmpty()) return;
+        try {
+            SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            String queueStr = prefs.getString(KEY_OFFLINE_QUEUE, "[]");
+            JSONArray queue = new JSONArray(queueStr);
+
+            if (queue.length() == 0) return;
+
+            Log.d("NativeTracking", "🔄 Found " + queue.length() + " offline location records to sync. Processing...");
+            JSONArray remainingQueue = new JSONArray();
+
+            for (int i = 0; i < queue.length(); i++) {
+                JSONObject jsonItem = queue.getJSONObject(i);
+                boolean success = sendSingleJsonPayload(jsonItem);
+                if (!success) {
+                    // Stop trying if network drops midway and retain remaining unsent items in queue
+                    for (int j = i; j < queue.length(); j++) {
+                        remainingQueue.put(queue.getJSONObject(j));
+                    }
+                    Log.w("NativeTracking", "⚠️ Connection lost while syncing offline queue. Saved remaining " + remainingQueue.length() + " items.");
+                    break;
+                }
+            }
+
+            prefs.edit().putString(KEY_OFFLINE_QUEUE, remainingQueue.toString()).apply();
+            if (remainingQueue.length() == 0) {
+                Log.d("NativeTracking", "🎉 All offline location records successfully synced with backend!");
+            }
+        } catch (Exception e) {
+            Log.e("NativeTracking", "Error flushing offline location queue", e);
+        }
     }
 }

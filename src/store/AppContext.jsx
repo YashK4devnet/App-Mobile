@@ -966,12 +966,28 @@ export const AppProvider = ({ children }) => {
       throw new Error(message);
     }
   };
-  const syncCheckInFromServer = (time = null) => {
+  const syncCheckInFromServer = async (time = null) => {
     dispatch({ type: ActionTypes.SYNC_CHECK_IN, payload: { time } });
+    try {
+      if (!liveTrackingService.getState().isTracking) {
+        console.log("🔄 Sync check-in received from server. Restarting live location tracking...");
+        await liveTrackingService.startTracking();
+      }
+    } catch (err) {
+      console.error("⚠️ Failed to auto-restart live tracking post-sync:", err);
+    }
   };
 
-  const syncCheckOutFromServer = () => {
+  const syncCheckOutFromServer = async () => {
     dispatch({ type: ActionTypes.SYNC_CHECK_OUT });
+    try {
+      if (liveTrackingService.getState().isTracking) {
+        console.log("🛑 Sync check-out received from server. Stopping live location tracking...");
+        await liveTrackingService.stopTracking();
+      }
+    } catch (err) {
+      console.error("⚠️ Failed to stop live tracking post-sync checkout:", err);
+    }
   };
 
   // Context value

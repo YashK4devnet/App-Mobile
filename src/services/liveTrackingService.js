@@ -78,6 +78,14 @@ class LiveTrackingService {
       
       await NativeTracking.setConfig({ apiKey, employeeId: trackingEmployeeId, endpointUrl, interval: 900000 });
 
+      // Clean up any stale watcher if present before creating a new one
+      if (this.watcherId) {
+        try {
+          await BackgroundGeolocation.removeWatcher({ id: this.watcherId });
+        } catch (e) {}
+        this.watcherId = null;
+      }
+
       // 3. Create the location watcher
       const id = await BackgroundGeolocation.addWatcher(
         {
@@ -86,6 +94,7 @@ class LiveTrackingService {
           distanceFilter: 0, // 0 = send updates regardless of distance moved
           backgroundMessage: "Tracking your location for attendance.",
           backgroundTitle: "Live Tracking Active",
+          icon: "ic_notification_location",
         },
         (location, error) => {
           if (error) {
@@ -117,9 +126,14 @@ class LiveTrackingService {
 
   async stopTracking() {
     if (this.watcherId) {
-      await BackgroundGeolocation.removeWatcher({ id: this.watcherId });
+      try {
+        await BackgroundGeolocation.removeWatcher({ id: this.watcherId });
+      } catch (e) {}
       this.watcherId = null;
     }
+    try {
+      await NativeTracking.stopTracking();
+    } catch (e) {}
     this.isTracking = false;
     this.notifyListeners();
     console.log('🛑 Background tracking stopped.');

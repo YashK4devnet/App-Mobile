@@ -118,4 +118,8 @@ This document provides persistent context for the App-Mobile React application, 
   - Added modular SVG navigation icons in `NavbarIcons.jsx` and updated CSS modules (`Navbar.module.css`, `Profile.module.css`, `Dashboard.module.css`, `Auth.module.css`).
 - **Production Cleaning & Attendance History Refactor:**
   - Cleaned up production auth handling in `Auth.jsx` and updated state rendering in `AttendanceHistory.jsx`.
+- **Live Location Tracking Auto-Resume & Native Offline Queue:**
+  - Added auto-restart logic in `AppContext.jsx` so background location tracking (`liveTrackingService.startTracking()`) automatically revives on app launch or server sync whenever an active check-in session is detected.
+  - Implemented a native offline queue in `NativeTrackingPlugin.java` using Android `SharedPreferences`. When network connectivity drops or timeouts occur, location payloads (`latitude`, `longitude`, `date`, `time`, `employee_id`) are saved locally (up to 200 logs). Upon network restoration, the queue is automatically flushed and synced to Odoo sequentially.
+
 
