@@ -380,6 +380,16 @@ export const AppProvider = ({ children }) => {
     }
   }, [state.user]);
 
+  // Auto-restart live background tracking if user is checked in but tracking isn't active (e.g. after app force-close & reopen)
+  useEffect(() => {
+    if (state.isAuthenticated && state.isCheckedIn && !liveTrackingService.getState().isTracking) {
+      console.log("🔄 Active check-in session detected. Auto-restarting live location tracking...");
+      liveTrackingService.startTracking().catch((err) => {
+        console.error("⚠️ Failed to auto-restart live tracking on session restore:", err);
+      });
+    }
+  }, [state.isAuthenticated, state.isCheckedIn]);
+
   // Action creators
   const login = (userData) => {
     dispatch({

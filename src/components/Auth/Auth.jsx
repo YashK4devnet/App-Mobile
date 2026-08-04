@@ -4,7 +4,7 @@ import { useAppContext } from "../../store/AppContext";
 import styles from "./Auth.module.css";
 import logo from "../../assets/Eduquity25.jpg";
 import { useState } from "react";
-import { SparklesIcon } from "../Navbar/NavbarIcons";
+import { SparklesIcon, MailIcon, LockIcon } from "../Navbar/NavbarIcons";
 
 const Auth = () => {
   const { register, handleSubmit } = useForm();
@@ -195,7 +195,7 @@ const Auth = () => {
         {/* Brand Header Badge */}
         <div className={styles.brandHeader}>
           <div className={styles.brandIcon}>
-            <SparklesIcon className="w-6 h-6 text-white" />
+            <SparklesIcon className={styles.sparkleSvg} />
           </div>
           <div>
             <span className={styles.brandBadge}>EDUQUITY</span>
@@ -208,23 +208,29 @@ const Auth = () => {
         <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <div className={styles.inputGroup}>
             <label className={styles.label}>Email / Username</label>
-            <input
-              type="text"
-              {...register("email", { required: true })}
-              placeholder="Enter your email"
-              className={styles.input}
-              required
-            />
+            <div className={styles.inputWrapper}>
+              <MailIcon className={styles.fieldIcon} />
+              <input
+                type="text"
+                {...register("email", { required: true })}
+                placeholder="Enter your email"
+                className={styles.input}
+                required
+              />
+            </div>
           </div>
           <div className={styles.inputGroup}>
             <label className={styles.label}>Password</label>
-            <input
-              type="password"
-              {...register("password", { required: true })}
-              placeholder="Enter your password"
-              className={styles.input}
-              required
-            />
+            <div className={styles.inputWrapper}>
+              <LockIcon className={styles.fieldIcon} />
+              <input
+                type="password"
+                {...register("password", { required: true })}
+                placeholder="Enter your password"
+                className={styles.input}
+                required
+              />
+            </div>
           </div>
 
           {loginError && <div className={styles.error}>{loginError}</div>}
@@ -236,8 +242,11 @@ const Auth = () => {
           >
             {loading ? (
               <div className={styles.buttonLoading}>
-                <div className={styles.spinner}></div>
-                <span>Signing in...</span>
+                <div className={styles.jumpingDots}>
+                  <span className={styles.dot}></span>
+                  <span className={styles.dot}></span>
+                  <span className={styles.dot}></span>
+                </div>
               </div>
             ) : (
               "Log-in"
@@ -255,3 +264,4 @@ const Auth = () => {
 };
 
 export default Auth;
+

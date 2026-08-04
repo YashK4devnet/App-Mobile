@@ -22,7 +22,7 @@ body:not(.audit-theme) {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #0f0f23;
+  background-color: #08080a;
   overflow-x: hidden;
   overflow-y: auto;
   color: #ffffff;
@@ -37,17 +37,17 @@ body:not(.audit-theme) #root {
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
-  background-color: #0f0f23;
+  background-color: #08080a;
 }
 
 body:not(.audit-theme) .capacitor-statusbar-safe-area {
-  background-color: #0f0f23;
+  background-color: #08080a;
 }
 
 @media screen and (display-mode: standalone),
 screen and (display-mode: fullscreen) {
   body:not(.audit-theme) {
-    background-color: #0f0f23;
+    background-color: #08080a;
   }
 
   body:not(.audit-theme) #root {
@@ -67,7 +67,7 @@ body:not(.audit-theme) .capacitor-app {
 
 @supports (padding: max(0px)) {
   body:not(.audit-theme) {
-    background-color: #0f0f23;
+    background-color: #08080a;
   }
 }
 

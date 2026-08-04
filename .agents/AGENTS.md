@@ -110,3 +110,12 @@ This document provides persistent context for the App-Mobile React application, 
   - Removed the `X-Pinggy-No-Screen` development proxy header from `httpClient.js`.
   - Updated `liveTrackingService.js` to strictly enforce a `15-minute` (900000ms) interval between background location posts.
   - Removed the `LiveTracking.jsx` test UI component from the `Attendance.jsx` screen, returning it to a production-ready check-in/out interface.
+- **Signature Section Client Customization & Audit Fetch Optimization:**
+  - Updated `networkAuditSchemas.js` and Venue `auditSchemas.js` to relabel `"Electrician Signature"` to **`Centre/Venue IT's Signature`** (`electricianSignature` schema key preserved for Odoo API compatibility).
+  - Refactored `AuditContext.jsx` `fetchAuditData` logic so background refreshes do not trigger full-screen loading spinners.
+- **UI & UX Modernization (Profile, Dashboard, Navbar & Auth):**
+  - Redesigned styling and responsiveness across `Profile.jsx`, `Auth.jsx`, `Dashboard.jsx`, and `Navbar.jsx`.
+  - Added modular SVG navigation icons in `NavbarIcons.jsx` and updated CSS modules (`Navbar.module.css`, `Profile.module.css`, `Dashboard.module.css`, `Auth.module.css`).
+- **Production Cleaning & Attendance History Refactor:**
+  - Cleaned up production auth handling in `Auth.jsx` and updated state rendering in `AttendanceHistory.jsx`.
+
