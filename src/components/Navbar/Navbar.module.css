@@ -1,4 +1,4 @@
-/* Glassmorphic Taller Navbar matching Audit Aesthetics */
+/* Premium Dark Black & Orange Navbar (Matte Finish - No Icon Glow) */
 .navbar {
   padding: 22px 28px;
   padding-top: max(
@@ -8,10 +8,10 @@
   );
   padding-left: max(28px, calc(28px + env(safe-area-inset-left, 0px)));
   padding-right: max(28px, calc(28px + env(safe-area-inset-right, 0px)));
-  background: rgba(15, 15, 35, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(14, 14, 18, 0.92);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-bottom: 1px solid rgba(255, 119, 0, 0.18);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,7 +19,7 @@
   top: 0;
   z-index: 100;
   user-select: none;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 /* Brand Section */
@@ -36,22 +36,19 @@
 .brandIcon {
   width: 44px;
   height: 44px;
-  background: linear-gradient(135deg, rgba(255, 107, 107, 0.35), rgba(78, 205, 196, 0.25));
-  border: 1px solid rgba(255, 107, 107, 0.4);
-  border-radius: 12px;
+  background: rgba(255, 119, 0, 0.12);
+  border: 1px solid rgba(255, 136, 0, 0.35);
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 18px rgba(255, 107, 107, 0.25);
 }
 
 .brandBadge {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 2px;
-  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #ff8800;
   text-transform: uppercase;
   display: block;
   line-height: 1;
@@ -61,7 +58,7 @@
 .title {
   color: #ffffff;
   font-size: 20px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.5px;
   margin: 0;
   line-height: 1.2;
@@ -90,7 +87,7 @@
   border: 1px solid transparent;
   border-radius: 10px;
   font-size: 13.5px;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.3px;
   cursor: pointer;
   transition: all 0.25s ease-out;
@@ -100,15 +97,14 @@
 .navLink:hover {
   color: #ffffff;
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .activeNavLink {
-  color: #4ECDC4 !important;
-  background: rgba(78, 205, 196, 0.1) !important;
-  border-color: rgba(78, 205, 196, 0.25) !important;
-  font-weight: 500;
-  box-shadow: 0 0 12px rgba(78, 205, 196, 0.15);
+  color: #ff7700 !important;
+  background: rgba(255, 119, 0, 0.12) !important;
+  border-color: rgba(255, 119, 0, 0.3) !important;
+  font-weight: 600;
 }
 
 .navIcon {
@@ -141,14 +137,14 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background: rgba(15, 15, 35, 0.95);
+  background: rgba(14, 14, 18, 0.95);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  border: 1px solid rgba(255, 119, 0, 0.25);
+  border-radius: 14px;
   padding: 6px;
   min-width: 200px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
   z-index: 120;
   animation: dropdownFade 0.2s ease-out;
 }
@@ -173,17 +169,17 @@
   background: transparent;
   color: rgba(255, 255, 255, 0.85);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: left;
 }
 
 .dropdownItem:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
+  background: rgba(255, 119, 0, 0.12);
+  color: #ff7700;
 }
 
 /* Header Actions (Info + Logout) */
@@ -207,16 +203,15 @@
 }
 
 .infoHeaderBtn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+  background: rgba(255, 119, 0, 0.12);
+  border-color: rgba(255, 119, 0, 0.35);
+  color: #ff7700;
 }
 
 .activeInfoHeaderBtn {
-  background: rgba(78, 205, 196, 0.15) !important;
-  border-color: rgba(78, 205, 196, 0.4) !important;
-  color: #4ECDC4 !important;
-  box-shadow: 0 0 10px rgba(78, 205, 196, 0.2);
+  background: rgba(255, 119, 0, 0.15) !important;
+  border-color: rgba(255, 119, 0, 0.4) !important;
+  color: #ff7700 !important;
 }
 
 .logoutHeaderBtn {
@@ -224,19 +219,19 @@
   align-items: center;
   gap: 6px;
   padding: 9px 14px;
-  background: rgba(255, 107, 107, 0.1);
-  border: 1px solid rgba(255, 107, 107, 0.25);
+  background: rgba(255, 85, 85, 0.12);
+  border: 1px solid rgba(255, 85, 85, 0.3);
   border-radius: 10px;
-  color: #FF6B6B;
+  color: #ff6b6b;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .logoutHeaderBtn:hover {
-  background: rgba(255, 107, 107, 0.2);
-  border-color: rgba(255, 107, 107, 0.4);
+  background: rgba(255, 85, 85, 0.2);
+  border-color: rgba(255, 85, 85, 0.45);
   transform: translateY(-1px);
 }
 
@@ -262,7 +257,8 @@
 
 .mobileInfoHeaderBtn:active {
   transform: scale(0.92);
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 119, 0, 0.15);
+  color: #ff7700;
 }
 
 .mobileLogoutHeaderBtn {
@@ -271,17 +267,17 @@
   justify-content: center;
   width: 38px;
   height: 38px;
-  background: rgba(255, 107, 107, 0.12);
-  border: 1px solid rgba(255, 107, 107, 0.3);
+  background: rgba(255, 85, 85, 0.12);
+  border: 1px solid rgba(255, 85, 85, 0.3);
   border-radius: 10px;
-  color: #FF6B6B;
+  color: #ff6b6b;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .mobileLogoutHeaderBtn:active {
   transform: scale(0.92);
-  background: rgba(255, 107, 107, 0.25);
+  background: rgba(255, 85, 85, 0.25);
 }
 
 /* Mobile Bottom Navigation (4 Items) */
@@ -291,13 +287,14 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(15, 15, 35, 0.9);
+  background: rgba(12, 12, 16, 0.94);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 119, 0, 0.18);
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom, 0px);
   user-select: none;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.4);
 }
 
 .mobileBottomNavContainer {
@@ -314,7 +311,7 @@
   left: 0;
   top: 4px;
   bottom: 4px;
-  width: 25%; /* 4 items -> 100 / 4 = 25% */
+  width: 25%;
   transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   z-index: 0;
   pointer-events: none;
@@ -327,9 +324,8 @@
   width: 75%;
   height: 100%;
   border-radius: 12px;
-  background: rgba(78, 205, 196, 0.08);
-  border: 1px solid rgba(78, 205, 196, 0.25);
-  box-shadow: 0 0 15px rgba(78, 205, 196, 0.1);
+  background: rgba(255, 119, 0, 0.12);
+  border: 1px solid rgba(255, 119, 0, 0.3);
 }
 
 .mobileNavItem {
@@ -353,7 +349,7 @@
 }
 
 .activeMobileNavItem {
-  color: #4ECDC4 !important;
+  color: #ff7700 !important;
 }
 
 .mobileNavIcon {
@@ -368,7 +364,7 @@
 
 .mobileNavLabel {
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
@@ -380,8 +376,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -390,22 +386,22 @@
 }
 
 .modalContent {
-  background: rgba(20, 20, 45, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
+  background: rgba(14, 14, 18, 0.95);
+  border: 1px solid rgba(255, 119, 0, 0.2);
+  border-radius: 24px;
   padding: 28px;
   width: 100%;
   max-width: 360px;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
 }
 
 .modalHeaderIcon {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: rgba(255, 107, 107, 0.1);
-  border: 1px solid rgba(255, 107, 107, 0.25);
+  background: rgba(255, 119, 0, 0.12);
+  border: 1px solid rgba(255, 119, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -415,12 +411,12 @@
 .modalContent h3 {
   color: #ffffff;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 700;
   margin: 0 0 8px;
 }
 
 .modalContent p {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.65);
   font-size: 13px;
   margin: 0 0 24px;
 }
@@ -436,31 +432,31 @@
   padding: 12px;
   border-radius: 12px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .cancelButton {
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .cancelButton:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
 }
 
 .confirmButton {
-  background: linear-gradient(135deg, #FF6B6B, #EE5253);
+  background: #ff7700;
   border: none;
   color: #ffffff;
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .confirmButton:hover {
-  opacity: 0.9;
+  background: #e66a00;
 }
 
 .loadingSpinner {
@@ -475,8 +471,8 @@
 .spinner {
   width: 28px;
   height: 28px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #4ECDC4;
+  border: 3px solid rgba(255, 255, 255, 0.15);
+  border-top-color: #ff7700;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

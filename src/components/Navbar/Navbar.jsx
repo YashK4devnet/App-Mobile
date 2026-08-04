@@ -202,21 +202,21 @@ const Navbar = () => {
                     className={styles.dropdownItem}
                     onClick={() => handleNavigation("/attendance")}
                   >
-                    <ClockIcon className="w-4 h-4 text-[#4ECDC4]" />
+                    <ClockIcon className="w-4 h-4 text-[#ff7700]" />
                     <span>Regular Attendance</span>
                   </button>
                   <button
                     className={styles.dropdownItem}
                     onClick={() => handleNavigation("/manual-attendance")}
                   >
-                    <ManualEditIcon className="w-4 h-4 text-[#4ECDC4]" />
+                    <ManualEditIcon className="w-4 h-4 text-[#ff8800]" />
                     <span>Manual Attendance</span>
                   </button>
                   <button
                     className={styles.dropdownItem}
                     onClick={() => handleNavigation("/attendance-history")}
                   >
-                    <HistoryIcon className="w-4 h-4 text-[#4ECDC4]" />
+                    <HistoryIcon className="w-4 h-4 text-[#ff7700]" />
                     <span>Attendance History</span>
                   </button>
                 </div>
@@ -249,14 +249,14 @@ const Navbar = () => {
                     className={styles.dropdownItem}
                     onClick={() => handleNavigation("/incidents")}
                   >
-                    <AlertIcon className="w-4 h-4 text-[#4ECDC4]" />
+                    <AlertIcon className="w-4 h-4 text-[#ff8800]" />
                     <span>Incidents Overview</span>
                   </button>
                   <button
                     className={styles.dropdownItem}
                     onClick={() => handleNavigation("/tickets")}
                   >
-                    <TicketIcon className="w-4 h-4 text-[#4ECDC4]" />
+                    <TicketIcon className="w-4 h-4 text-[#ff7700]" />
                     <span>Support Tickets</span>
                   </button>
                 </div>

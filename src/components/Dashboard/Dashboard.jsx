@@ -481,32 +481,32 @@ const Dashboard = () => {
               className={styles.quickActionCard}
               onClick={() => handleQuickLinks("/attendance")}
             >
-              <div className={`${styles.quickActionIconBadge} ${styles.tealBadge}`}>
-                <ClockIcon className="w-5 h-5 text-[#4ECDC4]" />
+              <div className={`${styles.quickActionIconBadge} ${styles.orangeBadge}`}>
+                <ClockIcon className="w-5 h-5 text-[#ff7700]" />
               </div>
               <h3>Check In/Out</h3>
               <p>Mark your attendance</p>
             </div>
 
             <div className={styles.quickActionCard}>
-              <div className={`${styles.quickActionIconBadge} ${styles.coralBadge}`}>
-                <ManualEditIcon className="w-5 h-5 text-[#FF6B6B]" />
+              <div className={`${styles.quickActionIconBadge} ${styles.orangeBadge}`}>
+                <ManualEditIcon className="w-5 h-5 text-[#ff8800]" />
               </div>
               <h3>Manual Entry</h3>
               <p>Coming Soon</p>
             </div>
 
             <div className={styles.quickActionCard}>
-              <div className={`${styles.quickActionIconBadge} ${styles.coralBadge}`}>
-                <TicketIcon className="w-5 h-5 text-[#FF6B6B]" />
+              <div className={`${styles.quickActionIconBadge} ${styles.orangeBadge}`}>
+                <TicketIcon className="w-5 h-5 text-[#ff8800]" />
               </div>
               <h3>Add Expense</h3>
               <p>Coming Soon</p>
             </div>
 
             <div className={styles.quickActionCard}>
-              <div className={`${styles.quickActionIconBadge} ${styles.tealBadge}`}>
-                <DocumentReportIcon className="w-5 h-5 text-[#4ECDC4]" />
+              <div className={`${styles.quickActionIconBadge} ${styles.orangeBadge}`}>
+                <DocumentReportIcon className="w-5 h-5 text-[#ff7700]" />
               </div>
               <h3>View Reports</h3>
               <p>Coming Soon</p>
@@ -516,8 +516,8 @@ const Dashboard = () => {
               className={styles.quickActionCard}
               onClick={() => handleQuickLinks("/center")}
             >
-              <div className={`${styles.quickActionIconBadge} ${styles.tealBadge}`}>
-                <BuildingIcon className="w-5 h-5 text-[#4ECDC4]" />
+              <div className={`${styles.quickActionIconBadge} ${styles.orangeBadge}`}>
+                <BuildingIcon className="w-5 h-5 text-[#ff7700]" />
               </div>
               <h3>Center Management</h3>
               <p>Manage your center activity</p>
@@ -527,8 +527,8 @@ const Dashboard = () => {
               className={styles.quickActionCard}
               onClick={() => handleQuickLinks("/audit")}
             >
-              <div className={`${styles.quickActionIconBadge} ${styles.coralBadge}`}>
-                <ClipboardCheckIcon className="w-5 h-5 text-[#FF6B6B]" />
+              <div className={`${styles.quickActionIconBadge} ${styles.orangeBadge}`}>
+                <ClipboardCheckIcon className="w-5 h-5 text-[#ff8800]" />
               </div>
               <h3>Venue Audit</h3>
               <p>Manage your audit activity</p>
