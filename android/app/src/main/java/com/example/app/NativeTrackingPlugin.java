@@ -81,6 +81,9 @@ public class NativeTrackingPlugin extends Plugin {
         int dynamicInterval = call.getInt("interval", 5000);
         TRACKING_INTERVAL_MS = dynamicInterval;
         
+        // Reset lastPostTime so newly configured tracking sends an immediate location update
+        lastPostTime = 0;
+        
         Log.d("NativeTracking", "Configured! Endpoint: " + endpointUrl + " | Interval: " + TRACKING_INTERVAL_MS + "ms | Employee: " + employeeId);
         call.resolve();
     }

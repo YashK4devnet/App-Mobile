@@ -201,10 +201,13 @@ class LiveTrackingService {
   }
 
   getTrackingConfig() {
-    const apiKey = localStorage.getItem("serverApiKey") || "";
     let trackingEmployeeId = null;
+    let apiKey = localStorage.getItem("serverApiKey") || "";
     try {
       const loginData = JSON.parse(localStorage.getItem("loginData") || "{}");
+      if (!apiKey) {
+        apiKey = loginData["api-Key"] || loginData["api-key"] || loginData["api_key"] || "";
+      }
       if (loginData.employeeId || loginData.employee_id) {
         trackingEmployeeId = loginData.employeeId || loginData.employee_id;
       }

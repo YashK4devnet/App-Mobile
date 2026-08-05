@@ -152,16 +152,23 @@ const CheckIn = () => {
       }
 
       if (data.status === "success" && data.records.length > 0) {
-        const lastActivity = data.records[0].activity;
+        // Sort records descending so the latest activity is always at index 0
+        const sortedRecords = [...data.records].sort((a, b) => {
+          const idA = Number(a.att_id || a.id || 0);
+          const idB = Number(b.att_id || b.id || 0);
+          return idB - idA;
+        });
+        const latestRecord = sortedRecords[0];
+        const lastActivity = latestRecord.activity;
 
         // Sync with context
         if (lastActivity === "Check-In") {
-          const apiCheckInId = data.records[0].att_id;
+          const apiCheckInId = latestRecord.att_id;
           const checkInId = JSON.parse(localStorage.getItem("checkInId") || "null");
           if (apiCheckInId !== checkInId) {
             localStorage.setItem("checkInId", JSON.stringify(apiCheckInId));
           }
-          const raw = data.records[0].check_in;
+          const raw = latestRecord.check_in;
           const checkInTime = new Date(
             raw.replace(" ", "T") + "Z"
           ).toLocaleString();
