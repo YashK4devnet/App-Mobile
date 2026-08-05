@@ -26,6 +26,11 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import android.os.PowerManager;
+import android.provider.Settings;
+import android.net.Uri;
+import com.getcapacitor.JSObject;
+
 @CapacitorPlugin(name = "NativeTracking")
 public class NativeTrackingPlugin extends Plugin {
     public static String apiKey = "";
@@ -88,6 +93,58 @@ public class NativeTrackingPlugin extends Plugin {
         call.resolve();
     }
 
+    @PluginMethod
+    public void flushQueue(PluginCall call) {
+        final Context context = getContext();
+        String tempApiKey = call.getString("apiKey", apiKey);
+        String tempEmployeeId = String.valueOf(call.getInt("employeeId", call.getString("employeeId") != null ? Integer.parseInt(call.getString("employeeId")) : (employeeId.isEmpty() ? 0 : Integer.parseInt(employeeId))));
+        String tempEndpointUrl = call.getString("endpointUrl", endpointUrl);
+
+        if (!tempApiKey.isEmpty()) apiKey = tempApiKey;
+        if (!tempEmployeeId.isEmpty() && !tempEmployeeId.equals("0")) employeeId = tempEmployeeId;
+        if (!tempEndpointUrl.isEmpty()) endpointUrl = tempEndpointUrl;
+
+        new Thread(() -> {
+            try {
+                flushOfflineQueue(context);
+                JSObject ret = new JSObject();
+                ret.put("success", true);
+                call.resolve(ret);
+            } catch (Exception e) {
+                Log.e("NativeTracking", "Manual flush failed", e);
+                call.reject("Manual flush failed: " + e.getMessage());
+            }
+        }).start();
+    }
+
+    @PluginMethod
+    public void requestIgnoreBatteryOptimizations(PluginCall call) {
+        try {
+            Context context = getContext();
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            String packageName = context.getPackageName();
+            boolean isIgnoring = false;
+            
+            if (pm != null) {
+                isIgnoring = pm.isIgnoringBatteryOptimizations(packageName);
+                if (!isIgnoring) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + packageName));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+            }
+            
+            JSObject ret = new JSObject();
+            ret.put("isIgnoring", isIgnoring);
+            call.resolve(ret);
+        } catch (Exception e) {
+            Log.e("NativeTracking", "Failed to request battery optimization exemption", e);
+            call.reject("Failed to request battery optimization exemption: " + e.getMessage());
+        }
+    }
+
     private void sendLocationToServer(Location location) {
         final Context context = getContext();
         new Thread(() -> {
@@ -111,13 +168,15 @@ public class NativeTrackingPlugin extends Plugin {
 
                 Log.d("NativeTracking", "Sending POST to: " + endpointUrl);
 
-                boolean success = sendSingleJsonPayload(json);
-                if (success) {
+                int statusCode = sendSingleJsonPayload(json);
+                if (statusCode >= 200 && statusCode < 300) {
                     Log.d("NativeTracking", "✅ Current location posted successfully!");
                     // Connection is active -> Sync any offline records that were queued earlier
                     flushOfflineQueue(context);
+                } else if (statusCode == 401 || statusCode == 403) {
+                    Log.e("NativeTracking", "⛔ Session expired / Unauthorized (HTTP " + statusCode + "). Skipping queue enqueueing until re-authenticated.");
                 } else {
-                    Log.w("NativeTracking", "⚠️ POST failed or offline. Saving location payload to offline queue...");
+                    Log.w("NativeTracking", "⚠️ POST failed or offline (HTTP " + statusCode + "). Saving location payload to offline queue...");
                     enqueueOfflineLocation(context, json);
                 }
             } catch (Exception e) {
@@ -126,7 +185,7 @@ public class NativeTrackingPlugin extends Plugin {
         }).start();
     }
 
-    private boolean sendSingleJsonPayload(JSONObject json) {
+    private int sendSingleJsonPayload(JSONObject json) {
         HttpURLConnection conn = null;
         try {
             URL url = new URL(endpointUrl);
@@ -145,16 +204,10 @@ public class NativeTrackingPlugin extends Plugin {
 
             int responseCode = conn.getResponseCode();
             Log.d("NativeTracking", "POST Response Code: " + responseCode + " for payload: " + json.toString());
-
-            if (responseCode >= 200 && responseCode < 300) {
-                return true;
-            } else {
-                Log.w("NativeTracking", "Non-2xx HTTP status code received: " + responseCode);
-                return false;
-            }
+            return responseCode;
         } catch (Exception e) {
             Log.e("NativeTracking", "HTTP POST failed: " + e.getMessage());
-            return false;
+            return 0; // Return 0 to signify network error / offline
         } finally {
             if (conn != null) {
                 conn.disconnect();
@@ -196,13 +249,17 @@ public class NativeTrackingPlugin extends Plugin {
 
             for (int i = 0; i < queue.length(); i++) {
                 JSONObject jsonItem = queue.getJSONObject(i);
-                boolean success = sendSingleJsonPayload(jsonItem);
-                if (!success) {
-                    // Stop trying if network drops midway and retain remaining unsent items in queue
+                int statusCode = sendSingleJsonPayload(jsonItem);
+                if (statusCode < 200 || statusCode >= 300) {
+                    // Stop trying if network drops or auth fails midway, and retain remaining unsent items in queue
                     for (int j = i; j < queue.length(); j++) {
                         remainingQueue.put(queue.getJSONObject(j));
                     }
-                    Log.w("NativeTracking", "⚠️ Connection lost while syncing offline queue. Saved remaining " + remainingQueue.length() + " items.");
+                    if (statusCode == 401 || statusCode == 403) {
+                        Log.e("NativeTracking", "⛔ Session expired during offline queue sync (HTTP " + statusCode + "). Saved remaining " + remainingQueue.length() + " items until user re-authenticates.");
+                    } else {
+                        Log.w("NativeTracking", "⚠️ Connection lost while syncing offline queue (HTTP " + statusCode + "). Saved remaining " + remainingQueue.length() + " items.");
+                    }
                     break;
                 }
             }

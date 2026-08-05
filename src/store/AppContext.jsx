@@ -354,6 +354,8 @@ export const AppProvider = ({ children }) => {
               type: ActionTypes.LOGIN,
               payload: parsedData,
             });
+            // 🔄 Trigger offline location queue flush on app startup
+            liveTrackingService.flushOfflineQueue();
           }
         }
       } catch (error) {

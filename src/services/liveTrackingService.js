@@ -138,6 +138,49 @@ class LiveTrackingService {
     this.notifyListeners();
     console.log('🛑 Background tracking stopped.');
   }
+
+  getTrackingConfig() {
+    const apiKey = localStorage.getItem("serverApiKey") || "";
+    let trackingEmployeeId = null;
+    try {
+      const loginData = JSON.parse(localStorage.getItem("loginData") || "{}");
+      if (loginData.employeeId || loginData.employee_id) {
+        trackingEmployeeId = loginData.employeeId || loginData.employee_id;
+      }
+    } catch(e) {
+      console.error("Failed to parse loginData for trackingEmployeeId", e);
+    }
+    
+    let baseUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '') : `${import.meta.env.VITE_API_BASE_URL || 'https://erp.eduquity.com'}`;
+    if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+    
+    let endpointUrl = `${baseUrl}/api/employee/location/log`;
+    endpointUrl = endpointUrl.replace(/\/api\/api\//g, '/api/');
+
+    return { apiKey, employeeId: trackingEmployeeId, endpointUrl };
+  }
+
+  async flushOfflineQueue() {
+    try {
+      const config = this.getTrackingConfig();
+      if (config.apiKey && config.employeeId) {
+        console.log('🔄 Triggering manual flush of offline location queue...');
+        await NativeTracking.flushQueue(config);
+      }
+    } catch (e) {
+      console.warn('Manual offline location flush error:', e);
+    }
+  }
+
+  async requestBatteryOptimizationExemption() {
+    try {
+      const res = await NativeTracking.requestIgnoreBatteryOptimizations();
+      return res?.isIgnoring || false;
+    } catch (e) {
+      console.warn('Request battery optimization error:', e);
+      return false;
+    }
+  }
 }
 
 // Export as a singleton
