@@ -79,11 +79,13 @@ class LiveTrackingService {
       await NativeTracking.setConfig({ apiKey, employeeId: trackingEmployeeId, endpointUrl, interval: 900000 });
 
       // Clean up any stale watcher if present before creating a new one
-      if (this.watcherId) {
+      const existingWatcherId = this.watcherId || localStorage.getItem('bg_watcher_id');
+      if (existingWatcherId) {
         try {
-          await BackgroundGeolocation.removeWatcher({ id: this.watcherId });
+          await BackgroundGeolocation.removeWatcher({ id: existingWatcherId });
         } catch (e) {}
         this.watcherId = null;
+        localStorage.removeItem('bg_watcher_id');
       }
 
       // 3. Create the location watcher
@@ -115,6 +117,9 @@ class LiveTrackingService {
       );
 
       this.watcherId = id;
+      if (id) {
+        localStorage.setItem('bg_watcher_id', String(id));
+      }
       this.isTracking = true;
       this.notifyListeners();
       console.log('✅ Background tracking started with watcher ID:', id);
@@ -125,11 +130,15 @@ class LiveTrackingService {
   }
 
   async stopTracking() {
-    if (this.watcherId) {
+    const activeId = this.watcherId || localStorage.getItem('bg_watcher_id');
+    if (activeId) {
       try {
-        await BackgroundGeolocation.removeWatcher({ id: this.watcherId });
-      } catch (e) {}
+        await BackgroundGeolocation.removeWatcher({ id: activeId });
+      } catch (e) {
+        console.warn('Error removing background geolocation watcher:', e);
+      }
       this.watcherId = null;
+      localStorage.removeItem('bg_watcher_id');
     }
     try {
       await NativeTracking.stopTracking();
@@ -137,6 +146,58 @@ class LiveTrackingService {
     this.isTracking = false;
     this.notifyListeners();
     console.log('🛑 Background tracking stopped.');
+  }
+
+  /**
+   * Captures high-accuracy GPS position and posts a final location log to Odoo on Check-Out
+   */
+  async sendFinalCheckoutLocation() {
+    try {
+      const config = this.getTrackingConfig();
+      if (!config.apiKey || !config.employeeId) return;
+
+      const position = await new Promise((resolve) => {
+        if (!navigator.geolocation) return resolve(null);
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve(pos),
+          (err) => {
+            console.warn('Checkout position capture error:', err);
+            resolve(null);
+          },
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+        );
+      });
+
+      if (position && position.coords) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        console.log('📍 [Checkout Location Update] Lat:', lat, 'Lng:', lng);
+
+        const now = new Date();
+        const dateStr = now.toISOString().slice(0, 10);
+        const timeStr = now.toTimeString().slice(0, 8);
+
+        const payload = {
+          employee_id: Number(config.employeeId),
+          latitude: lat,
+          longitude: lng,
+          date: dateStr,
+          time: timeStr
+        };
+
+        await fetch(config.endpointUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'api-key': config.apiKey,
+            'User-Agent': 'Mozilla/5.0 (Mobile; check-out-location)'
+          },
+          body: JSON.stringify(payload)
+        }).catch(err => console.warn('Checkout location POST error:', err));
+      }
+    } catch (err) {
+      console.warn('Failed to send final checkout location:', err);
+    }
   }
 
   getTrackingConfig() {

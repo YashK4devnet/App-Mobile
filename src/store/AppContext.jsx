@@ -486,6 +486,11 @@ export const AppProvider = ({ children }) => {
           Object.keys(preservedData).forEach((key) => {
             localStorage.setItem(key, preservedData[key]);
           });
+          try {
+            await liveTrackingService.stopTracking();
+          } catch (e) {
+            console.warn("Error stopping background tracking on logout:", e);
+          }
           dispatch({
             type: ActionTypes.LOGOUT,
           });
@@ -926,10 +931,11 @@ export const AppProvider = ({ children }) => {
         },
       });
 
-      // ✅ Step 10: Clean up check-in ID and Stop live location tracking
+      // ✅ Step 10: Clean up check-in ID, send final checkout location update, and stop tracking
       localStorage.removeItem("checkInId");
       console.log("✅ Check-out completed successfully");
       try {
+        await liveTrackingService.sendFinalCheckoutLocation();
         await liveTrackingService.stopTracking();
       } catch (err) {
         console.error("Failed to stop live tracking post-checkout:", err);

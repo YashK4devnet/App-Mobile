@@ -167,7 +167,8 @@ const CheckIn = () => {
           ).toLocaleString();
 
           setCurrentCheckInTime(checkInTime);
-          syncCheckInFromServer();
+          localStorage.setItem("checkInTime", checkInTime);
+          syncCheckInFromServer(checkInTime);
         } else if (lastActivity === "Check-Out") {
           syncCheckOutFromServer();
         } else {
