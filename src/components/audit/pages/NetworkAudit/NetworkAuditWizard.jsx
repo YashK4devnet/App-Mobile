@@ -259,16 +259,6 @@ export default function NetworkAuditWizard() {
             }}
             progressPercent={progressPercent}
           />
-          {isAuditNotStarted && (
-            <div className="absolute bottom-6 left-5 right-5 z-20">
-              <button 
-                onClick={handleStartAudit}
-                className="w-full bg-[#4ecdc4] hover:bg-[#45b7b0] text-black font-bold py-4 rounded-2xl shadow-xl shadow-[#4ecdc4]/20 active:scale-95 transition-all"
-              >
-                Start Audit
-              </button>
-            </div>
-          )}
         </div>
         <BottomNav />
       </div>
@@ -363,7 +353,7 @@ export default function NetworkAuditWizard() {
 
         <div id="audit-form-container" className="flex-1 overflow-y-auto scrollbar-none pb-28">
           {/* Form Content */}
-          <div className="transition-all duration-300 ease-in-out pt-3 bg-transparent px-5 pt-2 pb-6">
+          <div className="transition-all duration-300 ease-in-out bg-transparent px-5 pt-2 pb-32">
             <FormRenderer
               schema={dynamicSchemas[currentSubsection]}
               control={control}
@@ -401,7 +391,7 @@ export default function NetworkAuditWizard() {
             ) : isAuditNotStarted ? (
               <button
                 onClick={handleStartAudit}
-                className="flex-1 bg-[#4ecdc4] hover:bg-[#45b7b0] text-black text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-lg shadow-[#4ecdc4]/20"
+                className="flex-1 bg-[#ff7700] hover:bg-[#ea580c] text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs py-3.5"
               >
                 Start Audit
               </button>
@@ -421,7 +411,7 @@ export default function NetworkAuditWizard() {
                   Next
                 </button>
               )
-            ) : ['ReportInfo', 'VenueInfo', 'PersonnelInfo'].includes(currentSubsection) ? (
+            ) : ['ReportInfo', 'VenueInfo'].includes(currentSubsection) ? (
               <button
                 onClick={handleNextClick}
                 className="flex-1 bg-[#ff7700] hover:bg-[#ea580c] text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs"

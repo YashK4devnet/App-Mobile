@@ -70,7 +70,7 @@ export default function AuditIndex({
       </div>
 
       {/* Group List */}
-      <div className="flex-1 overflow-y-auto px-5 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-5 pt-6 pb-28 space-y-6">
         {groups.map((group, groupIdx) => (
           <div key={groupIdx} className="space-y-3">
             {group.title && (

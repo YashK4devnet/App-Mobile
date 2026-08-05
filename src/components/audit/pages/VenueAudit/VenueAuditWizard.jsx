@@ -231,16 +231,6 @@ export default function VenueAuditWizard() {
             }}
             progressPercent={progressPercent}
           />
-          {isAuditNotStarted && (
-            <div className="absolute bottom-6 left-5 right-5 z-20">
-              <button 
-                onClick={handleStartAudit}
-                className="w-full bg-[#4ecdc4] hover:bg-[#45b7b0] text-black font-bold py-4 rounded-2xl shadow-xl shadow-[#4ecdc4]/20 active:scale-95 transition-all"
-              >
-                Start Audit
-              </button>
-            </div>
-          )}
         </div>
         <BottomNav />
       </div>
@@ -254,13 +244,24 @@ export default function VenueAuditWizard() {
     // Header pill
     const currentIndex = STEPS.findIndex(s => s.id === currentSubsection) + 1;
     const stepPill = (
-      <span className="text-[11px] font-black text-[#ff6b6b] bg-[#ff6b6b]/20 px-2.5 py-1 rounded-full">
+      <span className="text-[11px] font-bold tracking-wider text-[#ea580c] bg-[#ff7700]/10 border border-[#ff7700]/20 px-3 py-1.5 rounded-full uppercase">
         {currentIndex} / {STEPS.length}
       </span>
     );
 
+    const statusReport = getSectionStatus('ReportInfo', currentData);
+    const statusPersonnel = getSectionStatus('PersonnelInfo', currentData);
+    const statusA1 = getSectionStatus('A.1', currentData);
+    const statusA2 = getSectionStatus('A.2', currentData);
+    const statusA3 = getSectionStatus('A.3', currentData);
+    const statusA4 = getSectionStatus('A.4', currentData);
+    const statusB1 = getSectionStatus('B.1', currentData);
+    const statusB3 = getSectionStatus('B.3', currentData);
+    const statusB4 = getSectionStatus('B.4', currentData);
+    const statusConclusion = getSectionStatus('Conclusion', currentData);
+
     const subsections = [
-      { id: 'ReportInfo', label: '1. Report Information', status: statusReportInfo },
+      { id: 'ReportInfo', label: '1. Report Information', status: statusReport },
       { id: 'PersonnelInfo', label: '2. Auditee & Auditor Information', status: statusPersonnel },
       { id: 'A.1', label: 'A.1 Location Details', status: statusA1 },
       { id: 'A.2', label: 'A.2 Contact Details', status: statusA2 },
@@ -335,7 +336,7 @@ export default function VenueAuditWizard() {
 
         <div id="audit-form-container" className="flex-1 overflow-y-auto scrollbar-none pb-28">
           {/* Form Content */}
-          <div className="transition-all duration-300 ease-in-out pt-3 bg-transparent px-5 pt-2 pb-6">
+          <div className="transition-all duration-300 ease-in-out bg-transparent px-5 pt-2 pb-32">
             <FormRenderer
               schema={SUBSECTION_SCHEMAS[currentSubsection]}
               control={control}
@@ -372,7 +373,7 @@ export default function VenueAuditWizard() {
             ) : isAuditNotStarted ? (
               <button
                 onClick={handleStartAudit}
-                className="flex-1 bg-[#4ecdc4] hover:bg-[#45b7b0] text-black text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-lg shadow-[#4ecdc4]/20"
+                className="flex-1 bg-[#ff7700] hover:bg-[#ea580c] text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs py-3.5"
               >
                 Start Audit
               </button>
@@ -392,7 +393,7 @@ export default function VenueAuditWizard() {
                   Next
                 </button>
               )
-            ) : ['ReportInfo', 'PersonnelInfo', 'A.1'].includes(currentSubsection) ? (
+            ) : ['ReportInfo', 'A.1'].includes(currentSubsection) ? (
               <button
                 onClick={handleNextClick}
                 className="flex-1 bg-[#ff7700] hover:bg-[#ea580c] text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs"
