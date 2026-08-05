@@ -2,32 +2,71 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* Swapped dark background to clean white */
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
   background-color: #ffffff;
-  /* Optional light-themed gradients (uncomment to use)
-  background: radial-gradient(circle at 20% 80%, #ff6b6b11 0%, transparent 50%), 
-              radial-gradient(circle at 80% 20%, #4ecdc411 0%, transparent 50%), 
-              radial-gradient(circle at 40% 40%, #45b7d111 0%, transparent 50%); 
-  */
-  z-index: 9999;
-}
-
-.content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 9999;
+  user-select: none;
 }
 
-.logoContainer {
+/* Orange Wave Background Animation */
+.waveContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.wave {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 119, 0, 0.4);
+  background: radial-gradient(circle, rgba(255, 119, 0, 0.12) 0%, rgba(255, 119, 0, 0.02) 60%, transparent 80%);
+  animation: waveExpand 3s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.wave1 {
   width: 120px;
   height: 120px;
-  animation: pulse 2s infinite ease-in-out;
+  animation-delay: 0s;
+}
+
+.wave2 {
+  width: 120px;
+  height: 120px;
+  animation-delay: 1s;
+}
+
+.wave3 {
+  width: 120px;
+  height: 120px;
+  animation-delay: 2s;
+}
+
+/* Dead-Centered Logo for Seamless Native Hand-off */
+.logoContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logo {
@@ -36,26 +75,39 @@
   object-fit: contain;
 }
 
+/* App Title & Loading Indicator Below Centered Logo */
+.bottomContent {
+  position: absolute;
+  top: calc(50% + 76px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  z-index: 10;
+}
+
 .title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  /* Changed text color from white to dark charcoal */
-  color: #1a1a1a;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
   margin: 0;
-  letter-spacing: 1px;
-  /* Softened the glow effect to blend into a white background */
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  letter-spacing: 0.5px;
+}
+
+.spinnerWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  /* Light gray base track instead of dark/semi-transparent white */
-  border: 3px solid rgba(0, 0, 0, 0.08);
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255, 119, 0, 0.2);
   border-radius: 50%;
-  /* Dark color for the spinning indicator segment */
-  border-top-color: #1a1a1a;
-  animation: spin 1s linear infinite;
+  border-top-color: #ff7700;
+  animation: spin 0.9s linear infinite;
 }
 
 @keyframes spin {
@@ -64,16 +116,15 @@
   }
 }
 
-@keyframes pulse {
+@keyframes waveExpand {
   0% {
-    transform: scale(1);
+    width: 120px;
+    height: 120px;
+    opacity: 0.85;
   }
-
-  50% {
-    transform: scale(1.05);
-  }
-
   100% {
-    transform: scale(1);
+    width: 340px;
+    height: 340px;
+    opacity: 0;
   }
 }

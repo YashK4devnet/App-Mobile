@@ -1,9 +1,11 @@
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { StatusBar, Style } from "@capacitor/status-bar";
+import { Capacitor } from "@capacitor/core";
 import { useAppContext } from "../../store/AppContext";
 import styles from "./Auth.module.css";
 import logo from "../../assets/Eduquity25.jpg";
-import { useState } from "react";
 import { SparklesIcon, MailIcon, LockIcon } from "../Navbar/NavbarIcons";
 
 const Auth = () => {
@@ -12,6 +14,21 @@ const Auth = () => {
   const { login } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
+
+  useEffect(() => {
+    const setLightModeBars = async () => {
+      if (Capacitor.isNativePlatform()) {
+        try {
+          await StatusBar.setStyle({ style: Style.Light });
+          await StatusBar.setOverlaysWebView({ overlay: true });
+        } catch (error) {
+          console.error("Failed to update status bar on login load:", error);
+        }
+      }
+    };
+
+    setLightModeBars();
+  }, []);
 
   const onSubmit = async (data) => {
     setLoginError("");

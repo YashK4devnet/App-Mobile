@@ -10,9 +10,8 @@ const SplashScreen = () => {
       // Only run on actual mobile devices to prevent web browser errors
       if (Capacitor.isNativePlatform()) {
         try {
-          // Style.Light forces dark icons/text
+          // Style.Light forces dark icons/text over status bar
           await StatusBar.setStyle({ style: Style.Light });
-
           // Re-enforces your webview overlay configuration
           await StatusBar.setOverlaysWebView({ overlay: true });
         } catch (error) {
@@ -22,16 +21,25 @@ const SplashScreen = () => {
     };
 
     setLightModeBars();
-  }, []); // Empty dependency array ensures this runs immediately on mount
+  }, []);
 
   return (
     <div className={styles.splashContainer}>
-      <div className={styles.content}>
-        <div className={styles.logoContainer}>
-          <img src={logo} alt="Eduquity OP Logo" className={styles.logo} />
-        </div>
+      {/* Orange Background Waves */}
+      <div className={styles.waveContainer}>
+        <div className={`${styles.wave} ${styles.wave1}`}></div>
+        <div className={`${styles.wave} ${styles.wave2}`}></div>
+        <div className={`${styles.wave} ${styles.wave3}`}></div>
+      </div>
+
+      {/* Dead-Centered Logo for Seamless Native Hand-off */}
+      <div className={styles.logoContainer}>
+        <img src={logo} alt="Eduquity OP Logo" className={styles.logo} />
+      </div>
+
+      {/* App Title & Loading Animation Below Logo */}
+      <div className={styles.bottomContent}>
         <h1 className={styles.title}>Eduquity OP</h1>
-        <div className={styles.spinner}></div>
       </div>
     </div>
   );

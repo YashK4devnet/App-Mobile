@@ -1,5 +1,8 @@
 import "./App.css";
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { StatusBar, Style } from "@capacitor/status-bar";
+import { Capacitor } from "@capacitor/core";
 import Auth from "./components/Auth/Auth";
 import Dashboard from "./components/Dashboard/Dashboard";
 import CheckIn from "./components/Attendance/Attendance";
@@ -206,6 +209,20 @@ function AppRoutes() {
 }
 
 function App() {
+  useEffect(() => {
+    const initStatusBar = async () => {
+      if (Capacitor.isNativePlatform()) {
+        try {
+          await StatusBar.setStyle({ style: Style.Light });
+          await StatusBar.setOverlaysWebView({ overlay: true });
+        } catch (e) {
+          console.error("StatusBar init error:", e);
+        }
+      }
+    };
+    initStatusBar();
+  }, []);
+
   return (
     <Router>
       <Toaster />
