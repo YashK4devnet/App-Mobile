@@ -1,42 +1,26 @@
-/* Premium Dark Black & Orange Theme for Attendance Page (Matte Finish - No Icon Glow) */
+/* Clean Off-White Theme for Attendance Page */
 .attendanceContainer {
   min-height: calc(100vh - 65px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  background: #08080a;
+  background: #f8fafc;
   padding: 28px 20px 100px;
   position: relative;
   overflow-x: hidden;
   user-select: none;
 }
 
-/* Subtle Ambient Background */
-.attendanceContainer::before {
-  content: "";
-  position: absolute;
-  top: -10%;
-  right: -10%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(255, 119, 0, 0.06) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-}
-
 /* Main card container */
 .attendanceCard {
-  background: rgba(14, 14, 18, 0.88);
+  background: #ffffff;
   border: 1px solid rgba(255, 119, 0, 0.2);
-  border-radius: 24px;
+  border-radius: 20px;
   padding: 32px 28px;
   width: 100%;
   max-width: 480px;
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(255, 119, 0, 0.04);
   position: relative;
   z-index: 1;
   display: flex;
@@ -51,14 +35,14 @@
   align-items: center;
   gap: 14px;
   padding-bottom: 18px;
-  border-bottom: 1px solid rgba(255, 119, 0, 0.15);
+  border-bottom: 1px solid rgba(255, 119, 0, 0.18);
 }
 
 .headerIconBadge {
   width: 46px;
   height: 46px;
-  background: rgba(255, 119, 0, 0.12);
-  border: 1px solid rgba(255, 136, 0, 0.35);
+  background: rgba(255, 119, 0, 0.08);
+  border: 1px solid rgba(255, 119, 0, 0.22);
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -67,18 +51,18 @@
 }
 
 .cardTitle {
-  color: #ffffff;
+  color: #0f172a;
   font-size: 20px;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: -0.2px;
   margin: 0 0 2px 0;
 }
 
 .cardSubtitle {
-  color: rgba(255, 255, 255, 0.55);
+  color: #64748b;
   font-size: 12.5px;
   font-weight: 400;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   margin: 0;
 }
 
@@ -87,9 +71,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
   padding: 12px 16px;
 }
 
@@ -97,10 +81,10 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: rgba(255, 255, 255, 0.85);
+  color: #0f172a;
   font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .statusDot {
@@ -115,7 +99,7 @@
 }
 
 .checkedOut {
-  background: rgba(255, 255, 255, 0.4);
+  background: #cbd5e1;
 }
 
 @keyframes pulse {
@@ -128,11 +112,11 @@
 }
 
 .timeDisplay {
-  color: #ff8800;
+  color: #ea580c;
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: 1px;
-  font-family: monospace, inherit;
+  letter-spacing: 0.8px;
+  font-family: inherit;
 }
 
 /* Button container */
@@ -145,25 +129,25 @@
 /* Check-in button (Warm Orange) */
 .checkInButton {
   width: 100%;
-  padding: 16px 20px;
+  padding: 15px 20px;
   background: #ff7700;
   color: #ffffff;
   border: none;
-  border-radius: 14px;
-  font-size: 16px;
+  border-radius: 12px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
   transition: all 0.25s ease;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(255, 119, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .checkInButton:hover:not(:disabled) {
-  background: #e66a00;
+  background: #ea580c;
   transform: translateY(-1px);
 }
 
@@ -171,28 +155,28 @@
   transform: translateY(0);
 }
 
-/* Check-out button (Matte Red-Orange) */
+/* Check-out button (Crisp Red) */
 .checkOutButton {
   width: 100%;
-  padding: 16px 20px;
-  background: #e64a45;
+  padding: 15px 20px;
+  background: #dc2626;
   color: #ffffff;
   border: none;
-  border-radius: 14px;
-  font-size: 16px;
+  border-radius: 12px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
   transition: all 0.25s ease;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .checkOutButton:hover:not(:disabled) {
-  background: #d43b36;
+  background: #b91c1c;
   transform: translateY(-1px);
 }
 
@@ -202,7 +186,7 @@
 
 .checkInButton:disabled,
 .checkOutButton:disabled {
-  opacity: 0.7;
+  opacity: 0.65;
   cursor: not-allowed;
   transform: none;
 }
@@ -231,29 +215,29 @@
 }
 
 .errorContainer {
-  background: rgba(255, 85, 85, 0.12);
-  border: 1px solid rgba(255, 85, 85, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
 .successContainer {
-  background: rgba(255, 119, 0, 0.12);
-  border: 1px solid rgba(255, 119, 0, 0.35);
+  background: rgba(255, 119, 0, 0.08);
+  border: 1px solid rgba(255, 119, 0, 0.25);
 }
 
 .errorMessage {
-  color: #ff6b6b;
+  color: #dc2626;
   font-size: 13.5px;
   font-weight: 500;
   margin: 0;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 .successMessage {
-  color: #ff8800;
+  color: #ea580c;
   font-size: 13.5px;
   font-weight: 600;
   margin: 0;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 /* Session details section */
@@ -262,7 +246,7 @@
   flex-direction: column;
   gap: 12px;
   animation: slideIn 0.4s ease-out;
-  border-top: 1px solid rgba(255, 119, 0, 0.15);
+  border-top: 1px solid rgba(255, 119, 0, 0.18);
   padding-top: 16px;
 }
 
@@ -280,9 +264,9 @@
 .sessionTitle {
   font-size: 14px;
   font-weight: 700;
-  color: #ffffff;
+  color: #0f172a;
   margin: 0;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .userData {
@@ -296,22 +280,28 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   font-size: 13px;
+  transition: all 0.25s ease;
+}
+
+.userField:hover {
+  background: #ffffff;
+  border-color: rgba(255, 119, 0, 0.35);
 }
 
 .fieldLabel {
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.55);
+  color: #64748b;
   font-size: 12.5px;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
 }
 
 .fieldValue {
-  color: #ffffff;
-  font-weight: 500;
+  color: #0f172a;
+  font-weight: 600;
   font-size: 13px;
   text-align: right;
   word-break: break-word;
@@ -343,15 +333,15 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  backdrop-filter: blur(8px);
-  background: rgba(8, 8, 10, 0.7);
+  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.88);
   z-index: 5;
-  color: #fff;
-  border-radius: 24px;
+  color: #0f172a;
+  border-radius: 20px;
 }
 
 .loader {
-  border: 3px solid rgba(255, 255, 255, 0.15);
+  border: 3px solid #e2e8f0;
   border-top: 3px solid #ff7700;
   border-radius: 50%;
   width: 36px;
@@ -368,8 +358,9 @@
 
 .loadingText {
   font-size: 13px;
-  letter-spacing: 0.5px;
-  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.3px;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .blurredCard {
@@ -389,7 +380,7 @@
   background: #ff7700;
   border: none;
   border-radius: 12px;
-  color: #fff;
+  color: #ffffff;
   cursor: pointer;
   font-size: 13.5px;
   font-weight: 600;
@@ -397,22 +388,22 @@
 }
 
 .retryButton:hover {
-  background: #e66a00;
+  background: #ea580c;
 }
 
 /* Logo Container */
 .logoContainer {
   background: #ffffff;
   border: 1px solid rgba(255, 119, 0, 0.2);
-  border-radius: 16px;
-  padding: 18px 24px;
-  margin-top: 28px;
+  border-radius: 18px;
+  padding: 16px 24px;
+  margin-top: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   max-width: 480px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
   z-index: 1;
 }
 
@@ -426,10 +417,14 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+  .attendanceContainer {
+    padding: 16px 16px calc(95px + env(safe-area-inset-bottom, 0px)) 16px;
+  }
+
   .attendanceCard {
     padding: 24px 20px;
-    border-radius: 20px;
+    border-radius: 18px;
     gap: 20px;
   }
 
@@ -442,12 +437,5 @@
   .logoContainer {
     padding: 14px;
     margin-top: 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  .attendanceContainer {
-    padding-top: calc(75px + var(--android-statusbar-height, env(safe-area-inset-top, 0px)));
-    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
   }
 }
