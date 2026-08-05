@@ -1,4 +1,4 @@
-/* Premium Dark Black & Orange Theme for Auth Login Page (Strictly Non-scrollable, Matte Finish) */
+/* Vibrant Premium Orange & White Theme for Auth Login Page */
 .authContainer {
   position: fixed;
   top: 0;
@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #08080a;
+  background: linear-gradient(135deg, #fffdfa 0%, #fff5ed 45%, #ffede0 100%);
   padding: 16px;
   overflow: hidden;
   user-select: none;
@@ -20,15 +20,15 @@
   z-index: 9999;
 }
 
-/* Subtle Ambient Background */
+/* Vibrant Orange Ambient Glow */
 .authContainer::before {
   content: '';
   position: absolute;
-  top: -10%;
+  top: -15%;
   right: -10%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(255, 119, 0, 0.08) 0%, transparent 70%);
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(255, 119, 0, 0.18) 0%, transparent 65%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 1;
@@ -37,26 +37,24 @@
 .authContainer::after {
   content: '';
   position: absolute;
-  bottom: -10%;
+  bottom: -15%;
   left: -10%;
-  width: 450px;
-  height: 450px;
-  background: radial-gradient(circle, rgba(255, 145, 0, 0.06) 0%, transparent 70%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255, 153, 51, 0.14) 0%, transparent 65%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 1;
 }
 
 .loginCard {
-  background: rgba(14, 14, 18, 0.92);
+  background: #ffffff;
   border: 1px solid rgba(255, 119, 0, 0.2);
   border-radius: 24px;
-  padding: 26px 26px;
+  padding: 28px 26px;
   width: 100%;
   max-width: 400px;
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 20px 45px -12px rgba(255, 119, 0, 0.15), 0 10px 25px -5px rgba(0, 0, 0, 0.05);
   position: relative;
   z-index: 10;
   display: flex;
@@ -89,8 +87,8 @@
 .brandIcon {
   width: 42px;
   height: 42px;
-  background: rgba(255, 119, 0, 0.12);
-  border: 1px solid rgba(255, 136, 0, 0.35);
+  background: rgba(255, 119, 0, 0.1);
+  border: 1px solid rgba(255, 119, 0, 0.25);
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -101,14 +99,14 @@
 .sparkleSvg {
   width: 20px;
   height: 20px;
-  color: #ff8800;
+  color: #ff7700;
 }
 
 .brandBadge {
   font-size: 10.5px;
   font-weight: 800;
   letter-spacing: 2.5px;
-  color: #ff8800;
+  color: #ea580c;
   text-transform: uppercase;
   display: block;
   line-height: 1;
@@ -116,21 +114,21 @@
 }
 
 .title {
-  color: #ffffff;
+  color: #0f172a;
   font-size: 22px;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: -0.3px;
   margin: 0;
   line-height: 1.2;
 }
 
 .subtitle {
-  color: rgba(255, 255, 255, 0.65);
+  color: #64748b;
   font-size: 12.5px;
   font-weight: 400;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 /* Form Layout */
@@ -143,14 +141,14 @@
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .label {
-  color: rgba(255, 255, 255, 0.75);
+  color: #334155;
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .inputWrapper {
@@ -165,23 +163,24 @@
   left: 14px;
   width: 18px;
   height: 18px;
-  color: rgba(255, 136, 0, 0.6);
+  color: #f97316;
   transition: color 0.25s ease, transform 0.25s ease;
   pointer-events: none;
 }
 
 .inputWrapper:focus-within .fieldIcon {
   color: #ff7700;
+  transform: scale(1.05);
 }
 
 .input {
   width: 100%;
   padding: 12px 16px 12px 42px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   font-size: 14px;
-  color: #ffffff;
+  color: #0f172a;
   transition: all 0.25s ease;
   font-weight: 400;
   outline: none;
@@ -189,12 +188,12 @@
 
 .input:focus {
   border-color: #ff7700;
-  background: rgba(255, 119, 0, 0.04);
-  box-shadow: 0 0 0 2px rgba(255, 119, 0, 0.25);
+  background: #ffffff;
+  box-shadow: 0 0 0 3.5px rgba(255, 119, 0, 0.15);
 }
 
 .input::placeholder {
-  color: rgba(255, 255, 255, 0.35);
+  color: #94a3b8;
   font-size: 13.5px;
 }
 
@@ -203,29 +202,31 @@
   width: 100%;
   padding: 12px;
   min-height: 44px;
-  background: #ff7700;
+  background: linear-gradient(135deg, #ff7700 0%, #ea580c 100%);
   color: #ffffff;
   border: none;
   border-radius: 12px;
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
   margin-top: 2px;
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px rgba(255, 119, 0, 0.32);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .loginButton:hover:not(:disabled) {
-  background: #e66a00;
+  background: linear-gradient(135deg, #f97316 0%, #c2410c 100%);
   transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 119, 0, 0.4);
 }
 
 .loginButton:active:not(:disabled) {
   transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 119, 0, 0.25);
 }
 
 .loginButton:disabled {
@@ -284,28 +285,29 @@
 
 /* Error Banner */
 .error {
-  color: #ff6b6b;
+  color: #dc2626;
   text-align: center;
   margin: 0;
-  padding: 8px 12px;
-  background: rgba(255, 85, 85, 0.12);
+  padding: 10px 12px;
+  background: #fef2f2;
   border-radius: 10px;
-  font-size: 12px;
-  border: 1px solid rgba(255, 85, 85, 0.3);
+  font-size: 12.5px;
+  border: 1px solid #fecaca;
   line-height: 1.35;
+  font-weight: 500;
 }
 
 /* Original Logo Container */
 .logoContainer {
-  background: #ffffff;
-  border: 1px solid rgba(255, 119, 0, 0.2);
+  background: #f8fafc;
+  border: 1px solid rgba(255, 119, 0, 0.15);
   border-radius: 12px;
   padding: 8px 14px;
   margin-top: 2px;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .logo {
