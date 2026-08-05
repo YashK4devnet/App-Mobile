@@ -28,17 +28,29 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    try {
-      StatusBar.setOverlaysWebView({ overlay: true });
-    } catch (e) {
-      // Ignore if not in Capacitor native context
-    }
+    const initializeNativeLayout = async () => {
+      // 1. Only call Capacitor commands if executing inside a native app shell
+      if (Capacitor.isNativePlatform()) {
+        try {
+          // Correctly await the Promise to handle layout rules securely
+          await StatusBar.setOverlaysWebView({ overlay: true });
 
-    const statusBarHeight = 24;
-    document.documentElement.style.setProperty(
-      "--android-statusbar-height",
-      statusBarHeight + "px"
-    );
+          // Re-affirm dark icons over your white background
+          await StatusBar.setStyle({ style: Style.Light });
+        } catch (error) {
+          console.error("Capacitor StatusBar runtime error handled:", error);
+        }
+      }
+
+      // 2. Safely apply your layout spacing styles (works on web and native)
+      const statusBarHeight = 24;
+      document.documentElement.style.setProperty(
+        "--android-statusbar-height",
+        `${statusBarHeight}px`
+      );
+    };
+
+    initializeNativeLayout();
   }, []);
 
   const handleNavigation = (path) => {
@@ -161,9 +173,8 @@ const Navbar = () => {
           <div className={styles.navLinks}>
             {/* Dashboard */}
             <button
-              className={`${styles.navLink} ${
-                location.pathname === "/dashboard" ? styles.activeNavLink : ""
-              }`}
+              className={`${styles.navLink} ${location.pathname === "/dashboard" ? styles.activeNavLink : ""
+                }`}
               onClick={() => handleNavigation("/dashboard")}
             >
               <HomeIcon className={styles.navIcon} />
@@ -173,13 +184,12 @@ const Navbar = () => {
             {/* Attendance Dropdown */}
             <div className={styles.dropdownContainer}>
               <button
-                className={`${styles.navLink} ${
-                  location.pathname.startsWith("/attendance") ||
+                className={`${styles.navLink} ${location.pathname.startsWith("/attendance") ||
                   location.pathname === "/manual-attendance" ||
                   location.pathname === "/attendance-history"
-                    ? styles.activeNavLink
-                    : ""
-                }`}
+                  ? styles.activeNavLink
+                  : ""
+                  }`}
                 onClick={() =>
                   setIsAttendanceDropdownOpen(!isAttendanceDropdownOpen)
                 }
@@ -187,9 +197,8 @@ const Navbar = () => {
                 <ClockIcon className={styles.navIcon} />
                 <span>Attendance</span>
                 <ChevronDownIcon
-                  className={`${styles.arrow} ${
-                    isAttendanceDropdownOpen ? styles.arrowUp : ""
-                  }`}
+                  className={`${styles.arrow} ${isAttendanceDropdownOpen ? styles.arrowUp : ""
+                    }`}
                 />
               </button>
 
@@ -223,20 +232,18 @@ const Navbar = () => {
             {/* Incidents & Tickets Dropdown */}
             <div className={styles.dropdownContainer}>
               <button
-                className={`${styles.navLink} ${
-                  location.pathname.startsWith("/incidents") ||
+                className={`${styles.navLink} ${location.pathname.startsWith("/incidents") ||
                   location.pathname.startsWith("/tickets")
-                    ? styles.activeNavLink
-                    : ""
-                }`}
+                  ? styles.activeNavLink
+                  : ""
+                  }`}
                 onClick={() => setIsMenuDropdownOpen(!isMenuDropdownOpen)}
               >
                 <AlertIcon className={styles.navIcon} />
                 <span>Incidents</span>
                 <ChevronDownIcon
-                  className={`${styles.arrow} ${
-                    isMenuDropdownOpen ? styles.arrowUp : ""
-                  }`}
+                  className={`${styles.arrow} ${isMenuDropdownOpen ? styles.arrowUp : ""
+                    }`}
                 />
               </button>
 
@@ -262,9 +269,8 @@ const Navbar = () => {
 
             {/* Profile Link */}
             <button
-              className={`${styles.navLink} ${
-                location.pathname === "/profile" ? styles.activeNavLink : ""
-              }`}
+              className={`${styles.navLink} ${location.pathname === "/profile" ? styles.activeNavLink : ""
+                }`}
               onClick={() => handleNavigation("/profile")}
             >
               <UserIcon className={styles.navIcon} />
@@ -275,9 +281,8 @@ const Navbar = () => {
           {/* Info Icon + Explicit Logout Button in Desktop Header */}
           <div className={styles.headerActions}>
             <button
-              className={`${styles.infoHeaderBtn} ${
-                location.pathname === "/about" ? styles.activeInfoHeaderBtn : ""
-              }`}
+              className={`${styles.infoHeaderBtn} ${location.pathname === "/about" ? styles.activeInfoHeaderBtn : ""
+                }`}
               onClick={toggleInfoPage}
               title={location.pathname === "/about" ? "Close Info" : "About System"}
             >
@@ -297,9 +302,8 @@ const Navbar = () => {
         {/* Mobile Header Right Section with Info + Logout Buttons */}
         <div className={styles.mobileHeaderRight}>
           <button
-            className={`${styles.mobileInfoHeaderBtn} ${
-              location.pathname === "/about" ? styles.activeInfoHeaderBtn : ""
-            }`}
+            className={`${styles.mobileInfoHeaderBtn} ${location.pathname === "/about" ? styles.activeInfoHeaderBtn : ""
+              }`}
             onClick={toggleInfoPage}
             aria-label={location.pathname === "/about" ? "Close Info" : "About System"}
           >
@@ -334,9 +338,8 @@ const Navbar = () => {
               <button
                 key={item.id}
                 onClick={() => handleNavigation(item.path)}
-                className={`${styles.mobileNavItem} ${
-                  isActive ? styles.activeMobileNavItem : ""
-                }`}
+                className={`${styles.mobileNavItem} ${isActive ? styles.activeMobileNavItem : ""
+                  }`}
               >
                 <IconComponent className={styles.mobileNavIcon} />
                 <span className={styles.mobileNavLabel}>{item.label}</span>

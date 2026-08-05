@@ -39,9 +39,10 @@ body:not(.audit-theme) #root {
   background-color: #f8fafc;
 }
 
+/*
 body:not(.audit-theme) .capacitor-statusbar-safe-area {
   background-color: #f8fafc;
-}
+}*/
 
 @media screen and (display-mode: standalone),
 screen and (display-mode: fullscreen) {
@@ -57,7 +58,7 @@ screen and (display-mode: fullscreen) {
 
 body:not(.audit-theme) .ion-page,
 body:not(.audit-theme) .capacitor-app {
-  padding-top: var(--safe-area-inset-top) !important;
+  padding-top: 0px !important;
   padding-right: var(--safe-area-inset-right) !important;
   padding-bottom: var(--safe-area-inset-bottom) !important;
   padding-left: var(--safe-area-inset-left) !important;

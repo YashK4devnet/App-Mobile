@@ -7,12 +7,14 @@
       "enabled": true
     },
     "Geolocation": {
-      "permissions": ["location"],
+      "permissions": [
+        "location"
+      ],
       "alwaysShow": true
     },
     "StatusBar": {
-      "style": "Dark",
-      "backgroundColor": "#0f0f23",
+      "style": "LIGHT",
+      "backgroundColor": "#FFFFFF",
       "overlaysWebView": true
     },
     "SplashScreen": {
