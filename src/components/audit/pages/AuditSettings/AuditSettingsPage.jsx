@@ -23,7 +23,6 @@ export default function AuditSettingsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Sync real-time browser network status
   useEffect(() => {
     const handleOnline = () => setRealOnlineStatus(true);
     const handleOffline = () => setRealOnlineStatus(false);
@@ -37,7 +36,6 @@ export default function AuditSettingsPage() {
     };
   }, []);
 
-  // Fetch pending sync tasks
   const refreshSyncTasks = async () => {
     try {
       const tasks = await storageService.getSyncTasks();
@@ -49,12 +47,10 @@ export default function AuditSettingsPage() {
 
   useEffect(() => {
     refreshSyncTasks();
-    // Poll every 3 seconds while on settings page to keep sync queue visual fresh
     const interval = setInterval(refreshSyncTasks, 3000);
     return () => clearInterval(interval);
   }, []);
 
-  // Group tasks by reportId
   const groupedTasks = pendingTasks.reduce((acc, task) => {
     if (!acc[task.reportId]) acc[task.reportId] = [];
     acc[task.reportId].push(task);
@@ -93,7 +89,6 @@ export default function AuditSettingsPage() {
     setTimeout(refreshSyncTasks, 2000);
   };
 
-  // Clear local DB cache
   const handleClearCache = async () => {
     if (window.confirm('Are you sure you want to clear all local drafts, offline cached reports, and sync tasks? This action is irreversible.')) {
       setIsClearing(true);
@@ -110,7 +105,7 @@ export default function AuditSettingsPage() {
         toast.success('Successfully cleared all local cached databases.', {
           style: {
             borderRadius: '12px',
-            background: '#333',
+            background: '#0f172a',
             color: '#fff',
           },
         });
@@ -126,35 +121,34 @@ export default function AuditSettingsPage() {
   return (
     <div className="transition-opacity duration-300 ease-out opacity-100 flex flex-col h-full overflow-y-auto pb-6 scrollbar-none px-4 pt-4 select-none">
       <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-white tracking-tight mb-1">
+        <h1 className="text-2xl font-bold text-[#0f172a] tracking-tight mb-1">
           Settings
         </h1>
-        <div className={`px-3 py-1 rounded-full text-xs font-medium border flex items-center gap-1.5 ${realOnlineStatus ? 'bg-[#4ecdc4]/10 text-[#4ecdc4] border-[#4ecdc4]/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>
-          <span className={`w-1.5 h-1.5 rounded-full ${realOnlineStatus ? 'bg-[#4ecdc4]' : 'bg-rose-400'}`}></span>
+        <div className={`px-3 py-1 rounded-full text-xs font-semibold border flex items-center gap-1.5 ${realOnlineStatus ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-rose-500/10 text-rose-600 border-rose-500/20'}`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${realOnlineStatus ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
           {realOnlineStatus ? 'Online' : 'Offline'}
         </div>
       </div>
 
       <div className="space-y-5">
-
         {/* Sync Status Card */}
-        <div className="p-5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl flex flex-col gap-4 shadow-xl">
-          <h3 className="text-[15px] font-bold text-white/95">
+        <div className="p-5 bg-white border border-[#ff7700]/20 rounded-3xl flex flex-col gap-4 shadow-xs">
+          <h3 className="text-[15px] font-bold text-[#0f172a]">
             Offline Synchronization
           </h3>
 
-          <div className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl">
+          <div className="flex items-center justify-between p-4 bg-[#f8fafc] border border-slate-200 rounded-2xl">
             <div className="flex-1 pr-4">
-              <h4 className="text-[14px] font-semibold text-white">
+              <h4 className="text-[14px] font-semibold text-[#0f172a]">
                 Pending Sync Actions
               </h4>
-              <p className="text-[12px] text-white/55 mt-0.5">
+              <p className="text-[12px] text-slate-500 mt-0.5">
                 {pendingTasksCount === 0 
                   ? "No actions saved locally." 
                   : "Actions saved locally that will auto-upload when reconnected."}
               </p>
             </div>
-            <div className="w-10 h-10 shrink-0 rounded-full bg-white/5 border border-white/5 flex items-center justify-center font-bold text-[15px] text-white">
+            <div className="w-10 h-10 shrink-0 rounded-full bg-[#ff7700]/10 border border-[#ff7700]/20 flex items-center justify-center font-bold text-[15px] text-[#ff7700]">
               {pendingTasksCount}
             </div>
           </div>
@@ -162,34 +156,34 @@ export default function AuditSettingsPage() {
           {pendingTasksCount > 0 && (
             <div className="flex flex-col gap-3 mt-1">
               {Object.entries(groupedTasks).map(([reportId, tasks]) => (
-                <div key={reportId} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all">
+                <div key={reportId} className="bg-[#f8fafc] border border-slate-200 rounded-2xl overflow-hidden transition-all">
                   <div 
                     onClick={() => toggleReportExpand(reportId)}
-                    className="p-4 flex items-center justify-between cursor-pointer active:bg-white/5"
+                    className="p-4 flex items-center justify-between cursor-pointer active:bg-slate-100"
                   >
                     <div className="flex-1 pr-2">
-                      <h4 className="text-[14px] font-medium text-white/90 truncate">{getReportName(reportId)}</h4>
-                      <p className="text-[12px] text-white/50 mt-1">{tasks.length} pending action{tasks.length > 1 ? 's' : ''}</p>
+                      <h4 className="text-[14px] font-semibold text-[#0f172a] truncate">{getReportName(reportId)}</h4>
+                      <p className="text-[12px] text-slate-500 mt-1">{tasks.length} pending action{tasks.length > 1 ? 's' : ''}</p>
                     </div>
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 text-white/70 shrink-0">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-600 shrink-0">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className={`w-4 h-4 transition-transform ${expandedReports[reportId] ? 'rotate-180' : ''}`}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                       </svg>
                     </div>
                   </div>
                   {expandedReports[reportId] && (
-                    <div className="px-4 pb-4 pt-1 bg-black/20">
+                    <div className="px-4 pb-4 pt-1 bg-white border-t border-slate-200">
                       <div className="space-y-3 mt-2">
                         {tasks.map(task => (
                           <div key={task.id} className="flex items-start gap-3">
-                            <div className="w-6 h-6 shrink-0 rounded-full bg-[#4ecdc4]/10 flex items-center justify-center mt-0.5">
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-3 h-3 text-[#4ecdc4]">
+                            <div className="w-6 h-6 shrink-0 rounded-full bg-[#ff7700]/10 flex items-center justify-center mt-0.5">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-3 h-3 text-[#ff7700]">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                             </div>
                             <div>
-                              <p className="text-[13px] text-white/80 leading-tight capitalize">{getTaskDescription(task)}</p>
-                              <p className="text-[11px] text-white/40 mt-1">
+                              <p className="text-[13px] text-[#0f172a] font-medium leading-tight capitalize">{getTaskDescription(task)}</p>
+                              <p className="text-[11px] text-slate-400 mt-1">
                                 {new Date(task.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                               </p>
                             </div>
@@ -203,36 +197,19 @@ export default function AuditSettingsPage() {
             </div>
           )}
 
-          <button
-            onClick={handleForceSync}
-            disabled={pendingTasksCount === 0}
-            className={`w-full py-3.5 bg-[#4ecdc4]/20 hover:bg-[#4ecdc4]/30 text-[#4ecdc4] border border-[#4ecdc4]/30 rounded-2xl text-[13px] font-bold tracking-wide transition-all flex items-center justify-center gap-2 ${pendingTasksCount === 0 ? 'opacity-50 cursor-not-allowed' : 'active:scale-[0.98]'
-              }`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-            </svg>
-            Sync Now
-          </button>
-        </div>
-
-        {/* Storage Management */}
-        <div className="p-5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl flex flex-col gap-4 shadow-xl">
-          <h3 className="text-[15px] font-bold text-white/95">
-            Storage & Cache Management
-          </h3>
-
-          <div className="space-y-3">
+          <div className="flex gap-3 mt-2">
+            <button
+              onClick={handleForceSync}
+              className="flex-1 py-3 px-4 bg-[#ff7700] hover:bg-[#ea580c] text-white rounded-2xl text-xs font-bold active:scale-95 transition-all shadow-xs cursor-pointer"
+            >
+              Sync Now
+            </button>
             <button
               onClick={handleClearCache}
               disabled={isClearing}
-              className={`w-full py-3.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/25 rounded-2xl text-[13px] font-bold tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2 ${isClearing ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+              className="py-3 px-4 bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 text-rose-600 rounded-2xl text-xs font-bold active:scale-95 transition-all cursor-pointer"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-              </svg>
-              {isClearing ? 'Clearing Storage...' : 'Wipe Local Database Cache'}
+              {isClearing ? 'Clearing...' : 'Clear Cache'}
             </button>
           </div>
         </div>

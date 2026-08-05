@@ -22,12 +22,12 @@ export function FormTextArea({
         value={value || ''}
         onChange={(e) => onChange(name, e.target.value)}
         placeholder={placeholder}
-        className={`w-full bg-white/5 backdrop-blur-md border rounded-xl px-4 py-3 text-[14px] transition-all focus:ring-1 focus:ring-[#4ecdc4] outline-none text-white placeholder-white/40 ${
-          error ? 'border-[#ff6b6b] focus:border-[#ff6b6b]' : 'border-white/20 focus:border-[#4ecdc4]'
+        className={`w-full bg-white border rounded-xl px-4 py-3 text-[14px] transition-all focus:ring-2 focus:ring-[#ff7700]/30 outline-none text-[#0f172a] placeholder-slate-400 shadow-xs ${
+          error ? 'border-rose-500 focus:border-rose-500' : 'border-slate-300 focus:border-[#ff7700]'
         }`}
       />
       {error && (
-        <p className="text-[11px] text-[#ff6b6b] font-medium mt-1 flex items-center gap-1">
+        <p className="text-[11px] text-rose-500 font-medium mt-1 flex items-center gap-1">
           <ExclamationCircleIcon className="w-3.5 h-3.5" />
           {error}
         </p>

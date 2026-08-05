@@ -331,27 +331,27 @@ export default function PowerAuditWizard() {
         />
         
         {isReadOnly ? (
-          <div className="mx-5 mt-4 px-4 py-3 bg-rose-500/10 border border-rose-500/25 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
-            <ExclamationCircleIcon className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+          <div className="mx-5 mt-4 px-4 py-3 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
+            <ExclamationCircleIcon className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-rose-200 text-[13px] font-semibold leading-tight">Read-Only Mode</p>
-              <p className="text-rose-200/70 text-[12px] mt-0.5">This report has been finalized and cannot be edited.</p>
+              <p className="text-rose-800 text-[13px] font-bold leading-tight">Read-Only Mode</p>
+              <p className="text-rose-700 text-[12px] mt-0.5">This report has been finalized and cannot be edited.</p>
             </div>
           </div>
         ) : isAuditNotStarted ? (
-          <div className="mx-5 mt-4 px-4 py-3 bg-blue-500/10 border border-blue-500/25 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
-            <ExclamationCircleIcon className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+          <div className="mx-5 mt-4 px-4 py-3 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
+            <ExclamationCircleIcon className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-blue-200 text-[13px] font-semibold leading-tight">Audit Not Started</p>
-              <p className="text-blue-200/70 text-[12px] mt-0.5">Please click "Start Audit" to begin editing this report.</p>
+              <p className="text-blue-800 text-[13px] font-bold leading-tight">Audit Not Started</p>
+              <p className="text-blue-700 text-[12px] mt-0.5">Please click "Start Audit" to begin editing this report.</p>
             </div>
           </div>
         ) : submittedSections.includes(currentSubsection) ? (
-          <div className="mx-5 mt-4 px-4 py-3 bg-amber-500/10 border border-amber-500/25 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
-            <ExclamationCircleIcon className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+          <div className="mx-5 mt-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3 shrink-0 animate-fade-in">
+            <ExclamationCircleIcon className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-amber-200 text-[13px] font-semibold leading-tight">Section Submitted (Read-Only)</p>
-              <p className="text-amber-200/70 text-[12px] mt-0.5">This section has already been submitted and is locked for editing.</p>
+              <p className="text-amber-900 text-[13px] font-bold leading-tight">Section Submitted (Read-Only)</p>
+              <p className="text-amber-800 text-[12px] mt-0.5">This section has already been submitted and is locked for editing.</p>
             </div>
           </div>
         ) : null}
@@ -393,11 +393,11 @@ export default function PowerAuditWizard() {
         </div>
 
         {/* Action Footer */}
-        <div className="bg-white/5 backdrop-blur-md border-t border-white/10 p-4 pb-safe z-10 shrink-0">
+        <div className="bg-white/95 backdrop-blur-md border-t border-[#ff7700]/20 p-4 pb-safe z-10 shrink-0 shadow-xs">
           <div className="flex gap-3">
             <button
               onClick={handlePrevClick}
-              className="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+              className="px-5 py-3.5 bg-slate-100 hover:bg-slate-200 text-[#0f172a] text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
             >
               {isFirst ? 'Exit' : 'Previous'}
             </button>
@@ -411,7 +411,7 @@ export default function PowerAuditWizard() {
                     handleNextClick();
                   }
                 }}
-                className="flex-1 bg-white/20 hover:bg-white/30 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                className="flex-1 bg-slate-200 hover:bg-slate-300 text-[#0f172a] text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
               >
                 {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Exit' : 'Next'}
               </button>
@@ -426,32 +426,39 @@ export default function PowerAuditWizard() {
               currentSubsection === STEPS[STEPS.length - 1]?.id ? (
                 <button
                   onClick={() => setShowSubmitConfirm(true)}
-                  className="flex-1 bg-[#ff6b6b] hover:bg-rose-600 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-lg shadow-rose-900/20"
+                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs"
                 >
                   Submit Audit
                 </button>
               ) : (
                 <button
                   onClick={handleNextClick}
-                  className="flex-1 bg-white/20 hover:bg-white/30 text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                  className="flex-1 bg-[#ff7700] hover:bg-[#ea580c] text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs"
                 >
                   Next
                 </button>
               )
+            ) : ['ReportInfo', 'VenueInfo', 'PersonnelInfo'].includes(currentSubsection) ? (
+              <button
+                onClick={handleNextClick}
+                className="flex-1 bg-[#ff7700] hover:bg-[#ea580c] text-white text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs"
+              >
+                Next
+              </button>
             ) : (
               <>
                 <button
                   onClick={() => handleSaveCurrent(false)}
-                  className="px-5 py-3.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                  className="px-5 py-3.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs"
                 >
                   Save
                 </button>
                 <button
                   onClick={() => setShowSubmitConfirm(true)}
-                  className={`flex-1 text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer ${
+                  className={`flex-1 py-3.5 text-sm font-bold rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs ${
                     currentSubsection === STEPS[STEPS.length - 1]?.id 
-                      ? 'bg-[#ff6b6b] text-white hover:bg-rose-600 shadow-lg shadow-rose-900/20' 
-                      : 'bg-[#4ecdc4] text-black hover:bg-[#45b7b0] shadow-lg shadow-[#4ecdc4]/20'
+                      ? 'bg-rose-600 text-white hover:bg-rose-700' 
+                      : 'bg-[#ff7700] text-white hover:bg-[#ea580c]'
                   }`}
                 >
                   {currentSubsection === STEPS[STEPS.length - 1]?.id ? 'Submit Audit' : 'Submit & Next'}

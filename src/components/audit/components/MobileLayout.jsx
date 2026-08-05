@@ -1,35 +1,8 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 
 export default function MobileLayout({ header, bottomNav, fab, children }) {
-  const location = useLocation();
-  const path = location.pathname;
-
-  // Determine active section
-  const isReports = path.includes('/reports');
-  const isSettings = path.includes('/settings');
-  const isHome = !isReports && !isSettings;
-
   return (
-    <div className="audit-theme h-screen w-screen bg-[#08080a] flex justify-center items-center font-sans antialiased text-white overflow-hidden relative">
-      
-      {/* --- Gradient Background Layers (Hardware Accelerated Crossfade) --- */}
-      
-      {/* 1. Home Gradient: Warm Orange subtle glow */}
-      <div 
-        className={`absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,119,0,0.08)_0%,transparent_50%),radial-gradient(circle_at_20%_80%,rgba(255,119,0,0.04)_0%,transparent_50%)] pointer-events-none transition-opacity duration-700 ease-in-out ${isHome ? 'opacity-100' : 'opacity-0'}`}
-      />
-      
-      {/* 2. Reports Gradient: Subtle warm ambient glow */}
-      <div 
-        className={`absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,119,0,0.07)_0%,transparent_50%),radial-gradient(circle_at_80%_80%,rgba(255,119,0,0.04)_0%,transparent_50%)] pointer-events-none transition-opacity duration-700 ease-in-out ${isReports ? 'opacity-100' : 'opacity-0'}`}
-      />
-
-      {/* 3. Settings Gradient: Subtle top glow */}
-      <div 
-        className={`absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(255,119,0,0.08)_0%,transparent_50%),radial-gradient(circle_at_50%_90%,rgba(255,119,0,0.03)_0%,transparent_50%)] pointer-events-none transition-opacity duration-700 ease-in-out ${isSettings ? 'opacity-100' : 'opacity-0'}`}
-      />
-
+    <div className="audit-theme h-screen w-screen bg-[#f8fafc] flex justify-center items-center font-sans antialiased text-[#0f172a] overflow-hidden relative">
       {/* Content Container */}
       <div className="absolute inset-0 flex flex-col overflow-hidden z-10">
 

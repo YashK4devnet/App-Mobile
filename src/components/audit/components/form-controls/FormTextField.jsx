@@ -16,6 +16,8 @@ export function FormTextField({
   disabled = false,
   readOnly = false
 }) {
+  const isReadOnly = disabled || readOnly;
+
   return (
     <div className="space-y-1.5">
       <Label htmlFor={name} text={label} required={required} />
@@ -28,18 +30,18 @@ export function FormTextField({
         placeholder={placeholder}
         inputMode={inputMode}
         pattern={pattern}
-        disabled={disabled || readOnly}
+        disabled={isReadOnly}
         readOnly={readOnly}
         className={`w-full border rounded-xl px-4 py-3 text-[14px] transition-all outline-none ${
-          disabled || readOnly
-            ? 'bg-white/5 border-white/10 text-white/50 cursor-not-allowed select-none'
-            : 'bg-white/5 backdrop-blur-md border-white/20 focus:ring-1 focus:ring-[#4ecdc4] text-white focus:border-[#4ecdc4] placeholder-white/40'
+          isReadOnly
+            ? 'bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed select-none'
+            : 'bg-white border-slate-300 focus:ring-2 focus:ring-[#ff7700]/30 text-[#0f172a] focus:border-[#ff7700] placeholder-slate-400 shadow-xs'
         } ${
-          error ? 'border-[#ff6b6b] focus:border-[#ff6b6b]' : ''
+          error ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/20' : ''
         }`}
       />
       {error && (
-        <p className="text-[11px] text-[#ff6b6b] font-medium mt-1 flex items-center gap-1">
+        <p className="text-[11px] text-rose-500 font-medium mt-1 flex items-center gap-1">
           <ExclamationCircleIcon className="w-3.5 h-3.5" />
           {error}
         </p>

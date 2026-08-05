@@ -22,48 +22,48 @@ export function FormNetworkQuestion({
   };
 
   return (
-    <div className="space-y-4 p-5 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl">
+    <div className="space-y-4 p-5 bg-white border border-[#ff7700]/20 rounded-2xl shadow-xs">
       <div>
         <div className="flex gap-2">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-white/50 mt-0.5">Checklist:</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mt-0.5">Checklist:</span>
           <div className="flex-1">
             <Label text={label} required={required} />
           </div>
         </div>
         {evidenceRecord && (
           <div className="flex items-center gap-2 mt-2 mb-1">
-            <span className="text-[10px] font-medium uppercase tracking-wider text-white/50">Evidence Record:</span>
-            <span className="px-2 py-0.5 bg-white/10 text-white text-[11px] font-medium rounded">{evidenceRecord}</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Evidence Record:</span>
+            <span className="px-2 py-0.5 bg-[#ff7700]/10 border border-[#ff7700]/20 text-[#ea580c] text-[11px] font-bold rounded">{evidenceRecord}</span>
           </div>
         )}
       </div>
 
       <div className="space-y-2">
         {remarksHint && (
-          <p className="text-[12px] text-white/90 italic bg-[#ff6b6b]/10 p-2.5 rounded-lg border border-white/10 border-l-4 border-l-[#ff6b6b]">
+          <p className="text-[12px] text-slate-700 italic bg-amber-50 p-2.5 rounded-lg border border-amber-200 border-l-4 border-l-amber-500">
             {remarksHint}
           </p>
         )}
-        <span className="text-[11px] text-white/50 font-medium uppercase tracking-wider block mb-1">Remarks</span>
+        <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Remarks</span>
         <textarea
           rows={2}
           value={value?.remarks || ''}
           onChange={(e) => handleFieldChange('remarks', e.target.value)}
           placeholder="Enter remarks here..."
           disabled={!isInteractive}
-          className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-[13px] transition-all focus:ring-1 focus:ring-[#4ecdc4] focus:border-[#4ecdc4] outline-none text-white placeholder-white/40 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-[13px] transition-all focus:ring-2 focus:ring-[#ff7700]/30 focus:border-[#ff7700] outline-none text-[#0f172a] placeholder-slate-400 disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed shadow-xs"
         />
       </div>
 
       <div className="space-y-1.5">
-        <span className="text-[11px] text-white/50 font-medium uppercase tracking-wider block mb-1">Observation</span>
+        <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Observation</span>
         <textarea
           rows={2}
           value={value?.observation || ''}
           onChange={(e) => handleFieldChange('observation', e.target.value)}
           placeholder="Enter observation here..."
           disabled={!isInteractive}
-          className="w-full bg-white/5 backdrop-blur-md border border-white/20 rounded-lg px-3 py-2 text-[13px] transition-all focus:ring-1 focus:ring-[#4ecdc4] focus:border-[#4ecdc4] outline-none text-white placeholder-white/40 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-[13px] transition-all focus:ring-2 focus:ring-[#ff7700]/30 focus:border-[#ff7700] outline-none text-[#0f172a] placeholder-slate-400 disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed shadow-xs"
         />
       </div>
 

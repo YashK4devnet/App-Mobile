@@ -15,7 +15,6 @@ export default function SubsectionAccordion({
   const currentSubObj = subsections[currentIndex !== -1 ? currentIndex : 0];
   const totalCount = subsections.length;
 
-  // Auto-scroll to current active section when accordion opens or active section changes
   useEffect(() => {
     if (isOpen && activeItemRef.current && listContainerRef.current) {
       const timer = setTimeout(() => {
@@ -29,11 +28,11 @@ export default function SubsectionAccordion({
   }, [isOpen, currentSubsection]);
 
   return (
-    <div className="relative bg-transparent border-b border-white/10 z-30">
+    <div className="relative bg-transparent border-b border-[#ff7700]/18 z-30">
       <button
         type="button"
         onClick={onToggle}
-        className="w-full px-5 py-3 flex justify-between items-center text-left hover:bg-white/5 transition-colors cursor-pointer"
+        className="w-full px-5 py-3 flex justify-between items-center text-left hover:bg-black/5 transition-colors cursor-pointer"
       >
         <div className="flex flex-col gap-0.5">
           <div className="flex items-center gap-2">
@@ -41,13 +40,13 @@ export default function SubsectionAccordion({
               Section {currentIndex !== -1 ? currentIndex + 1 : 1} of {totalCount}
             </span>
           </div>
-          <span className="text-[14px] font-bold text-white tracking-tight">
+          <span className="text-[14px] font-bold text-[#0f172a] tracking-tight">
             {currentSubObj?.label}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <ChevronDownIcon 
-            className={`w-5 h-5 text-white/50 transition-transform duration-300 ${
+            className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${
               isOpen ? 'rotate-180 text-[#ff7700]' : ''
             }`} 
           />
@@ -58,7 +57,7 @@ export default function SubsectionAccordion({
         <div className="relative z-40">
           <div 
             ref={listContainerRef}
-            className="absolute top-0 left-0 right-0 bg-[#0e0e12] border-b border-white/20 shadow-2xl z-40 divide-y divide-white/10 animate-slide-down max-h-[45vh] sm:max-h-[calc(100vh-280px)] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-[#ff7700]/50 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-white/5"
+            className="absolute top-0 left-0 right-0 bg-white border-b border-[#ff7700]/20 shadow-xl z-40 divide-y divide-slate-100 animate-slide-down max-h-[45vh] sm:max-h-[calc(100vh-280px)] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-[#ff7700]/50 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-100"
           >
             {subsections.map((sub, index) => {
               const isActive = sub.id === currentSubsection;
@@ -71,10 +70,10 @@ export default function SubsectionAccordion({
                   ref={isActive ? activeItemRef : null}
                   type="button"
                   onClick={() => onSelect(sub.id)}
-                  className={`w-full px-5 py-3.5 flex items-center justify-between text-[13px] transition-all hover:bg-white/10 cursor-pointer ${
+                  className={`w-full px-5 py-3.5 flex items-center justify-between text-[13px] transition-all hover:bg-slate-50 cursor-pointer ${
                     isActive 
-                      ? 'font-bold text-white bg-white/15 border-l-4 border-l-[#ff7700] pl-4' 
-                      : 'text-white/70 font-medium'
+                      ? 'font-bold text-[#0f172a] bg-[#ff7700]/10 border-l-4 border-l-[#ff7700] pl-4' 
+                      : 'text-slate-600 font-medium'
                   }`}
                 >
                   <span className="flex items-center gap-2 text-left pr-2">
@@ -82,17 +81,17 @@ export default function SubsectionAccordion({
                   </span>
                   <div className="flex items-center gap-2 shrink-0">
                     {isCompleted && (
-                      <span className="w-5 h-5 bg-[#ff7700] rounded-full flex items-center justify-center shadow-sm">
-                        <CheckIcon className="w-3.5 h-3.5 text-[#08080a]" />
+                      <span className="w-5 h-5 bg-[#ff7700] rounded-full flex items-center justify-center shadow-xs">
+                        <CheckIcon className="w-3.5 h-3.5 text-white" />
                       </span>
                     )}
                     {hasErrors && (
-                      <span className="w-5 h-5 bg-[#ff4444] rounded-full flex items-center justify-center shadow-sm">
+                      <span className="w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center shadow-xs">
                         <ExclamationCircleIcon className="w-3.5 h-3.5 text-white" />
                       </span>
                     )}
                     {isActive && (
-                      <span className="text-[10px] uppercase font-black tracking-wider text-[#ff7700] bg-[#ff7700]/20 px-2 py-0.5 rounded border border-[#ff7700]/30">
+                      <span className="text-[10px] uppercase font-black tracking-wider text-[#ff7700] bg-[#ff7700]/15 px-2 py-0.5 rounded border border-[#ff7700]/25">
                         Active
                       </span>
                     )}

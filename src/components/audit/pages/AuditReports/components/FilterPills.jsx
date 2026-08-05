@@ -3,52 +3,51 @@ import { motion } from 'framer-motion';
 
 const FILTER_STYLES = {
   "All": {
-    bg: "bg-[#ff7700]/20",
-    border: "border-[#ff7700]/50",
+    bg: "bg-[#ff7700]/10",
+    border: "border-[#ff7700]/40",
     activeText: "text-[#ff7700]",
   },
   "Assigned": {
-    bg: "bg-blue-500/20",
-    border: "border-blue-500/40",
-    activeText: "text-blue-400",
+    bg: "bg-blue-500/10",
+    border: "border-blue-500/30",
+    activeText: "text-blue-600",
   },
   "In Progress": {
-    bg: "bg-cyan-500/20",
-    border: "border-cyan-500/40",
-    activeText: "text-cyan-400",
+    bg: "bg-cyan-500/10",
+    border: "border-cyan-500/30",
+    activeText: "text-cyan-600",
   },
   "Completed": {
-    bg: "bg-purple-500/20",
-    border: "border-purple-500/40",
-    activeText: "text-purple-400",
+    bg: "bg-purple-500/10",
+    border: "border-purple-500/30",
+    activeText: "text-purple-600",
   },
   "Waiting for Approval": {
-    bg: "bg-amber-500/20",
-    border: "border-amber-500/40",
-    activeText: "text-amber-400",
+    bg: "bg-amber-500/10",
+    border: "border-amber-500/30",
+    activeText: "text-amber-600",
   },
   "Approved": {
-    bg: "bg-emerald-500/20",
-    border: "border-emerald-500/40",
-    activeText: "text-emerald-400",
+    bg: "bg-emerald-500/10",
+    border: "border-emerald-500/30",
+    activeText: "text-emerald-600",
   },
   "Rejected": {
-    bg: "bg-rose-500/20",
-    border: "border-rose-500/40",
-    activeText: "text-rose-400",
+    bg: "bg-rose-500/10",
+    border: "border-rose-500/30",
+    activeText: "text-rose-600",
   }
 };
 
 const DEFAULT_STYLE = {
-  bg: "bg-white/10",
-  border: "border-white/20",
-  activeText: "text-white",
+  bg: "bg-orange-500/10",
+  border: "border-orange-500/30",
+  activeText: "text-[#ff7700]",
 };
 
 export default function FilterPills({ filters, activeFilter, onSelectFilter }) {
   const scrollRef = useRef(null);
 
-  // Allow horizontal scrolling with mouse wheel (optional but nice UX for desktop)
   const handleWheel = (e) => {
     if (scrollRef.current) {
       scrollRef.current.scrollLeft += e.deltaY;
@@ -73,8 +72,8 @@ export default function FilterPills({ filters, activeFilter, onSelectFilter }) {
           <button
             key={filter}
             onClick={() => onSelectFilter(filter)}
-            className={`relative px-4 py-2 rounded-full text-[13px] font-medium whitespace-nowrap transition-colors duration-300 ${
-              isActive ? style.activeText : 'text-white/50 hover:text-white/80 bg-white/5 hover:bg-white/10'
+            className={`relative px-4 py-2 rounded-full text-[13px] font-semibold whitespace-nowrap transition-colors duration-300 ${
+              isActive ? style.activeText : 'text-slate-500 hover:text-[#0f172a] bg-white border border-slate-200'
             }`}
           >
             {isActive && (
@@ -91,4 +90,3 @@ export default function FilterPills({ filters, activeFilter, onSelectFilter }) {
     </div>
   );
 }
-

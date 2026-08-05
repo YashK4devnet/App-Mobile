@@ -92,22 +92,22 @@ export function FormImageUpload({
           hasImage || !isInteractive
             ? 'border-transparent' 
             : error 
-              ? 'border-red-300 bg-red-50' 
-              : 'border-white/20 bg-white/5'
+              ? 'border-rose-300 bg-rose-50' 
+              : 'border-slate-300 bg-white'
         }`}
       >
         {isPending ? (
-          <div className="relative aspect-video w-full bg-black/20 flex flex-col items-center justify-center border border-white/10 rounded-xl">
-             <div className="w-6 h-6 border-2 border-[#4ecdc4] border-t-transparent rounded-full animate-spin mb-2"></div>
-             <p className="text-[12px] text-white/50">Loading image...</p>
+          <div className="relative aspect-video w-full bg-slate-100 flex flex-col items-center justify-center border border-slate-200 rounded-xl">
+             <div className="w-6 h-6 border-2 border-[#ff7700] border-t-transparent rounded-full animate-spin mb-2"></div>
+             <p className="text-[12px] text-slate-500 font-medium">Loading image...</p>
           </div>
         ) : hasImage ? (
           <>
             <div 
-              className={`relative aspect-video w-full bg-black rounded-xl overflow-hidden border border-white/10 ${!isInteractive ? 'cursor-pointer' : ''}`}
+              className={`relative aspect-video w-full bg-slate-900 rounded-xl overflow-hidden border border-slate-200 ${!isInteractive ? 'cursor-pointer' : ''}`}
               onClick={() => { if (!isInteractive) setIsFullscreen(true); }}
             >
-              <img src={imgUrl} alt={label} className="w-full h-full object-contain opacity-90 transition-opacity" />
+              <img src={imgUrl} alt={label} className="w-full h-full object-contain opacity-95 transition-opacity" />
               {isInteractive && (
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                   <button 
@@ -155,31 +155,31 @@ export function FormImageUpload({
             )}
           </>
         ) : !isInteractive ? (
-          <div className="flex flex-col items-center justify-center py-6 px-4 text-center bg-white/5 rounded-xl border border-white/10">
-            <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center mb-2">
-              <CameraIcon className="w-5 h-5 text-white/30" />
+          <div className="flex flex-col items-center justify-center py-6 px-4 text-center bg-slate-100 rounded-xl border border-slate-200">
+            <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center mb-2">
+              <CameraIcon className="w-5 h-5 text-slate-400" />
             </div>
-            <p className="text-[12px] font-medium text-white/50">No image available</p>
+            <p className="text-[12px] font-medium text-slate-500">No image available</p>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
-            <div className="w-12 h-12 bg-[#ff6b6b]/10 rounded-full flex items-center justify-center mb-3 shadow-sm text-[#ff6b6b]">
+            <div className="w-12 h-12 bg-[#ff7700]/10 rounded-full flex items-center justify-center mb-3 shadow-xs text-[#ff7700]">
               <CameraIcon className="w-6 h-6" />
             </div>
-            <p className="text-[13px] font-medium text-white/90 mb-3">{label}</p>
+            <p className="text-[13px] font-bold text-[#0f172a] mb-3">{label}</p>
             
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={triggerCamera}
-                className="bg-[#ff6b6b] hover:bg-[#ff6b6b]/80 text-white px-4 py-2 rounded-xl text-[12px] font-medium transition-colors shadow-sm active:scale-95 cursor-pointer"
+                className="bg-[#ff7700] hover:bg-[#ea580c] text-white px-4 py-2 rounded-xl text-[12px] font-bold transition-colors shadow-xs active:scale-95 cursor-pointer"
               >
                 Take Photo
               </button>
               <button
                 type="button"
                 onClick={triggerGallery}
-                className="bg-white/10 border border-white/20 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-[12px] font-medium transition-colors shadow-sm active:scale-95 cursor-pointer"
+                className="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-xl text-[12px] font-semibold transition-colors shadow-xs active:scale-95 cursor-pointer"
               >
                 Upload
               </button>
@@ -189,7 +189,7 @@ export function FormImageUpload({
       </div>
 
       {error && !readOnly && (
-        <p className="text-[11px] text-[#ff6b6b] font-medium mt-1 flex items-center gap-1">
+        <p className="text-[11px] text-rose-500 font-medium mt-1 flex items-center gap-1">
           <ExclamationCircleIcon className="w-3.5 h-3.5" />
           {error}
         </p>

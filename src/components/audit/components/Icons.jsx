@@ -1,6 +1,6 @@
 import React from 'react';
 
-const defaultClass = "w-6 h-6 text-white/70 shrink-0 transition-colors";
+const defaultClass = "w-6 h-6 text-[#0f172a] shrink-0 transition-colors";
 const defaultStroke = "1.5";
 
 export function MenuIcon({ className = defaultClass }) {

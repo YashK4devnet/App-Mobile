@@ -7,23 +7,23 @@ export default function ProgressBar({
   label = "Progress" 
 }) {
   return (
-    <div className="px-5 pt-5 pb-3 border-b border-white/10 bg-[#08080a]/90 backdrop-blur-xl z-10 select-none">
-      <h4 className="text-[13px] font-light tracking-wide text-white mb-2">{label}</h4>
-      <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden mb-2">
+    <div className="px-5 pt-5 pb-3 border-b border-[#ff7700]/18 bg-white/95 backdrop-blur-xl z-10 select-none">
+      <h4 className="text-[13px] font-semibold tracking-wide text-[#0f172a] mb-2">{label}</h4>
+      <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden mb-2">
         <div
-          className="h-full bg-gradient-to-r from-[#ff7700] to-[#ff9933] rounded-full transition-all duration-300 ease-out"
+          className="h-full bg-gradient-to-r from-[#ff7700] to-[#ea580c] rounded-full transition-all duration-300 ease-out"
           style={{ width: `${percent}%` }}
         />
       </div>
       <div className="flex justify-between items-center text-[11px]">
         {filled !== undefined && total !== undefined ? (
-          <span className="text-white/50 font-light tracking-wider uppercase">
+          <span className="text-slate-500 font-medium tracking-wider uppercase">
             {filled} of {total} completed
           </span>
         ) : (
-          <span className="text-white/50 font-light tracking-wider uppercase">Progress</span>
+          <span className="text-slate-500 font-medium tracking-wider uppercase">Progress</span>
         )}
-        <span className="text-[#ff7700] font-light tracking-wider">{percent}%</span>
+        <span className="text-[#ea580c] font-semibold tracking-wider">{percent}%</span>
       </div>
     </div>
   );

@@ -25,17 +25,17 @@ export function FormNetworkSecurityQuestion({
   const displayRemarks = remarks || value?.remarks || value?.remark || value?.comment || value?.description || '';
 
   return (
-    <div className="space-y-4 p-5 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl">
+    <div className="space-y-4 p-5 bg-white border border-[#ff7700]/20 rounded-2xl shadow-xs">
       <div>
-        <div className="text-[11px] font-bold uppercase tracking-wider text-[#ff6b6b] mb-1.5">{displayHeader}</div>
+        <div className="text-[11px] font-bold uppercase tracking-wider text-[#ea580c] mb-1.5">{displayHeader}</div>
         <div className="flex gap-2">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-white/50 mt-0.5">Checklist:</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mt-0.5">Checklist:</span>
           <div className="flex-1">
             <Label text={label} required={required} />
           </div>
         </div>
         {displayRemarks ? (
-          <div className="mt-3 text-[12px] text-white/80 bg-white/5 p-3 rounded-lg border border-white/10 whitespace-pre-wrap">
+          <div className="mt-3 text-[12px] text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-200 whitespace-pre-wrap">
             {displayRemarks}
           </div>
         ) : null}

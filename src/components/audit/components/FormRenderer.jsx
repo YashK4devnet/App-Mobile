@@ -261,16 +261,16 @@ function AccordionSection({ heading, fields, control, renderItem, errors = {} })
   }, [hasErrors]);
 
   return (
-    <div className="bg-white/5 backdrop-blur-md border border-white/20 rounded-xl mb-4">
+    <div className="bg-white border border-[#ff7700]/20 rounded-xl mb-4 shadow-xs">
       <button 
         type="button" 
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex justify-between items-center p-4 hover:bg-white/20 transition-colors rounded-t-xl ${
-          isOpen ? 'sticky top-0 z-10 border-b border-white/20 bg-[#0F0F23]/95 backdrop-blur-xl shadow-sm' : 'bg-white/10 rounded-b-xl'
+        className={`w-full flex justify-between items-center p-4 hover:bg-slate-50 transition-colors rounded-t-xl ${
+          isOpen ? 'sticky top-0 z-10 border-b border-[#ff7700]/20 bg-white/95 backdrop-blur-xl shadow-xs' : 'bg-slate-50/50 rounded-b-xl'
         }`}
       >
         <div className="flex items-center gap-3">
-          <span className={`font-medium text-[14px] ${hasErrors ? 'text-[#ff6b6b]' : (heading.className?.includes('text-[#ff6b6b]') ? 'text-[#ff6b6b]' : 'text-white')}`}>
+          <span className={`font-bold text-[14px] ${hasErrors ? 'text-rose-500' : (heading.className?.includes('text-rose-500') ? 'text-rose-500' : 'text-[#0f172a]')}`}>
             {heading.label}
           </span>
           {hasErrors && (
@@ -280,7 +280,7 @@ function AccordionSection({ heading, fields, control, renderItem, errors = {} })
             </span>
           )}
         </div>
-        <svg className={`w-5 h-5 text-white/50 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
@@ -296,7 +296,7 @@ function AccordionSection({ heading, fields, control, renderItem, errors = {} })
 
 function ObjectSection({ field, control, renderItem }) {
   return (
-    <div className={`space-y-4 p-4 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl select-none ${field.className || ''}`}>
+    <div className={`space-y-4 p-4 bg-white border border-[#ff7700]/20 rounded-2xl select-none shadow-xs ${field.className || ''}`}>
       {field.label && <Label text={field.label} required={field.required} />}
       <div className="space-y-4">
         {field.fields.map((subField, sIdx) => {
@@ -318,14 +318,14 @@ function ArraySection({ field, control, renderItem, globalDisabled = false }) {
   });
 
   return (
-    <div className={`space-y-4 p-4 bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl select-none ${field.className || ''}`}>
+    <div className={`space-y-4 p-4 bg-white border border-[#ff7700]/20 rounded-2xl select-none shadow-xs ${field.className || ''}`}>
       <div className="flex justify-between items-center mb-1">
         <Label text={field.label} required={field.required} />
         {!globalDisabled && (
           <button
             type="button"
             onClick={() => append({})}
-            className="flex items-center gap-1 text-[12px] font-medium text-[#ff6b6b] hover:text-white bg-[#ff6b6b]/10 hover:bg-[#ff6b6b]/20 active:scale-[0.98] transition-all px-3 py-1.5 rounded-lg cursor-pointer"
+            className="flex items-center gap-1 text-[12px] font-bold text-[#ff7700] hover:text-[#ea580c] bg-[#ff7700]/10 hover:bg-[#ff7700]/20 border border-[#ff7700]/20 active:scale-[0.98] transition-all px-3 py-1.5 rounded-lg cursor-pointer"
           >
             <PlusIcon className="w-3.5 h-3.5" />
             Add {field.itemLabel || 'Item'}
@@ -334,18 +334,18 @@ function ArraySection({ field, control, renderItem, globalDisabled = false }) {
       </div>
 
       {fields.length === 0 ? (
-        <div className="text-center py-6 bg-white/5 rounded-xl border border-dashed border-white/20">
-          <p className="text-[13px] text-white/50 font-light">No {field.itemLabel?.toLowerCase() || 'items'} added yet.</p>
+        <div className="text-center py-6 bg-[#f8fafc] rounded-xl border border-dashed border-slate-300">
+          <p className="text-[13px] text-slate-500 font-medium">No {field.itemLabel?.toLowerCase() || 'items'} added yet.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {fields.map((item, index) => (
-            <div key={item.id} className="relative p-4 bg-white/10 border border-white/10 rounded-xl animate-fade-in shadow-sm">
+            <div key={item.id} className="relative p-4 bg-[#f8fafc] border border-slate-200 rounded-xl animate-fade-in shadow-xs">
               {!globalDisabled && (
                 <button
                   type="button"
                   onClick={() => remove(index)}
-                  className="absolute -top-3 -right-3 w-7 h-7 bg-[#ff6b6b] border border-white/10 text-white hover:bg-rose-600 hover:border-rose-200 rounded-full flex items-center justify-center shadow-sm cursor-pointer z-10 transition-colors"
+                  className="absolute -top-3 -right-3 w-7 h-7 bg-rose-500 border border-white text-white hover:bg-rose-600 rounded-full flex items-center justify-center shadow-xs cursor-pointer z-10 transition-colors"
                 >
                   <TrashIcon className="w-4 h-4" />
                 </button>
