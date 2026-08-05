@@ -190,9 +190,6 @@ const Auth = () => {
       <div className={styles.loginCard}>
         {/* Brand Header Badge */}
         <div className={styles.brandHeader}>
-          <div className={styles.brandIcon}>
-            <SparklesIcon className={styles.sparkleSvg} />
-          </div>
           <div>
             <span className={styles.brandBadge}>EDUQUITY</span>
             <h1 className={styles.title}>Sign In</h1>

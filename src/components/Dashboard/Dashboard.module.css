@@ -1,34 +1,23 @@
-/* Premium Dark Black & Orange Theme for Dashboard (Matte Finish - No Icon Glow) */
+/* Clean Off-White Theme for Dashboard */
 .dashboardContainer {
   min-height: 100vh;
   min-height: 100dvh;
-  background: #08080a;
+  width: 100%;
+  background: #f8fafc;
   position: relative;
   overflow-x: hidden;
-  padding-bottom: 50px;
-  user-select: none;
-}
-
-/* Subtle Ambient Background */
-.dashboardContainer::before {
-  content: "";
-  position: absolute;
-  top: -10%;
-  right: -10%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(255, 119, 0, 0.06) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .mainContent {
-  padding: 24px 32px 110px;
-  max-width: 1400px;
+  padding: 24px 24px 100px;
+  max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
   position: relative;
   z-index: 1;
+  box-sizing: border-box;
 }
 
 /* Welcome Section */
@@ -38,7 +27,7 @@
   align-items: stretch;
   margin-bottom: 24px;
   padding: 4px 0 18px;
-  border-bottom: 1px solid rgba(255, 119, 0, 0.15);
+  border-bottom: 1px solid rgba(255, 119, 0, 0.18);
   gap: 6px;
 }
 
@@ -50,23 +39,20 @@
 }
 
 .greetingText {
-  color: rgba(255, 255, 255, 0.65);
+  color: #64748b;
   font-size: 15px;
   font-weight: 500;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .userNameTitle {
-  color: #ffffff;
+  color: #0f172a;
   font-size: 28px;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: -0.3px;
   margin: 2px 0 4px 0;
   text-align: left;
   width: 100%;
-  background: linear-gradient(135deg, #ffffff 30%, #ff8800 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   line-height: 1.25;
 }
 
@@ -79,23 +65,23 @@
 }
 
 .welcomeSubtitle {
-  color: rgba(255, 255, 255, 0.55);
+  color: #64748b;
   font-size: 13.5px;
   font-weight: 400;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.1px;
   margin: 0;
 }
 
 .welcomeDotSeparator {
-  color: rgba(255, 119, 0, 0.5);
+  color: rgba(255, 119, 0, 0.6);
   font-size: 12px;
 }
 
 .timeDisplay {
-  color: #ff8800;
+  color: #ea580c;
   font-size: 14px;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   margin-bottom: 0;
   font-family: inherit;
 }
@@ -104,14 +90,15 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: rgba(255, 255, 255, 0.85);
+  color: #0f172a;
   font-size: 12.5px;
   font-weight: 600;
-  letter-spacing: 0.5px;
-  padding: 5px 14px;
-  background: rgba(255, 119, 0, 0.08);
-  border: 1px solid rgba(255, 119, 0, 0.25);
+  letter-spacing: 0.3px;
+  padding: 6px 14px;
+  background: #ffffff;
+  border: 1px solid rgba(255, 119, 0, 0.22);
   border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .statusDot {
@@ -126,7 +113,7 @@
 }
 
 .checkedOut {
-  background: rgba(255, 255, 255, 0.4);
+  background: #cbd5e1;
 }
 
 @keyframes pulse {
@@ -140,14 +127,12 @@
 
 /* Current Status Card */
 .currentStatusCard {
-  background: rgba(14, 14, 18, 0.85);
-  border: 1px solid rgba(255, 119, 0, 0.22);
+  background: #ffffff;
+  border: 1px solid rgba(255, 119, 0, 0.2);
   border-radius: 20px;
   padding: 24px;
   margin-bottom: 32px;
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(255, 119, 0, 0.04);
 }
 
 .statusHeader {
@@ -158,22 +143,22 @@
 }
 
 .statusHeader h3 {
-  color: #ffffff;
+  color: #0f172a;
   font-size: 16px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   margin: 0;
   text-transform: uppercase;
 }
 
 .liveIndicator {
   background: #ff7700;
-  color: white;
+  color: #ffffff;
   padding: 4px 12px;
   border-radius: 50px;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   animation: pulse 2s infinite;
 }
 
@@ -190,48 +175,47 @@
 }
 
 .statusLabel {
-  color: rgba(255, 255, 255, 0.65);
+  color: #64748b;
   font-size: 11.5px;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
 .statusValue {
-  color: #ff8800;
+  color: #ea580c;
   font-size: 16px;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 /* Quick Actions Section */
 .quickActionsSection {
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
 .sectionTitle {
-  color: #ffffff;
-  font-size: 20px;
+  color: #0f172a;
+  font-size: 18px;
   font-weight: 700;
-  letter-spacing: 1.5px;
-  margin: 0 0 20px 0;
+  letter-spacing: 0.5px;
+  margin: 0 0 18px 0;
   text-transform: uppercase;
 }
 
 .quickActionsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
 }
 
 .quickActionCard {
-  background: rgba(14, 14, 18, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 22px 20px;
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  background: #ffffff;
+  border: 1px solid rgba(255, 119, 0, 0.2);
+  border-radius: 18px;
+  padding: 20px 18px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(255, 119, 0, 0.03);
+  transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -241,70 +225,71 @@
 }
 
 .quickActionCard:hover {
-  transform: translateY(-3px);
-  background: rgba(255, 119, 0, 0.05);
-  border-color: rgba(255, 119, 0, 0.35);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+  background: #ffffff;
+  border-color: rgba(255, 119, 0, 0.45);
+  box-shadow: 0 10px 25px -5px rgba(255, 119, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 .quickActionIconBadge {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 14px;
-  transition: all 0.3s ease;
+  margin-bottom: 12px;
+  transition: all 0.25s ease;
 }
 
 .orangeBadge {
-  background: rgba(255, 119, 0, 0.12);
-  border: 1px solid rgba(255, 136, 0, 0.3);
+  background: rgba(255, 119, 0, 0.08);
+  border: 1px solid rgba(255, 119, 0, 0.22);
 }
 
 .quickActionCard:hover .orangeBadge {
-  background: rgba(255, 119, 0, 0.2);
-  border-color: rgba(255, 136, 0, 0.5);
+  background: rgba(255, 119, 0, 0.15);
+  border-color: rgba(255, 119, 0, 0.4);
   transform: scale(1.04);
 }
 
 .quickActionCard h3 {
-  color: #ffffff;
-  font-size: 15.5px;
+  color: #0f172a;
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.1px;
   margin: 0 0 4px 0;
 }
 
 .quickActionCard p {
-  color: rgba(255, 255, 255, 0.55);
+  color: #64748b;
   font-size: 12px;
   font-weight: 400;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   margin: 0;
 }
 
 .logoContainer {
   background: #ffffff;
   border: 1px solid rgba(255, 119, 0, 0.2);
-  border-radius: 16px;
-  padding: 18px;
-  margin: 30px auto 0 auto;
+  border-radius: 18px;
+  padding: 16px;
+  margin: 20px auto 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 90%;
+  width: 100%;
   max-width: 1200px;
   position: relative;
   z-index: 1;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
 }
 
 .logo {
   display: block;
   width: 100%;
-  max-width: 550px;
+  max-width: 500px;
   height: auto;
   border-radius: 8px;
   background: transparent;
@@ -312,14 +297,8 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .logoContainer {
-    margin: 20px auto calc(90px + env(safe-area-inset-bottom, 0px)) auto;
-    padding: 14px;
-    width: calc(100% - 40px);
-  }
-
   .mainContent {
-    padding: calc(75px + var(--android-statusbar-height, env(safe-area-inset-top, 0px))) 20px calc(80px + env(safe-area-inset-bottom, 0px));
+    padding: 16px 16px calc(95px + env(safe-area-inset-bottom, 0px)) 16px;
   }
 
   .userNameTitle {
@@ -332,20 +311,20 @@
   }
 
   .quickActionsGrid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .logoContainer {
+    margin: 16px auto calc(95px + env(safe-area-inset-bottom, 0px)) auto;
+    padding: 12px;
+    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
-  .logoContainer {
-    margin: 10px auto calc(90px + env(safe-area-inset-bottom, 0px)) auto;
-    padding: 12px;
-    width: calc(100% - 32px);
-  }
-
   .mainContent {
-    padding: 16px 16px calc(90px + env(safe-area-inset-bottom, 0px));
+    padding: 12px 12px calc(95px + env(safe-area-inset-bottom, 0px)) 12px;
   }
 
   .userNameTitle {
@@ -353,11 +332,11 @@
   }
 
   .quickActionsGrid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+    gap: 10px;
   }
 
   .quickActionCard {
-    padding: 16px;
+    padding: 14px;
   }
 }

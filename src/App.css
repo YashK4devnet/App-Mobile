@@ -22,10 +22,10 @@ body:not(.audit-theme) {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #08080a;
+  background-color: #f8fafc;
   overflow-x: hidden;
   overflow-y: auto;
-  color: #ffffff;
+  color: #0f172a;
 
   /* Add safe area padding only to body */
   padding-right: var(--safe-area-inset-right);
@@ -37,17 +37,17 @@ body:not(.audit-theme) #root {
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
-  background-color: #08080a;
+  background-color: #f8fafc;
 }
 
 body:not(.audit-theme) .capacitor-statusbar-safe-area {
-  background-color: #08080a;
+  background-color: #f8fafc;
 }
 
 @media screen and (display-mode: standalone),
 screen and (display-mode: fullscreen) {
   body:not(.audit-theme) {
-    background-color: #08080a;
+    background-color: #f8fafc;
   }
 
   body:not(.audit-theme) #root {
@@ -62,12 +62,12 @@ body:not(.audit-theme) .capacitor-app {
   padding-right: var(--safe-area-inset-right) !important;
   padding-bottom: var(--safe-area-inset-bottom) !important;
   padding-left: var(--safe-area-inset-left) !important;
-  background-color: #0f0f23 !important;
+  background-color: #f8fafc !important;
 }
 
 @supports (padding: max(0px)) {
   body:not(.audit-theme) {
-    background-color: #08080a;
+    background-color: #f8fafc;
   }
 }
 

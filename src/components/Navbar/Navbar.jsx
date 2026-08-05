@@ -149,9 +149,6 @@ const Navbar = () => {
         {/* Brand & Page Title Section */}
         <div className={styles.logoSection}>
           <div className={styles.brandContainer}>
-            <div className={styles.brandIcon}>
-              <SparklesIcon className="w-5 h-5 text-white" />
-            </div>
             <div>
               <span className={styles.brandBadge}>EDUQUITY</span>
               <h1 className={styles.title}>{getHeaderText()}</h1>
@@ -284,7 +281,7 @@ const Navbar = () => {
               onClick={toggleInfoPage}
               title={location.pathname === "/about" ? "Close Info" : "About System"}
             >
-              <InfoIcon className="w-4.5 h-4.5 text-white/80" />
+              <InfoIcon className="w-4.5 h-4.5 text-[#0f172a]" />
             </button>
             <button
               className={styles.logoutHeaderBtn}
@@ -306,7 +303,7 @@ const Navbar = () => {
             onClick={toggleInfoPage}
             aria-label={location.pathname === "/about" ? "Close Info" : "About System"}
           >
-            <InfoIcon className="w-5 h-5 text-white/80" />
+            <InfoIcon className="w-5 h-5 text-[#0f172a]" />
           </button>
           <button
             className={styles.mobileLogoutHeaderBtn}

@@ -1,4 +1,3 @@
-/* Vibrant Premium Orange & White Theme for Auth Login Page */
 .authContainer {
   position: fixed;
   top: 0;
@@ -11,7 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #fffdfa 0%, #fff5ed 45%, #ffede0 100%);
+  background: #f8fafc;
   padding: 16px;
   overflow: hidden;
   user-select: none;
@@ -20,32 +19,6 @@
   z-index: 9999;
 }
 
-/* Vibrant Orange Ambient Glow */
-.authContainer::before {
-  content: '';
-  position: absolute;
-  top: -15%;
-  right: -10%;
-  width: 450px;
-  height: 450px;
-  background: radial-gradient(circle, rgba(255, 119, 0, 0.18) 0%, transparent 65%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.authContainer::after {
-  content: '';
-  position: absolute;
-  bottom: -15%;
-  left: -10%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(255, 153, 51, 0.14) 0%, transparent 65%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 1;
-}
 
 .loginCard {
   background: #ffffff;
