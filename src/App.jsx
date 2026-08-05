@@ -10,7 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import ManualAttendance from "./components/ManualAttendance/ManualAttendance";
 import AuditRoutes from './components/audit/AuditRoutes';
 import SyncManager from './components/audit/components/SyncManager';
-import Navbar from "./components/Navbar/Navbar";
+import MainLayout from "./components/Layout/MainLayout";
 
 import Incident from "./components/Incidents/Incident";
 import TicketTable from "./components/Tickets/TicketTable";
@@ -38,12 +38,14 @@ function AppRoutes() {
         }
       />
 
-      {/* Protected routes - only accessible when authenticated */}
+      {/* Protected main app routes wrapped in MainLayout */}
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Dashboard />
+            <MainLayout>
+              <Dashboard />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -51,7 +53,9 @@ function AppRoutes() {
         path="/attendance"
         element={
           <ProtectedRoute requireAuth={true}>
-            <CheckIn />
+            <MainLayout>
+              <CheckIn />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -59,7 +63,9 @@ function AppRoutes() {
         path="/manual-attendance"
         element={
           <ProtectedRoute requireAuth={true}>
-            <ManualAttendance />
+            <MainLayout>
+              <ManualAttendance />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -67,7 +73,9 @@ function AppRoutes() {
         path="/profile"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Profile />
+            <MainLayout>
+              <Profile />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -75,8 +83,9 @@ function AppRoutes() {
         path="/tickets"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Navbar />
-            <TicketTable />
+            <MainLayout>
+              <TicketTable />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -84,7 +93,9 @@ function AppRoutes() {
         path="/incidents"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Incident />
+            <MainLayout>
+              <Incident />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -92,7 +103,9 @@ function AppRoutes() {
         path="/attendance-history"
         element={
           <ProtectedRoute requireAuth={true}>
-            <AttendanceHistory />
+            <MainLayout>
+              <AttendanceHistory />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -100,11 +113,14 @@ function AppRoutes() {
         path="/expenses"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Expenses />
+            <MainLayout>
+              <Expenses />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
-      {/* Audit routes */}
+
+      {/* Audit routes - manages its own AuditLayout */}
       <Route
         path="/audit/*"
         element={
@@ -113,12 +129,14 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/about"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Navbar />
-            <About />
+            <MainLayout>
+              <About />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -126,8 +144,9 @@ function AppRoutes() {
         path="/center"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Navbar />
-            <CenterPage />
+            <MainLayout>
+              <CenterPage />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -136,8 +155,9 @@ function AppRoutes() {
         path="/center/venue-infrastructure"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Navbar />
-            <VenueInfrastructurePage />
+            <MainLayout>
+              <VenueInfrastructurePage />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -145,8 +165,9 @@ function AppRoutes() {
         path="/center/venue-infrastructure/readiness-checklist"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Navbar />
-            <ExamDayReadinessChecklist />
+            <MainLayout>
+              <ExamDayReadinessChecklist />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -154,8 +175,9 @@ function AppRoutes() {
         path="/center/venue-infrastructure/sealing-checklist"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Navbar />
-            <SealingChecklist />
+            <MainLayout>
+              <SealingChecklist />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -163,8 +185,9 @@ function AppRoutes() {
         path="/center/venue-infrastructure/shift-wise-checklist"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Navbar />
-            <ShiftWiseChecklist />
+            <MainLayout>
+              <ShiftWiseChecklist />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -172,21 +195,12 @@ function AppRoutes() {
         path="/center/venue-infrastructure/unsealing-checklist"
         element={
           <ProtectedRoute requireAuth={true}>
-            <Navbar />
-            <UnsealingChecklist />
+            <MainLayout>
+              <UnsealingChecklist />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/expenses"
-        element={
-          <ProtectedRoute requireAuth={true}>
-            <Navbar />
-            <Expenses />
-          </ProtectedRoute>
-        }
-      />
-
     </Routes>
   );
 }

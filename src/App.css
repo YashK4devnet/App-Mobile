@@ -23,8 +23,7 @@ body:not(.audit-theme) {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f8fafc;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
   color: #0f172a;
 
   /* Add safe area padding only to body */

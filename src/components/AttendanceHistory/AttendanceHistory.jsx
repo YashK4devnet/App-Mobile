@@ -76,7 +76,6 @@ const AttendanceHistory = () => {
 
   return (
     <>
-      <Navbar />
       <div className={styles.cardContainer}>
         <div className={styles.attendanceCard}>
           <div className={styles.cardHeader}>

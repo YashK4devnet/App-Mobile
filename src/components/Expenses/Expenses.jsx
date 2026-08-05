@@ -148,7 +148,6 @@ const Expenses = () => {
   // ------------------------------
   return (
     <>
-      <Navbar />
       <div className={styles.expensesContainer}>
         {/* Summary Cards */}
         <div className={styles.summarySection}>

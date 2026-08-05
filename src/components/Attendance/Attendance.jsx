@@ -219,7 +219,6 @@ const CheckIn = () => {
 
   return (
     <>
-      <Navbar />
       <div className={styles.attendanceContainer}>
         {loading && (
           <div className={styles.loadingOverlay}>

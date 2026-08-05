@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Navbar from "../Navbar/Navbar";
 import { useAppContext } from "../../store/AppContext";
 import styles from "./Dashboard.module.css";
 import logo from "../../assets/Eduquity25.jpg";
@@ -260,7 +259,6 @@ const Dashboard = () => {
 
   return (
     <div className={styles.dashboardContainer}>
-      <Navbar />
       <main className={styles.mainContent}>
         {/* Welcome Section */}
         <div className={styles.welcomeSection}>

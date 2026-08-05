@@ -155,7 +155,6 @@ const ManualAttendance = () => {
 
   return (
     <>
-      <Navbar />
       <div className={styles.manualAttendanceContainer}>
         <div className={styles.formContainer}>
           <div className={styles.formCard}>

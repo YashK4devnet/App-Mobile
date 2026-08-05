@@ -51,7 +51,6 @@ const Profile = () => {
 
   return (
     <>
-      <Navbar />
       <div className={styles.cardContainer}>
         <div className={styles.profileCard}>
           {/* Top Right Status Badge */}

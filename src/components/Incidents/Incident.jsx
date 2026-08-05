@@ -41,7 +41,6 @@ const Incident = () => {
 
   return (
     <>
-      <Navbar />
       <div className={styles.pageBackground}>
         <div className={styles.incidentCard}>
           {/* Header */}
