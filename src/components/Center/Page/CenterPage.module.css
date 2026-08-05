@@ -1,12 +1,10 @@
 :root {
-  --bg-page: rgba(15, 15, 35, 0.95);
+  --bg-page: #f8fafc;
+  --text: #0f172a;
+  --text-dim: #64748b;
+  --accent: #ff7700;
 
-  --text: #ffffff;
-  --text-dim: rgba(255, 255, 255, 0.7);
-
-  --accent: #ffffff;
-
-  --radius: clamp(10px, 2vw, 14px);
+  --radius: clamp(10px, 2vw, 16px);
   --fs-md: clamp(14px, 1.8vw, 16px);
   --fs-lg: clamp(16px, 2.5vw, 20px);
   --fs-xl: clamp(18px, 3vw, 24px);
@@ -18,30 +16,31 @@
 
 /* Page container */
 .centerPage {
-  min-height: 100vh;
+  min-height: 100%;
   background: var(--bg-page);
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: var(--space-lg);
-  padding-top: calc(75px + var(--android-statusbar-height, env(safe-area-inset-top, 0px)));
-  padding-bottom: calc(95px + env(safe-area-inset-bottom, 0px));
+  padding: var(--space-md);
+  padding-top: 16px;
+  padding-bottom: 40px;
 }
 
 /* Main container */
 .centerContainer {
   width: 100%;
   max-width: min(95vw, 800px);
-  background: var(--bg-page); /* SAME background */
+  background: #ffffff;
   border-radius: var(--radius);
   padding: var(--space-lg);
   text-align: center;
-  border: none; /* remove border to avoid mismatched edges */
+  border: 1px solid rgba(255, 119, 0, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .pageTitle {
   font-size: var(--fs-xl);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text);
   margin-bottom: var(--space-lg);
 }
@@ -60,27 +59,29 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  padding: clamp(16px, 5vh, 28px);
+  padding: clamp(20px, 5vh, 32px);
   border-radius: var(--radius);
   font-size: var(--fs-md);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text);
-  background: var(--bg-page); /* FORCE same background */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* faint outline */
+  background: #ffffff;
+  border: 1px solid rgba(255, 119, 0, 0.2);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .actionCard:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 24px rgba(255, 119, 0, 0.15);
   transform: translateY(-2px);
 }
 
 .icon {
   font-size: clamp(28px, 6vw, 34px);
-  color: var(--text);
+  color: var(--accent);
 }
+
 /* Popup Overlay */
 .popupOverlay {
   position: fixed;
@@ -88,7 +89,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -97,34 +99,35 @@
 
 /* Popup Box */
 .popupBox {
-  background: rgba(30, 30, 50, 0.95);
+  background: #ffffff;
   padding: 24px 20px;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 119, 0, 0.2);
   max-width: 350px;
   width: 90%;
   text-align: center;
-  color: #ffffff;
+  color: #0f172a;
   font-size: 14px;
   line-height: 1.6;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
 
 /* Popup Button */
 .closeButton {
   margin-top: 16px;
-  padding: 10px 20px;
+  padding: 10px 24px;
   border: none;
-  background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
-  border-radius: 8px;
-  color: white;
-  font-size: 25px;
-  font-weight: 500;
+  background: #ff7700;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .closeButton:hover {
+  background: #ea580c;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4);
+  box-shadow: 0 4px 12px rgba(255, 119, 0, 0.3);
 }

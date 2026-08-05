@@ -1,12 +1,13 @@
 .formWrapper {
   width: 100%;
-  max-width: none; /* ✅ CHANGE from 900px to none */
-  background: #252839;
+  max-width: none;
+  background: #ffffff;
+  border: 1px solid rgba(255, 119, 0, 0.2);
   border-radius: 16px;
   padding: clamp(1.5rem, 4vw, 2.5rem);
-  color: #ffffff;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  margin-top: 2rem;
+  color: #0f172a;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  margin-top: 1rem;
   margin-bottom: 4rem;
 }
 
@@ -18,7 +19,7 @@
   font-weight: 700;
   text-align: center;
   margin-bottom: clamp(2rem, 5vh, 3rem);
-  color: #ffffff;
+  color: #0f172a;
   letter-spacing: -0.5px;
 }
 
@@ -31,20 +32,20 @@
 
 .subTitle {
   font-size: clamp(1.1rem, 2.5vw, 1.3rem);
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 1.25rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #ffffff;
+  color: #0f172a;
   padding-bottom: 0.75rem;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid rgba(255, 119, 0, 0.2);
 }
 
 .subTitle svg {
   width: 20px;
   height: 20px;
-  color: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  color: #ff7700;
 }
 
 /* ============================================
@@ -73,8 +74,8 @@
 
 .inputGroup label {
   font-size: 0.9rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  color: #334155;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -83,16 +84,16 @@
 .inputGroup label svg {
   width: 16px;
   height: 16px;
-  color: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  color: #ff7700;
 }
 
 .inputGroup input,
 .textArea {
   padding: 0.875rem 1rem;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  color: #ffffff;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
   font-size: 0.95rem;
   width: 100%;
   transition: all 0.2s ease;
@@ -102,15 +103,15 @@
 .inputGroup input:focus,
 .textArea:focus {
   outline: none;
-  background: rgba(255, 255, 255, 0.08);
-  border-color: linear-gradient(135deg, #ff6b6b, #4ecdc4);
-  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+  background: #ffffff;
+  border-color: #ff7700;
+  box-shadow: 0 0 0 3px rgba(255, 119, 0, 0.15);
 }
 
 .inputGroup input:read-only {
-  background: rgba(255, 255, 255, 0.03);
+  background: #f1f5f9;
   cursor: not-allowed;
-  color: rgba(255, 255, 255, 0.6);
+  color: #64748b;
 }
 
 .textArea {
@@ -127,22 +128,23 @@
   align-items: center;
   gap: 0.75rem;
   font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #334155;
   padding: 0.5rem 0;
   cursor: pointer;
   user-select: none;
   transition: color 0.2s ease;
+  font-weight: 500;
 }
 
 .checkboxItem:hover {
-  color: #ffffff;
+  color: #0f172a;
 }
 
 .checkboxItem input[type="checkbox"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #ff6b6b;
+  accent-color: #ff7700;
   flex-shrink: 0;
 }
 
@@ -179,20 +181,20 @@
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  background: #ff7700;
   color: #ffffff;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.95rem;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  box-shadow: 0 4px 12px rgba(255, 119, 0, 0.2);
   flex: 1;
   min-width: 160px;
 }
 
 .photoButton:hover {
-  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  background: #ea580c;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  box-shadow: 0 6px 16px rgba(255, 119, 0, 0.3);
 }
 
 .photoButton:active {
@@ -215,8 +217,9 @@
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   aspect-ratio: 1;
 }
 
@@ -231,7 +234,7 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgba(0, 0, 0, 0.75);
+  background: #f43f5e;
   border: none;
   border-radius: 50%;
   width: 32px;
@@ -242,11 +245,10 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  backdrop-filter: blur(4px);
 }
 
 .removePhoto:hover {
-  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  background: #e11d48;
   transform: scale(1.1);
 }
 
@@ -265,20 +267,20 @@
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  background: #ff7700;
   color: #ffffff;
   font-weight: 700;
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 16px linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  box-shadow: 0 4px 16px rgba(255, 119, 0, 0.2);
 }
 
 .submitButton:hover {
-  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  background: #ea580c;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  box-shadow: 0 6px 20px rgba(255, 119, 0, 0.3);
 }
 
 .submitButton:active {
@@ -295,7 +297,7 @@
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(15, 23, 42, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -305,15 +307,15 @@
 }
 
 .modalBox {
-  background: #252839;
-  border: 2px solid rgba(255, 107, 107, 0.3);
-  color: #ffffff;
+  background: #ffffff;
+  border: 1px solid rgba(255, 119, 0, 0.3);
+  color: #0f172a;
   padding: 2rem;
   border-radius: 16px;
   max-width: 420px;
   width: 90%;
   text-align: center;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
   animation: modalFadeIn 0.3s ease;
 }
 
@@ -321,7 +323,7 @@
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 1.5rem;
-  color: rgba(255, 255, 255, 0.95);
+  color: #334155;
 }
 
 .modalButton {
@@ -329,19 +331,19 @@
   font-size: 1rem;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  background: #ff7700;
   color: #ffffff;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   transition: all 0.2s ease;
   min-width: 120px;
-  box-shadow: 0 4px 12px linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  box-shadow: 0 4px 12px rgba(255, 119, 0, 0.2);
 }
 
 .modalButton:hover {
-  background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  background: #ea580c;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px linear-gradient(135deg, #ff6b6b, #4ecdc4);
+  box-shadow: 0 6px 16px rgba(255, 119, 0, 0.3);
 }
 
 .modalButton:active {
@@ -355,7 +357,7 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: conic-gradient(#ff6b6b, #4ecdc4);
+  background: conic-gradient(#ff7700, #ea580c);
   mask: radial-gradient(farthest-side, transparent 70%, black 71%);
   -webkit-mask: radial-gradient(farthest-side, transparent 70%, black 71%);
   animation: spin 0.8s linear infinite;

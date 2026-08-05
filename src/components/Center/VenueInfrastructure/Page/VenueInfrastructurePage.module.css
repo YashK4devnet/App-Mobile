@@ -1,9 +1,9 @@
 :root {
-  --bg-page: rgba(15, 15, 35, 0.95);
-  --bg-card: rgba(255, 255, 255, 0.05);
-  --border: rgba(255, 255, 255, 0.12);
-  --text: #ffffff;
-  --text-dim: rgba(255, 255, 255, 0.75);
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --border: rgba(255, 119, 0, 0.2);
+  --text: #0f172a;
+  --text-dim: #64748b;
 
   --radius: clamp(8px, 2vw, 16px);
   --fs-sm: clamp(0.8rem, 1.5vw, 0.9rem);
@@ -17,13 +17,14 @@
 
 /* Page wrapper */
 .pageWrapper {
-  min-height: 100vh;
+  min-height: 100%;
   background: var(--bg-page);
   padding: var(--space-lg);
+  padding-top: 16px;
+  padding-bottom: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 6rem;
 }
 
 /* Back button */
@@ -31,12 +32,13 @@
   align-self: flex-start;
   margin-bottom: var(--space-lg);
 
-  background: transparent;
+  background: #ffffff;
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: var(--space-sm) var(--space-md);
   font-size: var(--fs-md);
+  font-weight: 600;
 
   cursor: pointer;
   display: inline-flex;
@@ -44,11 +46,14 @@
   gap: var(--space-sm);
 
   transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 .backButton:hover {
-  background: var(--bg-card);
-  border-color: var(--text-dim);
+  background: #ffffff;
+  border-color: #ff7700;
+  color: #ff7700;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 119, 0, 0.15);
 }
 .backIcon {
   font-size: 1.1em;
@@ -77,26 +82,29 @@
   min-height: clamp(120px, 18vh, 160px);
   border-radius: var(--radius);
 
-  background: var(--bg-card);
+  background: #ffffff;
   border: 1px solid var(--border);
   color: var(--text);
 
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s ease, background 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 .cardButton:hover {
   transform: translateY(-4px);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: #ff7700;
+  box-shadow: 0 8px 24px rgba(255, 119, 0, 0.15);
 }
 
 .cardIcon {
   font-size: clamp(1.5rem, 3vw, 2rem);
+  color: #ff7700;
 }
 
 .cardTitle {
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .cardSubtitle {
@@ -104,7 +112,6 @@
   color: var(--text-dim);
 }
 
-/* Responsive behavior is automatic thanks to clamp + auto-fit grid */
 /* Popup Overlay */
 .popupOverlay {
   position: fixed;
@@ -112,7 +119,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(15, 15, 35, 0.8);
+  background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -122,21 +129,21 @@
 
 /* Popup Card */
 .popupCard {
-  background: rgba(25, 25, 50, 0.95);
-  border: 2px solid rgba(255, 107, 107, 0.5);
+  background: #ffffff;
+  border: 1px solid rgba(255, 119, 0, 0.3);
   border-radius: clamp(0.8rem, 2vw, 1.5rem);
   padding: clamp(1.5rem, 4vw, 3rem);
   max-width: clamp(300px, 80vw, 500px);
   text-align: center;
-  color: white;
-  box-shadow: 0 0 2rem rgba(0, 0, 0, 0.4);
+  color: #0f172a;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
   animation: popupFadeIn 0.3s ease-out;
 }
 
 /* Popup Icon */
 .popupIcon {
   font-size: clamp(2rem, 6vw, 3rem);
-  color: #ff6b6b;
+  color: #ea580c;
   margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
 }
 
@@ -144,34 +151,35 @@
 .popupTitle {
   font-size: clamp(1.2rem, 3vw, 1.8rem);
   font-weight: 700;
+  color: #0f172a;
   margin-bottom: clamp(0.5rem, 1vw, 1rem);
 }
 
 /* Message */
 .popupMessage {
   font-size: clamp(0.9rem, 2.2vw, 1.1rem);
-  color: rgba(255, 255, 255, 0.8);
+  color: #64748b;
   margin-bottom: clamp(1rem, 2vw, 1.5rem);
   line-height: 1.5;
 }
 
 /* Close Button */
 .popupCloseBtn {
-  background: transparent;
+  background: #ff7700;
   color: white;
-  border: 2px solid rgba(255, 107, 107, 0.6);
+  border: none;
   padding: clamp(0.5rem, 1vw, 0.8rem) clamp(1rem, 2vw, 1.5rem);
   border-radius: 1rem;
   font-size: clamp(0.8rem, 1.5vw, 1rem);
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .popupCloseBtn:hover {
-  background: rgba(255, 107, 107, 0.2);
-  border-color: #ff6b6b;
-  box-shadow: 0 0 1rem rgba(255, 107, 107, 0.4);
+  background: #ea580c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 119, 0, 0.3);
 }
 
 /* Animation */
