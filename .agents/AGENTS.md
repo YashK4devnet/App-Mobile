@@ -128,7 +128,25 @@ This document provides persistent context for the App-Mobile React application, 
   - Configured Tailwind v4 `@theme` design tokens in `index.css` for `--color-obsidian-bg`, `--color-obsidian-card`, and `--color-brand-orange`.
   - Updated all Audit layouts, headers, bottom navigation (`BottomNav.jsx`), accordion lists (`SubsectionAccordion.jsx`), progress bars, filter pills, and form controls (`FormYesNoSelector`, `FormQualitySelector`, `FormRating10Scale`, `FormSignature`, etc.) from legacy deep blue (`#0F0F23`) and teal (`#4ECDC4`) to Matte Black & Warm Orange.
   - Eliminated all heavy neon/orange glows (`box-shadow`) from icons, badges, buttons, active nav pills, and cards for a clean, matte, high-end design.
-- **Sensitive Console Log Cleanup (Production Readiness):**
-  - Removed all `console.log` and native `Log.d` statements dumping raw authentication API responses, user credentials, `serverApiKey` headers, full `loginData` objects, and raw location payloads (`Auth.jsx`, `AppContext.jsx`, `AuditContext.jsx`, `httpClient.js`, `NativeTrackingPlugin.java`).
+- **Center Infrastructure Checklist Modernization:**
+  - Converted `ExamDayReadinessChecklist.module.css`, `SealingChecklist.module.css`, `ShiftWiseChecklist.module.css`, `UnsealingChecklist.module.css`, and `ChecklistForm.module.css` from legacy dark colors to off-white (`#f8fafc`), dark slate (`#0f172a`), and warm orange (`#ff7700`) design tokens.
+- **Splash Screen Center Alignment & Radial Animation:**
+  - Updated `SplashScreen.jsx` and `SplashScreen.module.css` to dead-center the logo at 50%/50% (`transform: translate(-50%, -50%)`), matching Android's native splash screen bitmap. Moved text and spinner below logo, with layered animated radial orange background wave ripples.
+- **Status Bar Overlay Setup:**
+  - Changed `capacitor.config.json` SplashScreen `backgroundColor` to `#FFFFFF`. Added global `StatusBar.setOverlaysWebView({ overlay: true })` and `StatusBar.setStyle({ style: Style.Light })` in `App.jsx` and `Auth.jsx` to prevent top black bar glitches across non-navbar screens.
+- **Signatures Section Restored Submission & Locking:**
+  - Updated `useAuditWizard.js` to allow `PersonnelInfo` to be tracked in `submittedSections` and locked upon submission. Removed `PersonnelInfo` from Next-only bypass lists in Venue, Network, and Power audit wizards so Save and Submit & Next buttons render and post signature payloads to Odoo.
+- **Audit Index Padding & Floating Start Audit Button Removal:**
+  - Removed floating `isAuditNotStarted` "Start Audit" button overlay from `renderIndexView` in `VenueAuditWizard.jsx`, `NetworkAuditWizard.jsx`, and `PowerAuditWizard.jsx`. Rendered Start Audit button directly inside form view action footer in warm orange (`#ff7700`).
+  - Added `pb-28` to `AuditIndex.jsx` scroll container and `pb-32` to wizard form content containers so section cards and form inputs scroll cleanly above bottom navigation and action footers without clipping.
+- **Logout & Background Tracking Notification Removal:**
+  - Added `bg_watcher_id` persistence in `localStorage` inside `liveTrackingService.js`. When `stopTracking()` or `logout()` runs, `liveTrackingService` removes the background geolocation watcher (`BackgroundGeolocation.removeWatcher({ id })`) and clears native tracking config (`NativeTracking.stopTracking()`), immediately terminating the foreground service notification on logout without requiring an app force-close.
+- **Check-Out Immediate Location Update:**
+  - Added `sendFinalCheckoutLocation()` to `liveTrackingService.js`. Captured high-accuracy GPS position (`latitude`, `longitude`, `date`, `time`, `employee_id`) and sent an immediate POST update to `/api/employee/location/log` upon Check-Out in `AppContext.jsx` before shutting down background tracking.
+- **Attendance Record Sorting & Check-In Server Sync:**
+  - Updated `Attendance.jsx` to sort `data.records` descending by ID (`att_id`/`id`) before picking `latestRecord`, ensuring `fetchAttendanceStatus()` always processes the newest check-in activity instead of an old record.
+  - Updated `syncCheckInFromServer(checkInTime)` call in `Attendance.jsx` to explicitly pass the parsed server timestamp, updating `AppContext` state and `localStorage` so server data properly overwrites local draft storage on fetch.
+  - Updated `setConfig` in `NativeTrackingPlugin.java` to reset `lastPostTime = 0` whenever tracking starts, ensuring manual check-in location pings bypass the 15-minute throttle interval immediately.
+
 
 
