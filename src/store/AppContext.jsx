@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
-import { getAccurateTime } from "../services/timeService";
+import { getAccurateTime, calibrateTimeFromResponse } from "../services/timeService";
 import { liveTrackingService } from "../services/liveTrackingService";
 
 const getAssignedCoordinates = async () => {
@@ -298,6 +298,8 @@ export const AppProvider = ({ children }) => {
                 "User-Agent": "Mozilla/5.0 (Mobile; app-reload-check)",
               },
             });
+
+            calibrateTimeFromResponse(response);
 
             const responseText = await response.text();
 
@@ -782,12 +784,12 @@ export const AppProvider = ({ children }) => {
             "📝 User appears to be checked in but check-in ID is missing. Proceeding with local checkout only."
           );
 
-          // Perform local checkout without server update
+          const accurateTimeLocal = await getAccurateTime();
           dispatch({
             type: ActionTypes.CHECK_OUT,
             payload: {
-              time: new Date().toLocaleString(),
-              timestamp: new Date().toISOString(),
+              time: accurateTimeLocal.toLocaleString(),
+              timestamp: accurateTimeLocal.toISOString(),
               fromServer: false,
             },
           });

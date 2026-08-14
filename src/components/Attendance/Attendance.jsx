@@ -4,6 +4,7 @@ import { useAppContext } from "../../store/AppContext";
 import { useEffect, useState } from "react";
 import logo from "../../assets/Eduquity25.jpg";
 import { ClockIcon } from "../Navbar/NavbarIcons";
+import { getAccurateTime, calibrateTimeFromResponse } from "../../services/timeService";
 
 import { Geolocation } from "@capacitor/geolocation";
 import { Capacitor } from "@capacitor/core";
@@ -79,11 +80,14 @@ const CheckIn = () => {
 
   const userLoginData = JSON.parse(localStorage.getItem("loginData") || "{}");
 
-  // Update current time every second
+  // Update current time every second using true calibrated server time
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+    const updateClock = async () => {
+      const accurate = await getAccurateTime();
+      setCurrentTime(accurate);
+    };
+    updateClock();
+    const timer = setInterval(updateClock, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -114,6 +118,8 @@ const CheckIn = () => {
           },
         }
       );
+
+      calibrateTimeFromResponse(response);
 
       if (!response.ok) {
         let message = "Unexpected error occurred.";

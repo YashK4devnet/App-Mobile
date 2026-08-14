@@ -1,20 +1,79 @@
-const getAccurateTime = async () => {
+import { registerPlugin, Capacitor } from '@capacitor/core';
+
+const NativeTracking = registerPlugin('NativeTracking');
+const CALIBRATED_OFFSET_KEY = "server_time_offset_ms";
+
+let cachedJsOffset = null;
+
+/**
+ * Reads the HTTP 'Date' header from any fetch/axios response object or headers instance
+ * and updates the server_time_offset_ms in localStorage.
+ */
+const calibrateTimeFromResponse = (responseOrHeaders) => {
   try {
-    const response = await fetch(
-      "https://timeapi.io/api/Time/current/zone?timeZone=Asia/Kolkata"
-    );
-    if (!response.ok) {
-      throw new Error(`API responded with status: ${response.status}`);
+    let dateHeader = null;
+    if (responseOrHeaders) {
+      if (typeof responseOrHeaders.get === "function") {
+        dateHeader = responseOrHeaders.get("Date") || responseOrHeaders.get("date");
+      } else if (responseOrHeaders.headers && typeof responseOrHeaders.headers.get === "function") {
+        dateHeader = responseOrHeaders.headers.get("Date") || responseOrHeaders.headers.get("date");
+      } else if (responseOrHeaders.headers && typeof responseOrHeaders.headers === "object") {
+        dateHeader = responseOrHeaders.headers["Date"] || responseOrHeaders.headers["date"];
+      }
     }
 
-    const data = await response.json();
-    console.log("✅ Accurate time from timeapi.io:", data.dateTime);
-    return new Date(data.dateTime);
-  } catch (error) {
-    console.warn("⚠️ Failed to fetch time from timeapi.io:", error.message);
-    console.warn("⏰ Falling back to client system time.");
-    return new Date(); // Local system time as fallback
+    if (dateHeader) {
+      const serverTimeMs = new Date(dateHeader).getTime();
+      if (!isNaN(serverTimeMs)) {
+        const offsetMs = serverTimeMs - Date.now();
+        cachedJsOffset = offsetMs;
+        localStorage.setItem(CALIBRATED_OFFSET_KEY, offsetMs.toString());
+        console.log("⏱️ Server time offset calibrated:", offsetMs, "ms");
+      }
+    }
+  } catch (err) {
+    console.warn("Could not calibrate server time from response header:", err);
   }
 };
 
-export { getAccurateTime };
+/**
+ * Returns a Date object adjusted by native true time calibration if available,
+ * or latest calibrated server offset, falling back to local system time.
+ */
+const getAccurateTime = async (forceRefresh = false) => {
+  // Use in-memory cached offset for instant 1-second UI clock ticks without bridge overhead
+  if (cachedJsOffset !== null && !forceRefresh) {
+    return new Date(Date.now() + cachedJsOffset);
+  }
+
+  if (Capacitor.isNativePlatform()) {
+    try {
+      const res = await NativeTracking.getTrueTime();
+      if (res && res.trueTimeMs) {
+        cachedJsOffset = res.trueTimeMs - Date.now();
+        return new Date(res.trueTimeMs);
+      }
+    } catch (e) {
+      console.warn("⚠️ NativeTracking.getTrueTime failed, falling back to web offset:", e);
+    }
+  }
+
+  try {
+    const rawOffset = localStorage.getItem(CALIBRATED_OFFSET_KEY);
+    if (rawOffset !== null) {
+      const offsetMs = Number(rawOffset);
+      if (!isNaN(offsetMs)) {
+        cachedJsOffset = offsetMs;
+        return new Date(Date.now() + offsetMs);
+      }
+    }
+  } catch (e) {}
+
+  return new Date();
+};
+
+export { getAccurateTime, calibrateTimeFromResponse };
+
+
+
+

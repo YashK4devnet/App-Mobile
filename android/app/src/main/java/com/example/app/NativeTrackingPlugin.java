@@ -6,10 +6,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.os.PowerManager;
+import android.os.SystemClock;
+import android.provider.Settings;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -26,11 +31,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import android.os.PowerManager;
-import android.provider.Settings;
-import android.net.Uri;
-import com.getcapacitor.JSObject;
-
 @CapacitorPlugin(name = "NativeTracking")
 public class NativeTrackingPlugin extends Plugin {
     public static String apiKey = "";
@@ -43,6 +43,11 @@ public class NativeTrackingPlugin extends Plugin {
     private static final String PREFS_NAME = "NativeTrackingPrefs";
     private static final String KEY_OFFLINE_QUEUE = "offline_location_queue";
     private static final int MAX_QUEUE_SIZE = 200;
+
+    // Unified Trusted Time Preferences & Keys
+    private static final String PREFS_TIME_NAME = "TrustedTimePrefs";
+    private static final String KEY_BOOT_TIME_BASELINE = "boot_time_baseline";
+    private static final String KEY_LAST_RECORDED_TIMESTAMP = "last_recorded_log_timestamp";
 
     private BroadcastReceiver locationReceiver = new BroadcastReceiver() {
         @Override
@@ -121,6 +126,20 @@ public class NativeTrackingPlugin extends Plugin {
     }
 
     @PluginMethod
+    public void getTrueTime(PluginCall call) {
+        try {
+            Context context = getContext();
+            long trueTimeMs = getTrueTimestampMs(context);
+            JSObject ret = new JSObject();
+            ret.put("trueTimeMs", trueTimeMs);
+            call.resolve(ret);
+        } catch (Exception e) {
+            Log.e("NativeTracking", "Failed to get true time", e);
+            call.reject("Failed to get true time: " + e.getMessage());
+        }
+    }
+
+    @PluginMethod
     public void requestIgnoreBatteryOptimizations(PluginCall call) {
         try {
             Context context = getContext();
@@ -148,28 +167,75 @@ public class NativeTrackingPlugin extends Plugin {
         }
     }
 
+    /**
+     * Unified Time Formula: TrueTimestampMs = boot_time_baseline + SystemClock.elapsedRealtime()
+     * Includes Offline Reboot Protection Guard & Cold Start Seed.
+     */
+    private synchronized long getTrueTimestampMs(Context context) {
+        if (context == null) {
+            return System.currentTimeMillis();
+        }
+        SharedPreferences timePrefs = context.getSharedPreferences(PREFS_TIME_NAME, Context.MODE_PRIVATE);
+        long bootTimeBaseline = timePrefs.getLong(KEY_BOOT_TIME_BASELINE, 0L);
+        long currentElapsedRealtime = SystemClock.elapsedRealtime();
+
+        // Seed fallback for first run if no server HTTP Date header baseline has been established yet
+        if (bootTimeBaseline == 0L) {
+            bootTimeBaseline = System.currentTimeMillis() - currentElapsedRealtime;
+            timePrefs.edit().putLong(KEY_BOOT_TIME_BASELINE, bootTimeBaseline).apply();
+            Log.d("NativeTracking", "🌱 Initialized boot_time_baseline seed: " + bootTimeBaseline);
+        }
+
+        long calculatedTrueTimestamp = bootTimeBaseline + currentElapsedRealtime;
+        long lastRecordedTimestamp = timePrefs.getLong(KEY_LAST_RECORDED_TIMESTAMP, 0L);
+
+        // Offline Reboot Guard: If phone reboots offline, elapsedRealtime resets to 0. Force chronological progress.
+        if (lastRecordedTimestamp > 0 && calculatedTrueTimestamp < lastRecordedTimestamp) {
+            Log.w("NativeTracking", "⚠️ Offline reboot anomaly detected! Calculated TrueTimestamp (" + calculatedTrueTimestamp 
+                    + ") < LastRecorded (" + lastRecordedTimestamp + "). Advancing 1s ahead.");
+            calculatedTrueTimestamp = lastRecordedTimestamp + 1000L;
+        }
+
+        return calculatedTrueTimestamp;
+    }
+
+    private synchronized void updateLastRecordedTimestamp(Context context, long timestampMs) {
+        if (context == null) return;
+        SharedPreferences timePrefs = context.getSharedPreferences(PREFS_TIME_NAME, Context.MODE_PRIVATE);
+        timePrefs.edit().putLong(KEY_LAST_RECORDED_TIMESTAMP, timestampMs).apply();
+    }
+
     private void sendLocationToServer(Location location) {
         final Context context = getContext();
         new Thread(() -> {
             try {
-                JSONObject json = new JSONObject();
-                json.put("employee_id", Integer.parseInt(employeeId));
-                
-                // Keep as Double (Numbers) instead of Strings, as required by backend schema
-                json.put("latitude", location.getLatitude());
-                json.put("longitude", location.getLongitude());
-                
-                // date format: yyyy-MM-dd
+                // Calculate True Server-Calibrated Timestamp
+                long trueTimestampMs = getTrueTimestampMs(context);
+                Date trueDate = new Date(trueTimestampMs);
+
+                // ISO 8601 UTC string (e.g. 2026-08-14T12:30:00.123Z)
+                SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+                isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                // Date & Time strings in local timezone
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
                 dateFormat.setTimeZone(TimeZone.getDefault());
-                json.put("date", dateFormat.format(new Date(location.getTime())));
-                
-                // time format: 24 hr
+
                 SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
                 timeFormat.setTimeZone(TimeZone.getDefault());
-                json.put("time", timeFormat.format(new Date(location.getTime())));
 
-                Log.d("NativeTracking", "Sending POST to: " + endpointUrl);
+                JSONObject json = new JSONObject();
+                json.put("employee_id", Integer.parseInt(employeeId));
+                json.put("latitude", location.getLatitude());
+                json.put("longitude", location.getLongitude());
+                json.put("recordedAt", isoFormat.format(trueDate));
+                json.put("date", dateFormat.format(trueDate));
+                json.put("time", timeFormat.format(trueDate));
+
+                // Update checkpoint for reboot guard
+                updateLastRecordedTimestamp(context, trueTimestampMs);
+
+                Log.d("NativeTracking", "Sending POST to: " + endpointUrl + " | recordedAt: " + isoFormat.format(trueDate));
 
                 int statusCode = sendSingleJsonPayload(json);
                 if (statusCode >= 200 && statusCode < 300) {
@@ -207,6 +273,43 @@ public class NativeTrackingPlugin extends Plugin {
 
             int responseCode = conn.getResponseCode();
             Log.d("NativeTracking", "POST Response Code: " + responseCode + " for payload: " + json.toString());
+
+            // ONLINE CALIBRATION RULE: Auto-calibrate baseline using HTTP 'Date' header (case-insensitive)
+            if (responseCode >= 200 && responseCode < 300) {
+                String dateHeader = conn.getHeaderField("Date");
+                if (dateHeader == null) {
+                    dateHeader = conn.getHeaderField("date");
+                }
+                if (dateHeader == null && conn.getHeaderFields() != null) {
+                    for (java.util.Map.Entry<String, java.util.List<String>> entry : conn.getHeaderFields().entrySet()) {
+                        if (entry.getKey() != null && entry.getKey().equalsIgnoreCase("date")) {
+                            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+                                dateHeader = entry.getValue().get(0);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (dateHeader != null && !dateHeader.isEmpty() && getContext() != null) {
+                    try {
+                        // HTTP Date Format: "EEE, dd MMM yyyy HH:mm:ss z"
+                        SimpleDateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+                        Date serverDate = httpDateFormat.parse(dateHeader);
+                        if (serverDate != null) {
+                            long parsedServerTimeMs = serverDate.getTime();
+                            long newBaseline = parsedServerTimeMs - SystemClock.elapsedRealtime();
+
+                            SharedPreferences timePrefs = getContext().getSharedPreferences(PREFS_TIME_NAME, Context.MODE_PRIVATE);
+                            timePrefs.edit().putLong(KEY_BOOT_TIME_BASELINE, newBaseline).apply();
+                            Log.d("NativeTracking", "⏱️ Online Calibration Success! Updated boot_time_baseline: " + newBaseline);
+                        }
+                    } catch (Exception e) {
+                        Log.w("NativeTracking", "Failed to parse HTTP Date header: " + dateHeader, e);
+                    }
+                }
+            }
+
             return responseCode;
         } catch (Exception e) {
             Log.e("NativeTracking", "HTTP POST failed: " + e.getMessage());
@@ -276,3 +379,4 @@ public class NativeTrackingPlugin extends Plugin {
         }
     }
 }
+

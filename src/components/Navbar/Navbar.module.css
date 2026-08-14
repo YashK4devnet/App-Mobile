@@ -321,7 +321,7 @@
 }
 
 .slidingPillInner {
-  width: 75%;
+  width: 88%;
   height: 100%;
   border-radius: 12px;
   background: rgba(255, 119, 0, 0.12);
@@ -341,7 +341,7 @@
   cursor: pointer;
   z-index: 10;
   transition: color 0.25s ease, transform 0.15s ease;
-  padding: 4px 0;
+  padding: 4px 2px;
 }
 
 .mobileNavItem:active {
@@ -363,10 +363,11 @@
 }
 
 .mobileNavLabel {
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 600;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.3px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 /* Logout Modal */

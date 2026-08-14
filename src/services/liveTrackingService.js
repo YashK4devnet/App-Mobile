@@ -1,5 +1,6 @@
 import { registerPlugin } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { getAccurateTime } from './timeService';
 
 const NativeTracking = registerPlugin('NativeTracking');
 const BackgroundGeolocation = registerPlugin('BackgroundGeolocation');
@@ -173,7 +174,7 @@ class LiveTrackingService {
         const lng = position.coords.longitude;
         console.log('📍 [Checkout Location Update] Lat:', lat, 'Lng:', lng);
 
-        const now = new Date();
+        const now = await getAccurateTime();
         const dateStr = now.toISOString().slice(0, 10);
         const timeStr = now.toTimeString().slice(0, 8);
 

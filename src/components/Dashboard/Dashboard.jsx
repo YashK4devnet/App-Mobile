@@ -3,6 +3,7 @@ import { useAppContext } from "../../store/AppContext";
 import styles from "./Dashboard.module.css";
 import logo from "../../assets/Eduquity25.jpg";
 import { useNavigate } from "react-router-dom";
+import { getAccurateTime } from "../../services/timeService";
 import {
   ClockIcon,
   ManualEditIcon,
@@ -18,11 +19,14 @@ const Dashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
 
-  // Update current time every second
+  // Update current time every second using true calibrated server time
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+    const updateClock = async () => {
+      const accurate = await getAccurateTime();
+      setCurrentTime(accurate);
+    };
+    updateClock();
+    const timer = setInterval(updateClock, 1000);
 
     return () => clearInterval(timer);
   }, []);
