@@ -1,5 +1,6 @@
-import { registerPlugin } from '@capacitor/core';
+import { registerPlugin, Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { Geolocation } from '@capacitor/geolocation';
 import { getAccurateTime } from './timeService';
 
 const NativeTracking = registerPlugin('NativeTracking');
@@ -157,21 +158,24 @@ class LiveTrackingService {
       const config = this.getTrackingConfig();
       if (!config.apiKey || !config.employeeId) return;
 
-      const position = await new Promise((resolve) => {
-        if (!navigator.geolocation) return resolve(null);
-        navigator.geolocation.getCurrentPosition(
-          (pos) => resolve(pos),
-          (err) => {
-            console.warn('Checkout position capture error:', err);
-            resolve(null);
-          },
-          { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-        );
-      });
+      let lat = this.lastLocation?.lat || null;
+      let lng = this.lastLocation?.lng || null;
 
-      if (position && position.coords) {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
+      try {
+        const pos = await Geolocation.getCurrentPosition({
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 30000,
+        });
+        if (pos && pos.coords) {
+          lat = pos.coords.latitude;
+          lng = pos.coords.longitude;
+        }
+      } catch (e) {
+        console.warn('Geolocation capture fallback to lastLocation:', e);
+      }
+
+      if (lat && lng) {
         console.log('📍 [Checkout Location Update] Lat:', lat, 'Lng:', lng);
 
         const now = await getAccurateTime();
@@ -186,6 +190,7 @@ class LiveTrackingService {
           time: timeStr
         };
 
+        console.log('🚀 Sending final checkout location POST:', payload);
         await fetch(config.endpointUrl, {
           method: 'POST',
           headers: {

@@ -151,10 +151,13 @@ This document provides persistent context for the App-Mobile React application, 
   - **Unified Time Formula:** Implemented `getTrueTimestampMs()` in `NativeTrackingPlugin.java` using `boot_time_baseline + SystemClock.elapsedRealtime()`. Monotonic CPU hardware clock calculation prevents users from manipulating attendance or location timestamps by altering phone date/time settings.
   - **Online Case-Insensitive HTTP Header Calibration:** Updated `sendSingleJsonPayload` in `NativeTrackingPlugin.java` to extract server response `Date`/`date` headers case-insensitively (supporting HTTP/1.1 and HTTP/2) and dynamically recalculate `boot_time_baseline` in `SharedPreferences` (`TrustedTimePrefs`).
   - **Offline Reboot Protection Guard:** Added reboot anomaly check (`TrueTimestampMs < last_recorded_log_timestamp`) to advance timestamps by 1s chronological progress if phone reboots offline. Added cold-start seed fallback for initial runs.
-  - **Native Plugin Time Bridge (`timeService.js`):** Exposed `@PluginMethod getTrueTime` in `NativeTrackingPlugin.java` and connected `timeService.getAccurateTime()` to query native Java. Added JS in-memory offset caching (`cachedJsOffset`) to eliminate Capacitor bridge call overhead during 1-second UI clock updates.
+  - **Native Monotonic Throttle Fix:** Updated `locationReceiver` throttle check in `NativeTrackingPlugin.java` to use `SystemClock.elapsedRealtime()` instead of `System.currentTimeMillis()`. Prevents location tracking from stalling if a user alters phone clock forward and snaps it back to automatic network time mid-session.
+  - **Native Plugin Time Bridge (`timeService.js`):** Exposed `@PluginMethod getTrueTime` in `NativeTrackingPlugin.java` and connected `timeService.getAccurateTime()` to query native Java.
   - **Check-In, Check-Out & Live Location Alignment:** Updated `AppContext.jsx`, `liveTrackingService.js` (`sendFinalCheckoutLocation`), `Attendance.jsx`, and `Dashboard.jsx` to query `getAccurateTime()`, unifying all attendance actions, live location logs, and live digital clock displays against the server-calibrated clock.
+  - **Capacitor Geolocation Checkout Fallback:** Updated `sendFinalCheckoutLocation()` in `liveTrackingService.js` to use `@capacitor/geolocation` with a fallback to `this.lastLocation`, ensuring rapid check-outs never skip sending the final location POST to `/api/employee/location/log`.
 - **Mobile Navbar Active Slider Pill Styling (`Navbar.module.css`):**
   - Updated `slidingPillInner` width from `75%` to `88%` and adjusted `mobileNavLabel` font sizing/letter-spacing with `white-space: nowrap`, preventing longer tab titles (e.g. `"ATTENDANCE"`) from clipping or overflowing the active glass sliding pill background on mobile screens.
+
 
 
 
