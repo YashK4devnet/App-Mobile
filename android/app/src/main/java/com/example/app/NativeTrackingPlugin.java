@@ -52,8 +52,8 @@ public class NativeTrackingPlugin extends Plugin {
     private BroadcastReceiver locationReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            long now = System.currentTimeMillis();
-            if (now - lastPostTime < TRACKING_INTERVAL_MS) {
+            long now = SystemClock.elapsedRealtime();
+            if (lastPostTime > 0 && now - lastPostTime < TRACKING_INTERVAL_MS) {
                 return;
             }
             lastPostTime = now;
