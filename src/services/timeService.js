@@ -41,21 +41,20 @@ const calibrateTimeFromResponse = (responseOrHeaders) => {
  * or latest calibrated server offset, falling back to local system time.
  */
 const getAccurateTime = async (forceRefresh = false) => {
-  // Use in-memory cached offset for instant 1-second UI clock ticks without bridge overhead
-  if (cachedJsOffset !== null && !forceRefresh) {
-    return new Date(Date.now() + cachedJsOffset);
-  }
-
   if (Capacitor.isNativePlatform()) {
     try {
       const res = await NativeTracking.getTrueTime();
       if (res && res.trueTimeMs) {
-        cachedJsOffset = res.trueTimeMs - Date.now();
         return new Date(res.trueTimeMs);
       }
     } catch (e) {
       console.warn("⚠️ NativeTracking.getTrueTime failed, falling back to web offset:", e);
     }
+  }
+
+  // Web Browser fallback using cached offset
+  if (cachedJsOffset !== null && !forceRefresh) {
+    return new Date(Date.now() + cachedJsOffset);
   }
 
   try {
